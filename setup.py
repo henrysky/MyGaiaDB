@@ -35,6 +35,6 @@ setup(
     license="MIT",
     author="Henry Leung",
     author_email="henrysky.leung@utoronto.ca",
-    description="A python package to setup local ESA Gaia / 2MASS / ALLWISE databases and do query locally",
+    description="A python package to setup local serverless ESA Gaia / 2MASS / ALLWISE databases and do query locally",
     long_description=long_description,
 )

@@ -23,7 +23,9 @@ You are welcome to modify the code, make pull request to make this code to suit 
 Installation
 ---------------
 
-This code requires `python >= 3.8` with `numpy`, `pandas`, `h5py`, `astropy` and `tqdm`. Some optional functionality requires `galpy`, `mwdust`.
+This code requires `python >= 3.8` with `numpy`, `pandas`, `h5py`, `astropy` and `tqdm`. Some optional functionality requires `galpy`, `mwdust`. 
+
+You can simply do `python setup.py install` or `python setup.py develop` to use this code.
 
 You need to make sure you have at least ~8TB of free (preferably fast) disk space. First set an 
 environment variable called **MY_ASTRO_DATA** which point to a folder that contains your 
