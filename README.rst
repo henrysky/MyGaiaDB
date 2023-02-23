@@ -1,12 +1,12 @@
 MyGaiaDB
 ===============
 
-Why share when you can have the whole Gaia database on your own locally?
+*Why share when you can have the whole Gaia database on your own locally?*
 
-`MyGaiaDB` is simple python package with a set of scripts to help you setup a local 
+``MyGaiaDB`` is simple python package with a set of scripts to help you setup a local 
 Gaia database (also 2MASS and ALLWISE) without the need of administrator privilege and is compatible to all 
-major platforms (Linux, Mac and Windows) beacuse `MyGaiaDB` is **serverless** and requires Python 
-only using `sqlite` as long as you have enough disk space.
+major platforms (Linux, Mac and Windows) beacuse ``MyGaiaDB`` is **serverless** and requires Python 
+only using ``sqlite`` as long as you have enough disk space.
 
 This code is mainly to help myself managing data for my research project with Gaia DR3 XP spectra 
 and not meant to fit research usage from every aspect of Gaia's 1 billion stars. The main motivation of this 
@@ -23,9 +23,9 @@ You are welcome to modify the code, make pull request to make this code to suit 
 Installation
 ---------------
 
-This code requires `python >= 3.8` with `numpy`, `pandas`, `h5py`, `astropy` and `tqdm`. Some optional functionality requires `galpy`, `mwdust`. 
+This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy`` and ``tqdm``. Some optional functionality requires ```galpy``, ``mwdust``. 
 
-You can simply do `python setup.py install` or `python setup.py develop` to use this code.
+You can simply do ``python setup.py install`` or ``python setup.py develop`` to use this code.
 
 You need to make sure you have at least ~8TB of free (preferably fast) disk space. First set an 
 environment variable called **MY_ASTRO_DATA** which point to a folder that contains your 
@@ -45,8 +45,8 @@ Official data links:
 
 The folder structure should look something like this (**Case Sensitive**). If you already have the data but in a different structure and you do 
 not want or can not move them, you can use symbolic link to create the required folder structure without duplicating files. 
-For linux, you can use `ln -s {source-dir-or-file-path} {symbolic-dir-or-file-path}`. 
-For Windows, you can use `mklink {symbolic-file-path} {source-file-path}` or `mklink /D {symbolic-dir-path} {source-dir-path}`.
+For linux, you can use ``ln -s {source-dir-or-file-path} {symbolic-dir-or-file-path}``. 
+For Windows, you can use ``mklink {symbolic-file-path} {source-file-path}`` or ``mklink /D {symbolic-dir-path} {source-dir-path}``.
 
 ::
 
@@ -105,15 +105,15 @@ For Windows, you can use `mklink {symbolic-file-path} {source-file-path}` or `mk
 Post installation scripts
 --------------------------------
 Here are some post installation scripts (each only need to be ran once on each computer you store the data). 
-**Each sctipt will generate large sized file(s)**. You can simply run `python scripts/{name-of-the-script}.py`. 
+**Each sctipt will generate large sized file(s)**. You can simply run ``python scripts/{name-of-the-script}.py``. 
 Moreover if you are using a shared computing server, only one user need to run the scripts and share **MY_ASTRO_DATA** to other user.
 Multiple users can use the SQL database at the same time as long as you have set permission correctly so no accidential delete or modification.
 
 -   | `scripts/gen_gaia_sql_dataset.py`_
-    | Script to generate `gaia_source_lite` table (same as `gaia_source_lite` on `Gaia Archive`_ with addition of `grvs_mag`) along with 2MASS and ALLWISE best neightbour table into a singele SQL database
+    | Script to generate `gaia_source_lite` table (same as ``gaia_source_lite`` on `Gaia Archive`_ with addition of ``grvs_mag``) along with 2MASS and ALLWISE best neightbour table into a singele SQL database
     | This script will also do indexing on commonly used column. The whole script will take ~20 hours to run.
 -   | `scripts/gen_gaia_astro_param_sql_dataset.py`_
-    | Script to generate a stripped down version of `astrophysical_parameters` table into a singele SQL database
+    | Script to generate a stripped down version of ``astrophysical_parameters`` table into a singele SQL database
     | This script will also do indexing on commonly used column. The whole script will take ~12 hours to run.
 -   | `scripts/gen_allwise_sql_dataset.py`_
     | Script to generate a stripped down version of ALLWISE photometry table into a singele SQL database
@@ -138,8 +138,8 @@ Multiple users can use the SQL database at the same time as long as you have set
 SQL Query
 ------------
 
-This query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily you've got `MyGaiaDB` to do the job. 
-The following example query from `gaia_source_lite` table, `gaia_astrophysical_parameters` table, 2MASS and ALLWISE table all at once.
+This query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily you've got ``MyGaiaDB`` to do the job. 
+The following example query from ``gaia_source_lite`` table, ``gaia_astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
 
 .. _Gaia Archive: https://gea.esac.esa.int/archive/
 
@@ -164,9 +164,9 @@ The following example query from `gaia_source_lite` table, `gaia_astrophysical_p
 
     local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True)
 
-`MyGaiaDB` also has callbacks funcationality called `QueryCallback`, these callbacks can be used when you do query. For example, 
-you can create a callbacks to convert `ra` in degree to `ra_rad` in radian. So your csv file in the end will have a new column 
-called `ra_rad`. Functions in `QueryCallback` must have argeuments with **exact** column names in your query so `MyGaiaDB`  knows 
+``MyGaiaDB``` also has callbacks funcationality called ``QueryCallback``, these callbacks can be used when you do query. For example, 
+you can create a callbacks to convert ``ra`` in degree to `ra_rad` in radian. So your csv file in the end will have a new column 
+called ``ra_rad``. Functions in ``QueryCallback`` must have argeuments with **exact** column names in your query so ``MyGaiaDB`` knows 
 which columns to use on the fly.
 
 ..  code-block:: python
@@ -209,7 +209,7 @@ Spectroscopy Query
 --------------------
 
 There can be use case where you want to run a function (e.g. a machine learning model) to a large batch of source_id with reasonable memory usage. 
-You can use `MyGaiaDB` to do that too in batch
+You can use ``MyGaiaDB`` to do that too in batch
 
 ..  code-block:: python
 
