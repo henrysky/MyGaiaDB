@@ -1,0 +1,15 @@
+CREATE TABLE allwise (
+    designation character(20),
+    ra double precision,
+    dec double precision,
+    w1mpro real,
+    w1snr real,
+    w2mpro real,
+    w2snr real,
+    w3mpro real,
+    w3snr real,
+    w4mpro real,
+    w4snr real,
+    cc_flags character(4)
+);
+
