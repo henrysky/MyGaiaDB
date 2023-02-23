@@ -23,7 +23,7 @@ You are welcome to modify the code, make pull request to make this code to suit 
 Installation
 ---------------
 
-This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy`` and ``tqdm``. Some optional functionality requires ```galpy``, ``mwdust``. 
+This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy`` and ``tqdm``. Some optional functionality requires ``galpy``, ``mwdust``. 
 
 You can simply do ``python setup.py install`` or ``python setup.py develop`` to use this code.
 
@@ -164,7 +164,7 @@ The following example query from ``gaia_source_lite`` table, ``gaia_astrophysica
 
     local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True)
 
-``MyGaiaDB``` also has callbacks funcationality called ``QueryCallback``, these callbacks can be used when you do query. For example, 
+``MyGaiaDB`` also has callbacks funcationality called ``QueryCallback``, these callbacks can be used when you do query. For example, 
 you can create a callbacks to convert ``ra`` in degree to `ra_rad` in radian. So your csv file in the end will have a new column 
 called ``ra_rad``. Functions in ``QueryCallback`` must have argeuments with **exact** column names in your query so ``MyGaiaDB`` knows 
 which columns to use on the fly.

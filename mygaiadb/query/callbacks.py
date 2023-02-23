@@ -55,7 +55,7 @@ class ZeroPointCallback(QueryCallback):
             )
         zpt.load_tables()
 
-    @classmethod
+    @staticmethod
     def parallax_zp_func(
         ra,
         dec,
