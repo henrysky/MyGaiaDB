@@ -104,7 +104,7 @@ class LocalGaiaSQL():
                 _df = pd.DataFrame(results, columns=header_og)
                 if callbacks is not None:
                     _df = self._result_after_callbacks(_df, callbacks)
-                _df.to_csv(filename, mode="a" if not first_flag else "w", index=False, header=False  if not first_flag else True)
+                _df.to_csv(filename, mode="a" if not first_flag else "w", index=False, header=False if not first_flag else True)
                 first_flag = False
                 pbar.update(len(_df))
         return None
@@ -118,3 +118,13 @@ class LocalGaiaSQL():
             self._check_callbacks_header(_df.columns, callbacks)
             _df = self._result_after_callbacks(_df, callbacks)
         return _df
+
+    def execution_plan(self, query):
+        """
+        Get execution plan for a query, to debug to improve indexing
+        """
+        query = """
+        EXPLAIN QUERY PLAN
+        """ + query
+        self.cursor.execute(query)
+        return self.cursor.fetchall()

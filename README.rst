@@ -23,7 +23,7 @@ You are welcome to modify the code, make pull request to make this code to suit 
 Installation
 ---------------
 
-This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy`` and ``tqdm``. Some optional functionality requires ``galpy``, ``mwdust``. 
+This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy``, ``tqdm`` and ``sqlite3``. Some optional functionality requires ``galpy``, ``mwdust``. 
 
 You can simply do ``python setup.py install`` or ``python setup.py develop`` to use this code.
 
@@ -43,9 +43,9 @@ Official data links:
 * Official 2MASS data can be downloaded here: https://irsa.ipac.caltech.edu/2MASS/download/allsky/
 * Official ALLWISE data can be downloaded here: https://irsa.ipac.caltech.edu/data/download/wise-allwise/
 
-The folder structure should look something like this (**Case Sensitive**). If you already have the data but in a different structure and you do 
+The **case sensitive** folder structure should look something like the following chart. If you already have the data but in a different structure and you do 
 not want or can not move them, you can use symbolic link to create the required folder structure without duplicating files. 
-For linux, you can use ``ln -s {source-dir-or-file-path} {symbolic-dir-or-file-path}``. 
+For Linux, you can use ``ln -s {source-dir-or-file-path} {symbolic-dir-or-file-path}``. 
 For Windows, you can use ``mklink {symbolic-file-path} {source-file-path}`` or ``mklink /D {symbolic-dir-path} {source-dir-path}``.
 
 ::
@@ -106,11 +106,12 @@ Post installation scripts
 --------------------------------
 Here are some post installation scripts (each only need to be ran once on each computer you store the data). 
 **Each sctipt will generate large sized file(s)**. You can simply run ``python scripts/{name-of-the-script}.py``. 
-Moreover if you are using a shared computing server, only one user need to run the scripts and share **MY_ASTRO_DATA** to other user.
-Multiple users can use the SQL database at the same time as long as you have set permission correctly so no accidential delete or modification.
+Moreover if you are using a shared computing server, only one user need to run the scripts and share **MY_ASTRO_DATA** folder path to other user so
+they can setup their own enviroment variable **MY_ASTRO_DATA** to that folder too. Multiple users can use the SQL database at the same time as long as you have set permission 
+correctly so no accidential delete or modification.
 
 -   | `scripts/gen_gaia_sql_dataset.py`_
-    | Script to generate `gaia_source_lite` table (same as ``gaia_source_lite`` on `Gaia Archive`_ with addition of ``grvs_mag``) along with 2MASS and ALLWISE best neightbour table into a singele SQL database
+    | Script to generate ``gaia_source_lite`` table (same layout as ``gaia_source_lite`` on `Gaia Archive`_ with addition of ``grvs_mag``) along with 2MASS and ALLWISE best neightbour table into a singele SQL database
     | This script will also do indexing on commonly used column. The whole script will take ~20 hours to run.
 -   | `scripts/gen_gaia_astro_param_sql_dataset.py`_
     | Script to generate a stripped down version of ``astrophysical_parameters`` table into a singele SQL database
@@ -219,7 +220,7 @@ You can use ``MyGaiaDB`` to do that too in batch
         coeffs, idx = i
         # XP coeffs of idx from the original a_very_long_source_id_array
 
-For example you want to infer `M_H` with your machine learning model
+For example you want to infer ``M_H`` with your machine learning model
 
 ..  code-block:: python
 

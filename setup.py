@@ -22,6 +22,7 @@ setup(
     python_requires=f">=3.8",
     install_requires=[
         "numpy",
+        "astropy",
         "h5py",
         "pandas",
         "tqdm",
