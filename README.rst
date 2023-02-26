@@ -139,28 +139,66 @@ correctly so no accidential delete or modification.
 SQL Databases Data Model
 ---------------------------
 
-+---------------------------------------+
-| gaia_source_lite                      |
-+=======================================+
-| Column                                | 
-+=======================================+
-| source_id                             | 
-+---------------------------------------+
-| random_index                          |
-+---------------------------------------+
-| ra                                    |
-+---------------------------------------+
-| ra_error                              |
-+---------------------------------------+
-| dec                                   |
-+---------------------------------------+
-| dec_error                             |
-+---------------------------------------+
-| parallax                              |
-+---------------------------------------+
-| parallax_error                        |
-+---------------------------------------+
-
+=======================================
+gaia_source_lite                      
+=======================================
+source_id                             
+random_index  
+ra            
+ra_error      
+dec           
+dec_error     
+parallax      
+parallax_error
+parallax_over_error
+pmra
+pmra_error
+pmdec
+pmdec_error
+ra_dec_corr
+ra_parallax_corr
+ra_pmra_corr
+ra_pmdec_corr
+dec_parallax_corr
+dec_pmra_corr
+dec_pmdec_corr
+parallax_pmra_corr
+parallax_pmdec_corr
+pmra_pmdec_corr
+astrometric_params_solved
+nu_eff_used_in_astrometry
+pseudocolour
+pseudocolour_error
+astrometric_matched_transits
+ipd_gof_harmonic_amplitude
+ipd_frac_multi_peak
+ipd_frac_odd_win
+ruwe
+phot_g_mean_flux double
+phot_g_mean_flux_over_error
+phot_g_mean_mag
+phot_bp_mean_flux
+phot_bp_mean_flux_over_error
+phot_bp_mean_mag
+phot_rp_mean_flux
+phot_rp_mean_flux_over_error
+phot_rp_mean_mag
+phot_bp_rp_excess_factor
+bp_rp
+radial_velocity_error
+radial_velocity_error
+rv_nb_transits
+rv_expected_sig_to_noise 
+rv_renormalised_gof
+rv_chisq_pvalue
+rvs_spec_sig_to_noise
+grvs_mag
+l
+b
+has_xp_continuous
+has_xp_sampled
+has_rvs
+=======================================
 
 SQL Query
 ------------
