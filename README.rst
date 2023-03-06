@@ -4,9 +4,9 @@ MyGaiaDB
 *Why share when you can have the whole Gaia database on your own locally?*
 
 ``MyGaiaDB`` is simple python package with a set of scripts to help you setup a local 
-Gaia database (also 2MASS and ALLWISE) without the need of administrator privilege and is compatible to all 
-major platforms (Linux, Mac and Windows) beacuse ``MyGaiaDB`` is **serverless** and requires Python 
-only using ``sqlite`` as long as you have enough disk space.
+Gaia **DR3** database (also local 2MASS and ALLWISE databases too) without the need of administrator privilege 
+and is compatible to all major platforms (Linux, Mac and Windows) beacuse ``MyGaiaDB`` is **serverless** 
+and requires Python only using ``sqlite`` as long as you have enough disk space.
 
 This code is mainly to help myself managing data for my research project with Gaia DR3 XP spectra 
 and not meant to fit research usage from every aspect of Gaia's 1 billion stars. The main motivation of this 
@@ -27,7 +27,7 @@ This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``ast
 
 You can simply do ``python setup.py install`` or ``python setup.py develop`` to use this code.
 
-You need to make sure you have at least ~8TB of free (preferably fast) disk space. First set an 
+You need to make sure you have at least ~8TB of free disk space with fast **random read** speed. First set an 
 environment variable called **MY_ASTRO_DATA** which point to a folder that contains your 
 astronomical data in general. Where under **MY_ASTRO_DATA**, there should be a folder that contains all 
 gaia data and sdss data (i.e. **GAIA_TOOLS_DATA** environment variable from Jo Bovy's 
@@ -139,72 +139,78 @@ correctly so no accidential delete or modification.
 SQL Databases Data Model
 ---------------------------
 
-=======================================
-gaia_source_lite                      
-=======================================
-source_id                             
-random_index  
-ra            
-ra_error      
-dec           
-dec_error     
-parallax      
-parallax_error
-parallax_over_error
-pmra
-pmra_error
-pmdec
-pmdec_error
-ra_dec_corr
-ra_parallax_corr
-ra_pmra_corr
-ra_pmdec_corr
-dec_parallax_corr
-dec_pmra_corr
-dec_pmdec_corr
-parallax_pmra_corr
-parallax_pmdec_corr
-pmra_pmdec_corr
-astrometric_params_solved
-nu_eff_used_in_astrometry
-pseudocolour
-pseudocolour_error
-astrometric_matched_transits
-ipd_gof_harmonic_amplitude
-ipd_frac_multi_peak
-ipd_frac_odd_win
-ruwe
-phot_g_mean_flux double
-phot_g_mean_flux_over_error
-phot_g_mean_mag
-phot_bp_mean_flux
-phot_bp_mean_flux_over_error
-phot_bp_mean_mag
-phot_rp_mean_flux
-phot_rp_mean_flux_over_error
-phot_rp_mean_mag
-phot_bp_rp_excess_factor
-bp_rp
-radial_velocity_error
-radial_velocity_error
-rv_nb_transits
-rv_expected_sig_to_noise 
-rv_renormalised_gof
-rv_chisq_pvalue
-rvs_spec_sig_to_noise
-grvs_mag
-l
-b
-has_xp_continuous
-has_xp_sampled
-has_rvs
-=======================================
+Currently for DR3 
+
+Tables::
+    
+    =======================================
+    gaia_source_lite                      
+    =======================================
+    source_id                             
+    random_index  
+    ra            
+    ra_error      
+    dec           
+    dec_error     
+    parallax      
+    parallax_error
+    parallax_over_error
+    pmra
+    pmra_error
+    pmdec
+    pmdec_error
+    ra_dec_corr
+    ra_parallax_corr
+    ra_pmra_corr
+    ra_pmdec_corr
+    dec_parallax_corr
+    dec_pmra_corr
+    dec_pmdec_corr
+    parallax_pmra_corr
+    parallax_pmdec_corr
+    pmra_pmdec_corr
+    astrometric_params_solved
+    nu_eff_used_in_astrometry
+    pseudocolour
+    pseudocolour_error
+    astrometric_matched_transits
+    ipd_gof_harmonic_amplitude
+    ipd_frac_multi_peak
+    ipd_frac_odd_win
+    ruwe
+    phot_g_mean_flux double
+    phot_g_mean_flux_over_error
+    phot_g_mean_mag
+    phot_bp_mean_flux
+    phot_bp_mean_flux_over_error
+    phot_bp_mean_mag
+    phot_rp_mean_flux
+    phot_rp_mean_flux_over_error
+    phot_rp_mean_mag
+    phot_bp_rp_excess_factor
+    bp_rp
+    radial_velocity_error
+    radial_velocity_error
+    rv_nb_transits
+    rv_expected_sig_to_noise 
+    rv_renormalised_gof
+    rv_chisq_pvalue
+    rvs_spec_sig_to_noise
+    grvs_mag
+    l
+    b
+    has_xp_continuous
+    has_xp_sampled
+    has_rvs
+    =======================================
 
 SQL Query
 ------------
 
 This query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily you've got ``MyGaiaDB`` to do the job. 
 The following example query from ``gaia_source_lite`` table, ``gaia_astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
+Moreover, ``MyGaiaDB`` set all datasets to **read-only** before loading it. If you want to edit it afterward, you have to set the 
+premission mnaully each time you have used ``MyGaiaDB``.
 
 .. _Gaia Archive: https://gea.esac.esa.int/archive/
 
@@ -228,6 +234,8 @@ The following example query from ``gaia_source_lite`` table, ``gaia_astrophysica
     """
 
     local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True)
+
+As you can see for ``has_xp_continuous``, we use ``1`` to represent ``TRUE``.
 
 ``MyGaiaDB`` also has callbacks funcationality called ``QueryCallback``, these callbacks can be used when you do query. For example, 
 you can create a callbacks to convert ``ra`` in degree to `ra_rad` in radian. So your csv file in the end will have a new column 

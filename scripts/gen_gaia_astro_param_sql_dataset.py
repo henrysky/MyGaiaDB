@@ -9,7 +9,7 @@ from datetime import datetime
 from mygaiadb import astro_data_path, gaia_astro_param_sql_db_path
 
 # =================== settings ===================
-do_gaia_source_table = True
+do_table = True
 do_indexing = True
 # =================== settings ===================
 
@@ -18,18 +18,20 @@ Path(db_filename).touch()
 conn = sqlite3.connect(db_filename)
 c = conn.cursor()
 
-# =================== setup Gaia schema and first two tables ===================
-# this section will take ~30 minutes to run
-schema = "astrophysical_parameters_lite_schema"
-schema_filename = os.path.join("scripts", "sql_schema", f"{schema}")
+if do_table:
+    # =================== setup Gaia schema and first two tables ===================
+    # this section will take ~30 minutes to run
+    schema = "astrophysical_parameters_lite_schema"
+    schema_filename = os.path.join(
+        astro_data_path, f"gaia_mirror/Gaia/gdr3/{schema}"
+    )
 
-with open(schema_filename) as f:
-    lines = f.read().replace("\n", "")
-c.execute(lines)
-# =================== populate gaia_source lite table ===================
-# we have added "grvs_mag" to the table on top of gaia_source_lite on Gaia Archive
-# will take ~11 hours to run
-if do_gaia_source_table:
+    with open(schema_filename) as f:
+        lines = f.read().replace("\n", "")
+    c.execute(lines)
+    # =================== populate gaia_source lite table ===================
+    # we have added "grvs_mag" to the table on top of gaia_source_lite on Gaia Archive
+    # will take ~11 hours to run
     path = os.path.join(astro_data_path, f"gaia_mirror/Gaia/gdr3/Astrophysical_parameters/astrophysical_parameters/*.csv.gz")
     glob_paths = glob.glob(path)
 
@@ -111,8 +113,8 @@ if do_gaia_source_table:
 # =================== indexing ===================
 if do_indexing:  # approx ~10Gb each indexing
     print("=================== indexing ===================")
-    # 33m27s
+    # 1h15m
     print("Start doing gaia_astrophysical_parameters_sourceid indexing")
     c.execute(
-        """CREATE INDEX gaia_astrophysical_parameters_sourceid ON gaia_astrophysical_parameters (source_id);"""
+        """CREATE INDEX gaia_astrophysical_parameters_sourceid ON gaia_astrophysical_parameters (source_id, teff_gspphot, logg_gspphot, mh_gspphot);"""
     )
