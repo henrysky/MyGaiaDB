@@ -108,7 +108,7 @@ def compile_xp_continuous_allinone_h5():
 def compile_xp_continuous_h5(save_correlation_matrix=False):
     for i_path in tqdm.tqdm(
         astro_data_path.joinpath(
-            "Gaia/gdr3/Spectroscopy/xp_continuous_mean_spectrum/"
+            "Gaia", "gdr3", "Spectroscopy", "xp_continuous_mean_spectrum"
         ).glob("*.csv.gz"),
         desc="XP coeffs",
     ):
@@ -237,7 +237,7 @@ def compile_rvs_h5():
 
 def compile_rvs_h5():
     for i_path in tqdm.tqdm(
-        astro_data_path.joinpath("Gaia/gdr3/Spectroscopy/rvs_mean_spectrum/").glob(
+        astro_data_path.joinpath("Gaia", "gdr3", "Spectroscopy", "rvs_mean_spectrum").glob(
             "*.csv.gz"
         ),
         desc="RVS spec",
@@ -259,7 +259,7 @@ def compile_rvs_h5():
 def comile_xp_mean_spec_h5():
     for i_path in tqdm.tqdm(
         astro_data_path.joinpath(
-            "Gaia/gdr3/Spectroscopy/xp_sampled_mean_spectrum/"
+            "Gaia", "gdr3", "Spectroscopy", "xp_sampled_mean_spectrum"
         ).glob("*.csv.gz"),
         desc="XP specs",
     ):
@@ -277,7 +277,7 @@ def comile_xp_mean_spec_h5():
             f.create_dataset("flux_error", data=flux_error)
 
 
-def compile_gaia_sql_db(do_gaia_source_table=True, do_indexing=True):
+def compile_gaia_sql_db(do_gaia_source_table=True, do_gaia_astrophysical_table=True, do_indexing=True):
     # The whole script takes about ~24 hours to complete
     db_filename = gaia_sql_db_path
     Path(db_filename).touch()
@@ -380,6 +380,92 @@ def compile_gaia_sql_db(do_gaia_source_table=True, do_indexing=True):
             )
             # write the data to a sqlite table
             data.to_sql("gaia_source", conn, if_exists="append", index=False)
+
+    if do_gaia_astrophysical_table:
+        schema = "astrophysical_parameters_lite_schema"
+        schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", f"{schema}")
+
+        with open(schema_filename) as f:
+            lines = f.read().replace("\n", "")
+        c.execute(lines)
+        # =================== populate gaia_source lite table ===================
+        # we have added "grvs_mag" to the table on top of gaia_source_lite on Gaia Archive
+        # will take ~11 hours to run
+
+        for p in tqdm.tqdm(astro_data_path.joinpath("Gaia", "gdr3", "Astrophysical_parameters", "astrophysical_parameters").glob("*.csv.gz")):
+            dtypes = {
+                "source_id": np.int64,
+                "classprob_dsc_combmod_quasar": np.float32,
+                "classprob_dsc_combmod_galaxy": np.float32,
+                "classprob_dsc_combmod_star": np.float32,
+                "classprob_dsc_combmod_whitedwarf": np.float32,
+                "classprob_dsc_combmod_binarystar": np.float32,
+                "classprob_dsc_specmod_quasar": np.float32, 
+                "classprob_dsc_specmod_galaxy": np.float32,
+                "classprob_dsc_specmod_star": np.float32,
+                "classprob_dsc_specmod_whitedwarf": np.float32,
+                "classprob_dsc_specmod_binarystar": np.float32,
+                "classprob_dsc_allosmod_quasar": np.float32,
+                "classprob_dsc_allosmod_galaxy": np.float32,
+                "classprob_dsc_allosmod_star": np.float32,
+                "teff_gspphot": np.float32,
+                "teff_gspphot_lower": np.float32,
+                "teff_gspphot_upper": np.float32,
+                "logg_gspphot": np.float32,
+                "logg_gspphot_lower": np.float32,
+                "logg_gspphot_upper": np.float32,
+                "mh_gspphot": np.float32,
+                "mh_gspphot_lower": np.float32,
+                "mh_gspphot_upper": np.float32,
+                "distance_gspphot": np.float32,
+                "distance_gspphot_lower": np.float32,
+                "distance_gspphot_upper": np.float32,
+                "azero_gspphot": np.float32,
+                "azero_gspphot_lower": np.float32,
+                "azero_gspphot_upper": np.float32,
+                "ag_gspphot": np.float32,
+                "ag_gspphot_lower": np.float32,
+                "ag_gspphot_upper": np.float32,
+                "abp_gspphot": np.float32,
+                "abp_gspphot_lower": np.float32,
+                "abp_gspphot_upper": np.float32,
+                "arp_gspphot": np.float32,
+                "arp_gspphot_lower": np.float32,
+                "arp_gspphot_upper": np.float32,
+                "ebpminrp_gspphot": np.float32,
+                "ebpminrp_gspphot_lower": np.float32,
+                "ebpminrp_gspphot_upper": np.float32,
+                "mg_gspphot": np.float32,
+                "mg_gspphot_lower": np.float32,
+                "mg_gspphot_upper": np.float32,
+                "radius_gspphot": np.float32,
+                "radius_gspphot_lower": np.float32,
+                "radius_gspphot_upper": np.float32,
+                "logposterior_gspphot": np.float32,
+                "mcmcaccept_gspphot": np.float32,
+                "libname_gspphot": str,
+                "teff_gspspec": np.float32,
+                "teff_gspspec_lower": np.float32,
+                "teff_gspspec_upper": np.float32,
+                "logg_gspspec": np.float32,
+                "logg_gspspec_lower": np.float32,
+                "logg_gspspec_upper": np.float32,
+                "mh_gspspec": np.float32,
+                "mh_gspspec_lower": np.float32,
+                "mh_gspspec_upper": np.float32,
+                "alphafe_gspspec": np.float32,
+                "alphafe_gspspec_lower": np.float32,
+                "alphafe_gspspec_upper": np.float32,
+                "flags_gspspec": str,
+                "activityindex_espcs": np.float32,
+                "activityindex_espcs_uncertainty": np.float32,
+                "activityindex_espcs_input": str
+            }
+            data = pd.read_csv(
+                p, header=1, sep=",", skiprows=1540, usecols=dtypes.keys(), dtype=dtypes
+            )
+            # write the data to a sqlite table
+            data.to_sql("astrophysical_parameters", conn, if_exists="append", index=False)
 
     # =================== indexing ===================
     if do_indexing:

@@ -25,4 +25,4 @@ jobs:
           key: mygaiadb-${{ runner.os }}-2023march12
       - name: Test
         run: >
-          python -m pytest -v tests/
+          python -m pytest -v -s tests/

@@ -232,7 +232,7 @@ To run this query in ``MyGaiaDB``, you can do the following and will get a panda
     local_db.query("""SELECT TOP 100 * FROM gaiadr3.gaia_source as G  WHERE (G.has_xp_continuous = 'True')""")
 
 The following example query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily you've got ``MyGaiaDB`` to do the job. 
-The following example query from ``gaia_source_lite`` table, ``gaia_astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
+The following example query from ``gaia_source`` table, ``astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
 Moreover, ``MyGaiaDB`` set each dataset to **read-only** before loading it. If you want to edit the database afterward, you have to set the 
 appropiate premission manually each time you have used ``MyGaiaDB``.
 
@@ -247,7 +247,7 @@ appropiate premission manually each time you have used ``MyGaiaDB``.
     SELECT G.source_id, G.ra, G.dec, G.pmra, G.pmdec, G.parallax, G.parallax_error, G.phot_g_mean_mag, GA.logg_gspspec,
     TM.j_m, AW.w1mpro
     FROM gaiadr3.gaia_source as G
-    INNER JOIN gaiadr3.gaia_astrophysical_parameters as GA on GA.source_id = G.source_id
+    INNER JOIN gaiadr3.astrophysical_parameters as GA on GA.source_id = G.source_id
     INNER JOIN gaiadr3.tmasspscxsc_best_neighbour as T on G.source_id = T.source_id
     INNER JOIN gaiadr3.allwise_best_neighbour as W on W.source_id = T.source_id
     INNER JOIN tmass.twomass_psc as TM on TM.designation = T.original_ext_source_id

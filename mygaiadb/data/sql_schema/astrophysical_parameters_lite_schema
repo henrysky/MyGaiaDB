@@ -1,4 +1,4 @@
-CREATE TABLE gaia_astrophysical_parameters (
+CREATE TABLE astrophysical_parameters (
     source_id bigint,
     classprob_dsc_combmod_quasar real,
     classprob_dsc_combmod_galaxy real,
