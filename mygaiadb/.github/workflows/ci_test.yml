@@ -1,0 +1,28 @@
+name: CI
+
+on: [push]
+
+jobs:
+  test:
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"  # respect [ci skip] commit
+    runs-on: ubuntu-latest
+    env:
+      MY_ASTRO_DATA: ${{ github.workspace }}/my_astro_data/
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: |
+          pip install galpy gaiadr3-zeropoint mwdust
+          pip install .
+    # - name: Cache my astro data
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: ${{ github.workspace }}/my_astro_data/
+    #     key: mygaiadb-${{ runner.os }}-2023march12
+      - name: Test
+        run: >
+          python -m pytest tests/

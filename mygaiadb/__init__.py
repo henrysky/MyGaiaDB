@@ -1,9 +1,26 @@
 import os
+import pathlib
 
+# make sure (shared) database folder exists
 astro_data_path = os.getenv("MY_ASTRO_DATA")
+if astro_data_path is None:
+    raise EnvironmentError("Please specify an environment variable - MY_ASTRO_DATA")
+else:
+    astro_data_path = pathlib.Path(astro_data_path).expanduser()
+    if not astro_data_path.exists():
+        astro_data_path.mkdir()
 
-gaia_sql_db_path = os.path.join(astro_data_path, "gaia_mirror/gaiadr3.db")
-gaia_astro_param_sql_db_path = os.path.join(astro_data_path, "gaia_mirror/gaiadr3_astrophysical_params.db")
-gaia_xp_coeff_h5_path = os.path.join(astro_data_path, "gaia_mirror/xp_continuous_mean_spectrum_allinone.h5")
-tmass_sql_db_path = os.path.join(astro_data_path, "2mass_mirror/tmass.db")
-allwise_sql_db_path = os.path.join(astro_data_path, "allwise_mirror/allwise.db")
+# make sure user-specific database folder exists
+mygaiadb_folder = pathlib.Path.home().joinpath(".mygaiadb")
+mygaiadb_default_db = mygaiadb_folder.joinpath("mygaiadb.db")
+mygaiadb_usertable_db = mygaiadb_folder.joinpath("user_table.db")
+if not mygaiadb_folder.exists():
+    mygaiadb_folder.mkdir()
+mygaiadb_default_db.touch()
+mygaiadb_usertable_db.touch()
+
+gaia_sql_db_path = astro_data_path.joinpath("gaia_mirror/gaiadr3.db")
+gaia_astro_param_sql_db_path = astro_data_path.joinpath("gaia_mirror/gaiadr3_astrophysical_params.db")
+gaia_xp_coeff_h5_path = astro_data_path.joinpath("gaia_mirror/xp_continuous_mean_spectrum_allinone.h5")
+tmass_sql_db_path = astro_data_path.joinpath("2mass_mirror/tmass.db")
+allwise_sql_db_path = astro_data_path.joinpath("allwise_mirror/allwise.db")

@@ -9,13 +9,15 @@ with open(
 
 setup(
     name="MyGaiaDB",
-    version="0.1.dev",
+    version="0.1.dev0",
     classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Astronomy",
+        "Topic :: Database :: Database Engines/Servers",
+        "Topic :: Database :: Front-Ends",
     ],
     packages=find_packages(),
     include_package_data=True,
@@ -26,6 +28,7 @@ setup(
         "h5py",
         "pandas",
         "tqdm",
+        "beautifulsoup4",
     ],
     url="https://github.com/henrysky/MyGaiaDB",
     project_urls={
@@ -36,6 +39,6 @@ setup(
     license="MIT",
     author="Henry Leung",
     author_email="henrysky.leung@utoronto.ca",
-    description="A python package to setup local serverless ESA Gaia / 2MASS / ALLWISE databases and do query locally",
+    description="Setup local serverless ESA Gaia / 2MASS / ALLWISE databases and run query locally with python",
     long_description=long_description,
 )

@@ -1,18 +1,28 @@
 import os
+import re
 import sys
 import stat
 import inspect
 import sqlite3
+import contextlib
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from mygaiadb import gaia_sql_db_path, tmass_sql_db_path, allwise_sql_db_path, gaia_astro_param_sql_db_path
+from mygaiadb import (
+    mygaiadb_default_db,
+    mygaiadb_usertable_db,
+    gaia_sql_db_path,
+    tmass_sql_db_path,
+    allwise_sql_db_path,
+    gaia_astro_param_sql_db_path,
+)
 
 
-class QueryCallback():
+class QueryCallback:
     """
     Callback to add new column to SQL query on the fly
     """
+
     def __init__(self, new_col_name, func):
         """
         INPUT:
@@ -24,11 +34,19 @@ class QueryCallback():
         self.func = func
         self.required_col = list(inspect.getfullargspec(self.func))[0]
 
-class LocalGaiaSQL():
+
+class LocalGaiaSQL:
     """
     Class for local Gaia SQL database
     """
-    def __init__(self, load_tmass=True, load_allwise=True, load_gaia_astro_params=True, readonly_guard=True):
+
+    def __init__(
+        self,
+        load_tmass=True,
+        load_allwise=True,
+        load_gaia_astro_params=True,
+        readonly_guard=True,
+    ):
         """
         Parameters
         ----------
@@ -45,10 +63,11 @@ class LocalGaiaSQL():
         self.load_allwise = load_allwise
         self.load_gaia_astro_params = load_gaia_astro_params
         self.readonly_guard = readonly_guard
+        self.attached_db_name = []
 
         # flag for windows or not
         self.win32 = sys.platform.startswith("win32")
-        
+
         self.conn, self.cursor = self._load_db()
 
     def _check_callbacks_header(self, headers, callbacks):
@@ -65,7 +84,9 @@ class LocalGaiaSQL():
         for i in callbacks:
             for j in i.required_col:
                 if not j in headers:
-                    raise NameError(f"Callback for new column {i.new_col_name} requires column {j} but not presented in your query")
+                    raise NameError(
+                        f"Callback for new column {i.new_col_name} requires column {j} but not presented in your query"
+                    )
 
     def _result_after_callbacks(self, df, callbacks):
         for i in callbacks:
@@ -76,33 +97,100 @@ class LocalGaiaSQL():
         return df
 
     def _read_only(self, file_path):
-        # set read only premission for all loaded dataset to prevent mess-up
+        # set read only premission for all loaded dataset to prevent accidental change
         if self.win32:
             os.chmod(file_path, stat.S_IREAD)
         else:
             os.chmod(file_path, 0o444)
 
+    def _file_exist(self, path):
+        if not os.path.exists(path):
+            raise FileExistsError(f"Database at {path} does not exist")
+
+    def preprocess_query(func):
+        """
+        Decoractor to preprocess query. Mostly to increase compatability with Gaia ADQL
+        """
+
+        def preprocess_logic(self, *args, **kwargs):
+            # either it is keyworded or the first arguement
+            if "query" in kwargs:
+                query = kwargs["query"]
+            else:
+                query = args[0]
+
+            # turn TOP * to LIMIT *
+            m = re.search("TOP (\d+)", query, re.IGNORECASE)
+            if m is not None:
+                limit_num = m.group(1)
+                query = re.sub("\s+[TOP]+\s+[0-9]+", "", query, flags=re.IGNORECASE)
+                query += f""" LIMIT {limit_num}"""
+
+            # turn true to 1
+            query = re.sub(r"[']\s?\b(t)\b\s?[']", "1 ", query, flags=re.IGNORECASE)
+            query = re.sub(r"[']\s?\b(f)\b\s?[']", "0 ", query, flags=re.IGNORECASE)
+            query = re.sub(r"[']\s?\b(true)\b\s?[']", "1 ", query, flags=re.IGNORECASE)
+            query = re.sub(r"[']\s?\b(false)\b\s?[']", "0 ", query, flags=re.IGNORECASE)
+            if "query" in kwargs:
+                kwargs["query"] = query
+            else:
+                args = list(args)
+                args[0] = query
+                args = tuple(args)
+            return func(self, *args, **kwargs)
+
+        return preprocess_logic
+
     def _load_db(self):
         """
         Get SQL database connection and cursor used in this work for Gaia DR3 as the main table; 2MASS, ALLWISE and gaia astrophysical parameters as virtual tables
         """
+        self._file_exist(mygaiadb_default_db)
         conn = sqlite3.connect(gaia_sql_db_path)
         c = conn.cursor()
+
+        # ======================= must load table =======================
+        self._file_exist(gaia_sql_db_path)
+        if self.readonly_guard:
+            self._read_only(gaia_sql_db_path)  # set read-only before loading it
+        c.execute(f"""ATTACH DATABASE '{gaia_sql_db_path}' AS gaiadr3""")
+        self.attached_db_name.append("gaiadr3")
+        self._file_exist(mygaiadb_usertable_db)
+        c.execute(
+            f"""ATTACH DATABASE '{mygaiadb_usertable_db}' AS user_table"""
+        )  # don't read-only
+        # ======================= must load table =======================
+
+        # ======================= optional table =======================
         if self.load_tmass:
+            self._file_exist(tmass_sql_db_path)
             if self.readonly_guard:
                 self._read_only(tmass_sql_db_path)  # set read-only before loading it
             c.execute(f"""ATTACH DATABASE '{tmass_sql_db_path}' AS tmass""")
+            self.attached_db_name.append("tmass")
         if self.load_allwise:
+            self._file_exist(allwise_sql_db_path)
             if self.readonly_guard:
                 self._read_only(allwise_sql_db_path)  # set read-only before loading it
             c.execute(f"""ATTACH DATABASE '{allwise_sql_db_path}' AS allwise""")
+            self.attached_db_name.append("allwise")
         if self.load_gaia_astro_params:
+            self._file_exist(gaia_astro_param_sql_db_path)
             if self.readonly_guard:
-                self._read_only(gaia_astro_param_sql_db_path)  # set read-only before loading it
-            c.execute(f"""ATTACH DATABASE '{gaia_astro_param_sql_db_path}' AS gastrophysical_params""")
+                self._read_only(
+                    gaia_astro_param_sql_db_path
+                )  # set read-only before loading it
+            c.execute(
+                f"""ATTACH DATABASE '{gaia_astro_param_sql_db_path}' AS gastrophysical_params"""
+            )
+            self.attached_db_name.append("gastrophysical_params")
+        # ======================= optional table =======================
         return conn, c
 
-    def save_csv(self, query, filename, chunchsize=50000, overwrite=True, callbacks=None):
+    @preprocess_query
+    def save_csv(
+        self, query, filename, chunchsize=50000, overwrite=True, callbacks=None
+    ):
         """
         Given query, save the fetchall() result to csv, "chunchsize" number of rows at each time until finished
 
@@ -128,7 +216,7 @@ class LocalGaiaSQL():
             header_big = [d[0] for d in self.cursor.description]
             header_big.extend([i.new_col_name for i in callbacks])
             self._check_callbacks_header(header_og, callbacks)
-        else: 
+        else:
             header_big = header_og
         pd.DataFrame(columns=header_big).to_csv(filename, index=False)
         # csv_out.writerow(header)
@@ -142,11 +230,17 @@ class LocalGaiaSQL():
                 _df = pd.DataFrame(results, columns=header_og)
                 if callbacks is not None:
                     _df = self._result_after_callbacks(_df, callbacks)
-                _df.to_csv(filename, mode="a" if not first_flag else "w", index=False, header=False if not first_flag else True)
+                _df.to_csv(
+                    filename,
+                    mode="a" if not first_flag else "w",
+                    index=False,
+                    header=False if not first_flag else True,
+                )
                 first_flag = False
                 pbar.update(len(_df))
         return None
 
+    @preprocess_query
     def query(self, query, callbacks=None):
         """
         Get result from query to pandas dataframe, ONLY USE THIS FOR SMALL QUERY
@@ -158,7 +252,7 @@ class LocalGaiaSQL():
 
         Returns
         -------
-        pandas.Dataframe
+        df: pandas.Dataframe
         """
         _df = pd.read_sql_query(query, self.conn)
         if callbacks is not None:
@@ -166,17 +260,125 @@ class LocalGaiaSQL():
             _df = self._result_after_callbacks(_df, callbacks)
         return _df
 
+    @preprocess_query
     def execution_plan(self, query):
         """
         Get execution plan for a query, to debug to improve indexing
         """
-        query = """
+        query = (
+            """
         EXPLAIN QUERY PLAN
-        """ + query
+        """
+            + query
+        )
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
-    def xmatch(user_id, db_id, query):
+    def xmatch(self, user_id, db_id, query):
         """
-        cross-matching
+        cross-matching given a list of source_id
         """
+        raise NotImplementedError()
+
+    def upload_user_table(self, df, tablename=None):
+        """
+        Add a custom user table
+
+        Parameters
+        ----------
+        df : pandas.Dataframe
+            pandas dataframe to be added
+        tablename: str
+            Table name
+        """
+        if tablename is None:
+            raise NameError("You need to specify a name for the new table")
+        with contextlib.closing(sqlite3.connect(mygaiadb_usertable_db)) as conn:
+            df.to_sql(f"{tablename}", conn, if_exists="fail", index=False)
+
+    def remove_user_table(self, tablename=None, reclaim=False):
+        """
+        Remove a custom user table
+
+        Parameters
+        ----------
+        tablename: str
+            Table name
+        reclaim: bool
+            Whether to reclaim disk space after removing a table
+        """
+        if tablename is None:
+            raise NameError("You need to specify a name for the table to be removed")
+        with contextlib.closing(sqlite3.connect(mygaiadb_usertable_db)) as conn:
+            conn.execute(f"""DROP TABLE {tablename}""")
+            if reclaim:
+                conn.execute("""VACUUM""")
+
+    def get_user_tables(self):
+        """
+        Get the list of user table name
+
+        Returns
+        -------
+        result: dict
+            dictionary of all user table name and columns
+        """
+        self.cursor.execute(
+            """
+        SELECT name
+        FROM user_table.sqlite_schema
+        WHERE type ='table'
+        """
+        )
+        a = self.cursor.fetchall()
+        result = {}
+
+        # TODO: add table length??
+        for i in a:
+            name = i[0]
+            cols = self.get_table_cols(name=f"user_table.{name}")
+            result[name] = cols
+
+        return result
+
+    def get_all_tables(self):
+        """
+        Get the list of all table name
+
+        Returns
+        -------
+        result: list
+            list of tables with the format of DATABASE_NAME.TABLE_NAME
+        """
+        result = []
+        for i in self.attached_db_name:
+            self.cursor.execute(
+                f"""
+            SELECT name FROM {i}.sqlite_schema
+            WHERE type ='table'
+            """
+            )
+            a = self.cursor.fetchall()
+            result.extend(list(f"{i}.{_a[0]}" for _a in a))
+        return result
+
+    def get_table_cols(self, name=None):
+        """
+        Get the list of column from a table
+
+        Parameters
+        ----------
+        name: str
+            Table name with the format of DATABASE_NAME.TABLE_NAME
+
+        Returns
+        -------
+        result: list
+            list of columns of DATABASE_NAME.TABLE_NAME
+        """
+        if not "." in name:
+            raise NameError(
+                "Table name need to be with the format of DATABASE_NAME.TABLE_NAME"
+            )
+        result = pd.read_sql_query(f"""SELECT * FROM {name} LIMIT 1""", self.conn)
+        return [i for i in result.columns]

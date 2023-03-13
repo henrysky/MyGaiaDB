@@ -10,7 +10,7 @@ and requires Python only using ``sqlite`` as long as you have enough disk space.
 
 This code is mainly to help myself managing data for my research project with Gaia DR3 XP spectra 
 and not meant to fit research usage from every aspect of Gaia's 1 billion stars. The main motivation of this 
-code is to make setuping local Gaia database with 2MASS and ALLWISE accessible to everyone. Possible use cases include 
+code is to make seting up local Gaia database with 2MASS and ALLWISE accessible to everyone. Possible use cases include 
 but not limited to make very long complex query cross-matching to multiple databses that can take a long time 
 to finish (where the online ESA `Gaia archive`_ has timeout limitation).
 
@@ -20,16 +20,23 @@ You are welcome to modify the code, make pull request to make this code to suit 
 
 (🚧Work in progress🏗️)
 
-Installation
----------------
+.. contents:: **Contents**
+    :depth: 3
 
-This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy``, ``tqdm`` and ``sqlite3``. Some optional functionality requires ``galpy``, ``mwdust``. 
+Installation and Dependencies
+-------------------------------
 
-You can simply do ``python setup.py install`` or ``python setup.py develop`` to use this code.
+This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy``, ``tqdm``, ``beautifulsoup4`` and ``sqlite3``. 
+Some optional functionalities requires ``galpy``, ``mwdust``. 
 
-You need to make sure you have at least ~8TB of free disk space with fast **random read** speed. First set an 
-environment variable called **MY_ASTRO_DATA** which point to a folder that contains your 
-astronomical data in general. Where under **MY_ASTRO_DATA**, there should be a folder that contains all 
+You can simply do ``python -m pip install .`` to use or ``python -m pip install -e .`` to develop ``MyGaiaDB`` locally.
+
+Folder Structure
+-------------------
+
+You need to make sure you have at least ~8TB of free disk space with fast **random read** speed for optimal query performance. 
+First set an environment variable called **MY_ASTRO_DATA** which point to a folder that (will) contains your 
+astronomical data in general. To be compatiable with other python package, under **MY_ASTRO_DATA** there should be a folder that contains all 
 gaia data and sdss data (i.e. **GAIA_TOOLS_DATA** environment variable from Jo Bovy's 
 gaia_tools_ as well as **SDSS_LOCAL_SAS_MIRROR** environment 
 variable from Jo Bovy's apogee_).
@@ -37,18 +44,19 @@ variable from Jo Bovy's apogee_).
 .. _apogee: https://github.com/jobovy/apogee
 .. _gaia_tools: https://github.com/jobovy/gaia_tools
 
-Official data links:
+If you start from stratch, you only need to set **MY_ASTRO_DATA** environment variable and ``MyGaiaDB`` will populate the files and folders. 
+``MyGaiaDB`` will use ``~/.mygaiadb`` folder to save user specific settings an tables.
 
-* Official Gaia data can be downloaded here: http://cdn.gea.esac.esa.int/Gaia/. 
-* Official 2MASS data can be downloaded here: https://irsa.ipac.caltech.edu/2MASS/download/allsky/
-* Official ALLWISE data can be downloaded here: https://irsa.ipac.caltech.edu/data/download/wise-allwise/
-
-The **case sensitive** folder structure should look something like the following chart. If you already have the data but in a different structure and you do 
-not want or can not move them, you can use symbolic link to create the required folder structure without duplicating files. 
-For Linux, you can use ``ln -s {source-dir-or-file-path} {symbolic-dir-or-file-path}``. 
-For Windows, you can use ``mklink {symbolic-file-path} {source-file-path}`` or ``mklink /D {symbolic-dir-path} {source-dir-path}``.
+If you already have the data on your computer but in a  different directory structure and you do  not want or can not move them, 
+you can use symbolic link to create the required folder structure without 
+duplicating files. For Linux and MacOS, you can use ``ln -s {source-dir-or-file-path} {symbolic-dir-or-file-path}``. 
+For Windows, you can use ``mklink {symbolic-file-path} {source-file-path}`` or ``mklink /D {symbolic-dir-path} {source-dir-path}``. 
+The **case sensitive** folder structure should look something like the following chart. 
 
 ::
+
+    ~/
+    ├── .mygaiadb
 
     $MY_ASTRO_DATA/
     ├── $GAIA_TOOLS_DATA/
@@ -102,6 +110,16 @@ For Windows, you can use ``mklink {symbolic-file-path} {source-file-path}`` or `
     └── $SDSS_LOCAL_SAS_MIRROR/
         └── *we don't actually need sdss data here*
 
+Downloading Data
+---------------------------
+
+Official data links:
+
+* Official Gaia data can be downloaded here: https://cdn.gea.esac.esa.int/Gaia/
+* Official 2MASS data can be downloaded here: https://irsa.ipac.caltech.edu/2MASS/download/allsky/
+* Official ALLWISE data can be downloaded here: https://irsa.ipac.caltech.edu/data/download/wise-allwise/
+
+
 Post installation scripts
 --------------------------------
 Here are some post installation scripts (each only need to be ran once on each computer you store the data). 
@@ -139,12 +157,39 @@ correctly so no accidential delete or modification.
 SQL Databases Data Model
 ---------------------------
 
+There are a few utility functions to see list of tables and table's columns. 
+
+You can use ``get_all_tables()`` to get a list of tables. do 
+
+..  code-block:: python
+
+    from mygaiadb.query import LocalGaiaSQL
+
+    # initialize a local Gaia SQL database instance
+    local_db = LocalGaiaSQL()
+
+    # print a list of tables
+    print(local_db.get_all_tables())
+
+You can use ``get_table_cols(table_name)`` To get a list of columns of a table which must be in the format of 
+``{database_name}.{table_name}``, ``gaiadr3.gaia_source`` in this case
+
+..  code-block:: python
+
+    from mygaiadb.query import LocalGaiaSQL
+
+    # initialize a local Gaia SQL database instance
+    local_db = LocalGaiaSQL()
+
+    # print a list of columns of a table
+    print(local_db.get_table_cols("gaiadr3.gaia_source"))
+
 Currently for DR3 
 
 Tables::
     
     =======================================
-    gaia_source_lite                      
+    gaia_source_lite                    
     =======================================
     source_id                             
     random_index  
@@ -204,15 +249,35 @@ Tables::
     has_rvs
     =======================================
 
+If you want to manage and edit the databases with GUI, you can try to use `SQLiteStudio`_  or `DB Browser for SQLite`_.
+
 SQL Query
 ------------
 
-This query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily you've got ``MyGaiaDB`` to do the job. 
-The following example query from ``gaia_source_lite`` table, ``gaia_astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
-Moreover, ``MyGaiaDB`` set all datasets to **read-only** before loading it. If you want to edit it afterward, you have to set the 
-premission mnaully each time you have used ``MyGaiaDB``.
+SQL query in ``MyGaiaDB`` is largely the same as `Gaia Archive`_ except ``MyGaiaDB`` does not have advanced SQL functions 
+like geometrical functions. For example the following query that works on `Gaia Archive`_ will also work in ``MyGaiaDB`` to 
+select the first 100 gaia sources with XP coefficients
 
-.. _Gaia Archive: https://gea.esac.esa.int/archive/
+..  code-block:: sql
+
+    SELECT TOP 100 * 
+    FROM gaiadr3.gaia_source as G 
+    WHERE (G.has_xp_continuous = 'True')
+
+To run this query in ``MyGaiaDB``, you can do the following and will get a pandas Dataframe back as the result
+
+..  code-block:: python
+
+    from mygaiadb.query import LocalGaiaSQL
+
+    # initialize a local Gaia SQL database instance
+    local_db = LocalGaiaSQL()
+    local_db.query("""SELECT TOP 100 * FROM gaiadr3.gaia_source as G  WHERE (G.has_xp_continuous = 'True')""")
+
+The following example query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily you've got ``MyGaiaDB`` to do the job. 
+The following example query from ``gaia_source_lite`` table, ``gaia_astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
+Moreover, ``MyGaiaDB`` set each dataset to **read-only** before loading it. If you want to edit the database afterward, you have to set the 
+appropiate premission mnaully each time you have used ``MyGaiaDB``.
 
 ..  code-block:: python
 
@@ -224,9 +289,9 @@ premission mnaully each time you have used ``MyGaiaDB``.
     query = """
     SELECT G.source_id, G.ra, G.dec, G.pmra, G.pmdec, G.parallax, G.parallax_error, G.phot_g_mean_mag, GA.logg_gspspec,
     TM.j_m, AW.w1mpro
-    FROM gaia_source as G
-    INNER JOIN main.tmasspscxsc_best_neighbour as T on G.source_id = T.source_id
-    INNER JOIN allwise_best_neighbour as W on W.source_id = T.source_id
+    FROM gaiadr3.gaia_source as G
+    INNER JOIN gaiadr3.tmasspscxsc_best_neighbour as T on G.source_id = T.source_id
+    INNER JOIN gaiadr3.allwise_best_neighbour as W on W.source_id = T.source_id
     INNER JOIN tmass.twomass_psc as TM on TM.designation = T.original_ext_source_id
     INNER JOIN allwise.allwise as AW on AW.designation = W.original_ext_source_id
     INNER JOIN gastrophysical_params.gaia_astrophysical_parameters as GA on GA.source_id = G.source_id
@@ -235,7 +300,7 @@ premission mnaully each time you have used ``MyGaiaDB``.
 
     local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True)
 
-As you can see for ``has_xp_continuous``, we use ``1`` to represent ``TRUE``.
+As you can see for ``has_xp_continuous``, we use ``1`` to represent ``TRUE`` which is different from Gaia archive.
 
 ``MyGaiaDB`` also has callbacks funcationality called ``QueryCallback``, these callbacks can be used when you do query. For example, 
 you can create a callbacks to convert ``ra`` in degree to `ra_rad` in radian. So your csv file in the end will have a new column 
@@ -252,7 +317,7 @@ which columns to use on the fly.
 
     query = """
     SELECT G.source_id, G.ra, G.dec
-    FROM gaia_source as G
+    FROM gaiadr3.gaia_source as G
     LIMIT 100000
     """
     ra_conversion = QueryCallback(new_col_name="ra_rad", func=lambda ra: ra / 180 * np.pi)
@@ -267,7 +332,7 @@ We also have a few useful callbacks included by default to add columns like zero
 
     query = """
     SELECT G.source_id, G.ra, G.dec, G.parallax, G.phot_bp_mean_mag, G.nu_eff_used_in_astrometry, G.pseudocolour, G.astrometric_params_solved
-    FROM gaia_source as G
+    FROM gaiadr3.gaia_source as G
     LIMIT 100000
     """
 
@@ -303,7 +368,7 @@ For example you want to infer ``M_H`` with your machine learning model
         coeffs, idx = i
         m_h[idx] = your_ml_model(coeffs)
 
-Authors
+Author
 -------------
 -  | **Henry Leung** - henrysky_
    | University of Toronto
@@ -313,5 +378,8 @@ License
 -------------
 This project is licensed under the MIT License - see the `LICENSE`_ file for details
 
+.. _Gaia Archive: https://gea.esac.esa.int/archive/
+.. _SQLiteStudio: https://sqlitestudio.pl/
+.. _DB Browser for SQLite: https://sqlitebrowser.org/
 .. _LICENSE: LICENSE
 .. _henrysky: https://github.com/henrysky
