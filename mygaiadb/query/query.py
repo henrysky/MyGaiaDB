@@ -44,7 +44,7 @@ class LocalGaiaSQL:
         self,
         load_tmass=True,
         load_allwise=True,
-        load_gaia_astro_params=True,
+        # load_gaia_astro_params=True,
         readonly_guard=True,
     ):
         """
@@ -61,7 +61,7 @@ class LocalGaiaSQL:
         """
         self.load_tmass = load_tmass
         self.load_allwise = load_allwise
-        self.load_gaia_astro_params = load_gaia_astro_params
+        # self.load_gaia_astro_params = load_gaia_astro_params
         self.readonly_guard = readonly_guard
         self.attached_db_name = []
 
@@ -174,16 +174,16 @@ class LocalGaiaSQL:
                 self._read_only(allwise_sql_db_path)  # set read-only before loading it
             c.execute(f"""ATTACH DATABASE '{allwise_sql_db_path}' AS allwise""")
             self.attached_db_name.append("allwise")
-        if self.load_gaia_astro_params:
-            self._file_exist(gaia_astro_param_sql_db_path)
-            if self.readonly_guard:
-                self._read_only(
-                    gaia_astro_param_sql_db_path
-                )  # set read-only before loading it
-            c.execute(
-                f"""ATTACH DATABASE '{gaia_astro_param_sql_db_path}' AS gastrophysical_params"""
-            )
-            self.attached_db_name.append("gastrophysical_params")
+        # if self.load_gaia_astro_params:
+        #     self._file_exist(gaia_astro_param_sql_db_path)
+        #     if self.readonly_guard:
+        #         self._read_only(
+        #             gaia_astro_param_sql_db_path
+        #         )  # set read-only before loading it
+        #     c.execute(
+        #         f"""ATTACH DATABASE '{gaia_astro_param_sql_db_path}' AS gastrophysical_params"""
+        #     )
+        #     self.attached_db_name.append("gastrophysical_params")
         # ======================= optional table =======================
         return conn, c
 

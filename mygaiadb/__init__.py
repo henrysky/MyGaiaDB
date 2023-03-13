@@ -19,8 +19,8 @@ if not mygaiadb_folder.exists():
 mygaiadb_default_db.touch()
 mygaiadb_usertable_db.touch()
 
-gaia_sql_db_path = astro_data_path.joinpath("gaia_mirror/gaiadr3.db")
-gaia_astro_param_sql_db_path = astro_data_path.joinpath("gaia_mirror/gaiadr3_astrophysical_params.db")
-gaia_xp_coeff_h5_path = astro_data_path.joinpath("gaia_mirror/xp_continuous_mean_spectrum_allinone.h5")
-tmass_sql_db_path = astro_data_path.joinpath("2mass_mirror/tmass.db")
-allwise_sql_db_path = astro_data_path.joinpath("allwise_mirror/allwise.db")
+gaia_sql_db_path = astro_data_path.joinpath("gaia_mirror", "gaiadr3.db")
+gaia_astro_param_sql_db_path = astro_data_path.joinpath("gaia_mirror", "gaiadr3_astrophysical_params.db")
+gaia_xp_coeff_h5_path = astro_data_path.joinpath("gaia_mirror" ,"xp_continuous_mean_spectrum_allinone.h5")
+tmass_sql_db_path = astro_data_path.joinpath("2mass_mirror", "tmass.db")
+allwise_sql_db_path = astro_data_path.joinpath("allwise_mirror", "allwise.db")

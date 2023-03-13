@@ -27,7 +27,7 @@ Installation and Dependencies
 -------------------------------
 
 This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy``, ``tqdm``, ``beautifulsoup4`` and ``sqlite3``. 
-Some optional functionalities requires ``galpy``, ``mwdust``. 
+Some optional functionalities requires ``galpy``, ``mwdust``. Downloading function requires ``wget``.
 
 You can simply do ``python -m pip install .`` to use or ``python -m pip install -e .`` to develop ``MyGaiaDB`` locally.
 
@@ -36,10 +36,8 @@ Folder Structure
 
 You need to make sure you have at least ~8TB of free disk space with fast **random read** speed for optimal query performance. 
 First set an environment variable called **MY_ASTRO_DATA** which point to a folder that (will) contains your 
-astronomical data in general. To be compatiable with other python package, under **MY_ASTRO_DATA** there should be a folder that contains all 
-gaia data and sdss data (i.e. **GAIA_TOOLS_DATA** environment variable from Jo Bovy's 
-gaia_tools_ as well as **SDSS_LOCAL_SAS_MIRROR** environment 
-variable from Jo Bovy's apogee_).
+astronomical data in general. To be compatiable with other python package, under **MY_ASTRO_DATA** there should be a folder called ``gaia_mirror`` that contains all 
+gaia data (i.e. **GAIA_TOOLS_DATA** environment variable from Jo Bovy's gaia_tools_).
 
 .. _apogee: https://github.com/jobovy/apogee
 .. _gaia_tools: https://github.com/jobovy/gaia_tools
@@ -59,7 +57,7 @@ The **case sensitive** folder structure should look something like the following
     ├── .mygaiadb
 
     $MY_ASTRO_DATA/
-    ├── $GAIA_TOOLS_DATA/
+    ├── gaia_mirror/
     │   ├── Gaia/
     │   │   ├── gdr3/
     │   │   │   ├── Astrophysical_parameters/astrophysical_parameters/
@@ -103,22 +101,22 @@ The **case sensitive** folder structure should look something like the following
     │   ├── psc_aaa.gz
     │   ├── ******
     │   └── xsc_baa.gz
-    ├── allwise_mirror/
-    │   ├── wise-allwise-cat-part01.bz2
-    │   ├── ******
-    │   └── wise-allwise-cat-part48.bz2
-    └── $SDSS_LOCAL_SAS_MIRROR/
-        └── *we don't actually need sdss data here*
+    └── allwise_mirror/
+        ├── wise-allwise-cat-part01.bz2
+        ├── ******
+        └── wise-allwise-cat-part48.bz2
+
 
 Downloading Data
 ---------------------------
 
 Official data links:
 
-* Official Gaia data can be downloaded here: https://cdn.gea.esac.esa.int/Gaia/
-* Official 2MASS data can be downloaded here: https://irsa.ipac.caltech.edu/2MASS/download/allsky/
-* Official ALLWISE data can be downloaded here: https://irsa.ipac.caltech.edu/data/download/wise-allwise/
+* Official Gaia data can be accessed here: https://cdn.gea.esac.esa.int/Gaia/
+* Official 2MASS data can be accessed here: https://irsa.ipac.caltech.edu/2MASS/download/allsky/
+* Official ALLWISE data can be accessed here: https://irsa.ipac.caltech.edu/data/download/wise-allwise/
 
+To download ``gaia_source``, 
 
 Post installation scripts
 --------------------------------
@@ -236,7 +234,7 @@ To run this query in ``MyGaiaDB``, you can do the following and will get a panda
 The following example query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily you've got ``MyGaiaDB`` to do the job. 
 The following example query from ``gaia_source_lite`` table, ``gaia_astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
 Moreover, ``MyGaiaDB`` set each dataset to **read-only** before loading it. If you want to edit the database afterward, you have to set the 
-appropiate premission manully each time you have used ``MyGaiaDB``.
+appropiate premission manually each time you have used ``MyGaiaDB``.
 
 ..  code-block:: python
 
