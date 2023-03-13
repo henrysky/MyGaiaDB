@@ -17,6 +17,7 @@ def test_compile():
     compile.compile_gaia_sql_db(do_indexing=False)
     print("=======existance check========")
     assert mygaiadb.gaia_sql_db_path.exists()
+    assert mygaiadb.gaia_sql_db_path.stat().st_size > 5e+8
 
 
 @pytest.mark.order(3)
