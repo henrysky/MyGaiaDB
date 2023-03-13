@@ -20,7 +20,6 @@ setup(
         "Topic :: Database :: Front-Ends",
     ],
     packages=find_packages(),
-    include_package_data=True,
     package_data={"mygaiadb/sql_schema": ["*"]},
     include_package_data=True,
     python_requires=f">=3.8",
