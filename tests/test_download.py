@@ -15,6 +15,8 @@ def test_download():
 @pytest.mark.order(2)
 def test_compile():
     compile.compile_gaia_sql_db(do_indexing=False)
+    print("=======existance check========")
+    assert mygaiadb.gaia_sql_db_path.exists()
 
 
 @pytest.mark.order(3)
@@ -36,4 +38,4 @@ def test_query():
 @pytest.mark.order(4)
 def test_cleanup():
     # cleanup to prevent caching
-    mygaiadb.gaia_astro_param_sql_db_path.unlink()
+    mygaiadb.gaia_sql_db_path.unlink()
