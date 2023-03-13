@@ -17,5 +17,5 @@ def test_compile():
 
 @pytest.mark.order(3)
 def test_query():
-    localdb = LocalGaiaSQL()
+    localdb = LocalGaiaSQL(load_tmass=False, load_allwise=False)
     print(localdb.query("""SELECT * FROM gaiadr3.gaia_source LIMIT 10"""))
