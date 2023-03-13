@@ -120,10 +120,10 @@ class LocalGaiaSQL:
                 query = args[0]
 
             # turn TOP * to LIMIT *
-            m = re.search("TOP (\d+)", query, re.IGNORECASE)
+            m = re.search(r"TOP (\d+)", query, re.IGNORECASE)
             if m is not None:
                 limit_num = m.group(1)
-                query = re.sub("\s+[TOP]+\s+[0-9]+", "", query, flags=re.IGNORECASE)
+                query = re.sub(r"\s+[TOP]+\s+[0-9]+", "", query, flags=re.IGNORECASE)
                 query += f""" LIMIT {limit_num}"""
 
             # turn true to 1
