@@ -27,7 +27,7 @@ Installation and Dependencies
 -------------------------------
 
 This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy``, ``tqdm``, ``beautifulsoup4`` and ``sqlite3``. 
-Some optional functionalities requires ``galpy``, ``mwdust``. Downloading function requires ``wget``.
+Some optional functionalities requires ``galpy``, ``mwdust``. Downloading functions require ``wget``.
 
 You can simply do ``python -m pip install .`` to use or ``python -m pip install -e .`` to develop ``MyGaiaDB`` locally.
 

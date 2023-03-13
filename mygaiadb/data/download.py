@@ -15,7 +15,7 @@ def download_gaia_source(test=False):
     _GAIA_DR3_GAIASOURCE_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/gaia_source/"
     if test:
-        downloader(test=test)
+        downloader(_url, "test", "test", test=test)
         cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}GaiaSource_000000-003111.csv.gz"
         subprocess.run(cmd_str, shell=True)
         cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}GaiaSource_000000-003111.csv.gz"
@@ -29,7 +29,7 @@ def download_gaia_astrophysical_parameters(test=False):
     _GAIA_DR3_ASTROPHYS_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Astrophysical_parameters/astrophysical_parameters/"
     if test:
-        downloader(test=test)
+        downloader(_url, "test", "test", test=test)
         cmd_str = f"wget -P {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}AstrophysicalParameters_000000-003111.csv.gz"
         subprocess.run(cmd_str, shell=True)
         cmd_str = f"wget -P {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}AstrophysicalParameters_003112-005263.csv.gz"
@@ -43,7 +43,7 @@ def download_allwise_best_neightbour(test=False):
     _GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gedr3/cross_match/allwise_best_neighbour/"
     if test:
-        downloader(test=test)
+        downloader(_url, "test", "test", test=test)
         cmd_str = f"wget -P {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}allwiseBestNeighbour0001.csv.gz"
         subprocess.run(cmd_str, shell=True)
         cmd_str = f"wget -P {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}allwiseBestNeighbour0002.csv.gz"
@@ -59,7 +59,7 @@ def download_2mass_best_neightbour(test=False):
         "http://cdn.gea.esac.esa.int/Gaia/gedr3/cross_match/tmasspscxsc_best_neighbour/"
     )
     if test:
-        downloader(test=test)
+        downloader(_url, "test", "test", test=test)
         cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}tmasspscxscBestNeighbour0001.csv.gz"
         subprocess.run(cmd_str, shell=True)
         cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}tmasspscxscBestNeighbour0001.csv.gz"
@@ -74,7 +74,7 @@ def download_2mass(test=False):
         "https://irsa.ipac.caltech.edu/2MASS/download/allsky/"
     )
     if test:
-        downloader(test=test)
+        downloader(_url, "test", "test", test=test)
         cmd_str = f"wget -P {_2MASS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}psc_aaa.gz"
         subprocess.run(cmd_str, shell=True)
         cmd_str = f"wget -P {_2MASS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}psc_aab.gz"
@@ -86,6 +86,7 @@ def download_2mass(test=False):
 
 def download_allwise(test=False):
     _ALLWISE_PARENT.mkdir(parents=True, exist_ok=True)
+    _url = "http://irsa.ipac.caltech.edu/data/download/wise-allwise/"
     # https://irsa.ipac.caltech.edu/data/download/wise-allwise/wget_bz2.script
     cmd_list = [
         f"wget -P {_ALLWISE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent http://irsa.ipac.caltech.edu/data/download/wise-allwise/README.txt",
@@ -142,7 +143,7 @@ def download_allwise(test=False):
     ]
 
     if test:
-        downloader(test=test)
+        downloader(_url, "test", "test", test=test)
         subprocess.run(cmd_list[3], shell=True)
     else:
         for cmd_str in cmd_list:
