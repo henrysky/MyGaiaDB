@@ -16,7 +16,7 @@ jobs:
           python-version: "3.x"
       - name: Install dependencies
         run: |
-          pip install galpy gaiadr3-zeropoint mwdust
+          pip install pytest galpy gaiadr3-zeropoint mwdust
           pip install .
     # - name: Cache my astro data
     #   uses: actions/cache@v3
