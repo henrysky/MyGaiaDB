@@ -157,7 +157,29 @@ correctly so no accidential delete or modification.
 SQL Databases Data Model
 ---------------------------
 
-There are a few utility functions to see list of tables and table's columns. 
+Currently for Gaia DR3 in ``MyGaiaDB``, these tales are avaliable if you have compiled all databases: 
+``gaiadr3.gaia_source``, ``gaiadr3.allwise_best_neighbour``, ``gaiadr3.tmasspscxsc_best_neighbour``, 
+``gaiadr3.astrophysical_parameters``, ``tmass.twomass_psc``, ``allwise.allwise``. But there are a few 
+utility functions to see list of tables and table's columns. Brief description of the tables are as following:
+
+-   | ``gaiadr3.gaia_source``
+    | This table mimics ``gaia_source_lite`` on `Gaia Archive`_ with addition of ``grvs_mag`` columns
+    | Official description: https://gea.esac.esa.int/archive/documentation/GDR3/Gaia_archive/chap_datamodel/sec_dm_main_source_catalogue/ssec_dm_gaia_source.html
+-   | ``gaiadr3.allwise_best_neighbour``
+    | This table is identical to ``allwise_best_neighbour`` on `Gaia Archive`_
+    | Official description: https://gea.esac.esa.int/archive/documentation/GDR3/Gaia_archive/chap_datamodel/sec_dm_cross-matches/ssec_dm_allwise_best_neighbour.html
+-   | ``gaiadr3.tmasspscxsc_best_neighbour``
+    | This table is identical to ``tmass_psc_xsc_best_neighbour`` on `Gaia Archive`_
+    | Official description: https://gea.esac.esa.int/archive/documentation/GDR3/Gaia_archive/chap_datamodel/sec_dm_cross-matches/ssec_dm_tmass_psc_xsc_best_neighbour.html
+-   | ``gaiadr3.astrophysical_parameters``
+    | This table is a lite version of ``astrophysical_parameters`` on `Gaia Archive`_ with only essential useful columns are kept
+    | Official description: https://gea.esac.esa.int/archive/documentation/GDR3/Gaia_archive/chap_datamodel/sec_dm_astrophysical_parameter_tables/ssec_dm_astrophysical_parameters.html
+-   | ``tmass.twomass_psc``
+    | This table is a lite version of 2MASS Point Source Catalog (PSC) with only essential useful columns are kept
+    | Official description: https://irsa.ipac.caltech.edu/2MASS/download/allsky/format_psc.html
+-   | ``allwise.allwise``
+    | This table is a lite version of ALLWISE source catalog with only essential useful columns are kept
+    | Official description: https://wise2.ipac.caltech.edu/docs/release/allwise/expsup/sec2_1a.html
 
 You can use ``get_all_tables()`` to get a list of tables. do 
 
@@ -170,6 +192,7 @@ You can use ``get_all_tables()`` to get a list of tables. do
 
     # print a list of tables
     print(local_db.get_all_tables())
+
 
 You can use ``get_table_cols(table_name)`` To get a list of columns of a table which must be in the format of 
 ``{database_name}.{table_name}``, ``gaiadr3.gaia_source`` in this case
@@ -184,70 +207,6 @@ You can use ``get_table_cols(table_name)`` To get a list of columns of a table w
     # print a list of columns of a table
     print(local_db.get_table_cols("gaiadr3.gaia_source"))
 
-Currently for DR3 
-
-Tables::
-    
-    =======================================
-    gaia_source_lite                    
-    =======================================
-    source_id                             
-    random_index  
-    ra            
-    ra_error      
-    dec           
-    dec_error     
-    parallax      
-    parallax_error
-    parallax_over_error
-    pmra
-    pmra_error
-    pmdec
-    pmdec_error
-    ra_dec_corr
-    ra_parallax_corr
-    ra_pmra_corr
-    ra_pmdec_corr
-    dec_parallax_corr
-    dec_pmra_corr
-    dec_pmdec_corr
-    parallax_pmra_corr
-    parallax_pmdec_corr
-    pmra_pmdec_corr
-    astrometric_params_solved
-    nu_eff_used_in_astrometry
-    pseudocolour
-    pseudocolour_error
-    astrometric_matched_transits
-    ipd_gof_harmonic_amplitude
-    ipd_frac_multi_peak
-    ipd_frac_odd_win
-    ruwe
-    phot_g_mean_flux double
-    phot_g_mean_flux_over_error
-    phot_g_mean_mag
-    phot_bp_mean_flux
-    phot_bp_mean_flux_over_error
-    phot_bp_mean_mag
-    phot_rp_mean_flux
-    phot_rp_mean_flux_over_error
-    phot_rp_mean_mag
-    phot_bp_rp_excess_factor
-    bp_rp
-    radial_velocity_error
-    radial_velocity_error
-    rv_nb_transits
-    rv_expected_sig_to_noise 
-    rv_renormalised_gof
-    rv_chisq_pvalue
-    rvs_spec_sig_to_noise
-    grvs_mag
-    l
-    b
-    has_xp_continuous
-    has_xp_sampled
-    has_rvs
-    =======================================
 
 If you want to manage and edit the databases with GUI, you can try to use `SQLiteStudio`_  or `DB Browser for SQLite`_.
 
@@ -277,7 +236,7 @@ To run this query in ``MyGaiaDB``, you can do the following and will get a panda
 The following example query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily you've got ``MyGaiaDB`` to do the job. 
 The following example query from ``gaia_source_lite`` table, ``gaia_astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
 Moreover, ``MyGaiaDB`` set each dataset to **read-only** before loading it. If you want to edit the database afterward, you have to set the 
-appropiate premission mnaully each time you have used ``MyGaiaDB``.
+appropiate premission manully each time you have used ``MyGaiaDB``.
 
 ..  code-block:: python
 
@@ -290,14 +249,15 @@ appropiate premission mnaully each time you have used ``MyGaiaDB``.
     SELECT G.source_id, G.ra, G.dec, G.pmra, G.pmdec, G.parallax, G.parallax_error, G.phot_g_mean_mag, GA.logg_gspspec,
     TM.j_m, AW.w1mpro
     FROM gaiadr3.gaia_source as G
+    INNER JOIN gaiadr3.gaia_astrophysical_parameters as GA on GA.source_id = G.source_id
     INNER JOIN gaiadr3.tmasspscxsc_best_neighbour as T on G.source_id = T.source_id
     INNER JOIN gaiadr3.allwise_best_neighbour as W on W.source_id = T.source_id
     INNER JOIN tmass.twomass_psc as TM on TM.designation = T.original_ext_source_id
     INNER JOIN allwise.allwise as AW on AW.designation = W.original_ext_source_id
-    INNER JOIN gastrophysical_params.gaia_astrophysical_parameters as GA on GA.source_id = G.source_id
     WHERE (G.has_xp_continuous = 1) AND (G.ruwe < 1.4) AND (G.ipd_frac_multi_peak <= 2) AND (G.ipd_gof_harmonic_amplitude<0.1) AND (GA.logg_gspspec < 3.0)
     """
 
+    # take ~12 hours to complete
     local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True)
 
 As you can see for ``has_xp_continuous``, we use ``1`` to represent ``TRUE`` which is different from Gaia archive.

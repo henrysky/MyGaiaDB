@@ -8,11 +8,16 @@ def yield_xp_coeffs(source_ids, assume_unique=True, rdcc_nbytes=16*1024**3, rdcc
     """
     Function to yield XP coeffs according to their healpixs from source_id
 
-    INPUT:
-        source_ids (int, list, ndarray): source id
-        assume_unique (bool): whether to assume the list of source id is unique
-        rdcc_nbytes (int): h5py cache in bytes
-        rdcc_nslots (int): h5py cache number of slots
+    Parameters
+    ----------
+    source_ids: (int, list, ndarray)
+        source id
+    assume_unique: bool
+        whether to assume the list of source id is unique
+    rdcc_nbytes: int
+        h5py cache in bytes
+    rdcc_nslots: int
+        h5py cache number of slots
     """
     reduced_source_ids = source_ids // 8796093022208
     total_num = len(source_ids)
