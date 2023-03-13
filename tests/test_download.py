@@ -1,4 +1,5 @@
 import pytest
+import pathlib
 import mygaiadb
 from mygaiadb.query import LocalGaiaSQL
 from mygaiadb.data import download, compile
@@ -30,3 +31,9 @@ def test_query():
     localdb.save_csv(query, "saved")
     query_df = localdb.query(query)
     print(query_df)
+
+
+@pytest.mark.order(4)
+def test_cleanup():
+    # cleanup to prevent caching
+    mygaiadb.gaia_astro_param_sql_db_path.unlink()

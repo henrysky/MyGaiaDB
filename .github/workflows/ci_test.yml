@@ -22,7 +22,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/my_astro_data/
-          key: mygaiadb-${{ runner.os }}-2023march12
+          key: mygaiadb-${{ runner.os }}-2023march13
       - name: Test
         run: >
           python -m pytest -v -s tests/
