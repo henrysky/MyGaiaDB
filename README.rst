@@ -208,6 +208,7 @@ You can use ``get_table_cols(table_name)`` To get a list of columns of a table w
 
 If you want to manage and edit the databases with GUI, you can try to use `SQLiteStudio`_  or `DB Browser for SQLite`_.
 
+
 SQL Query
 ------------
 
@@ -300,6 +301,35 @@ We also have a few useful callbacks included by default to add columns like zero
     dust_callback = DustCallback(new_col_name="sfd_ebv", filter="H", dustmap="SFD")
 
     local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True, callbacks=[zp_callback, dust_callback])
+
+User tables
+-------------
+
+``MyGaiaDB`` support the use of user uploaded table. You can load your table first by ``pandas`` and then do
+
+..  code-block:: python
+
+    from mygaiadb.query import LocalGaiaSQL 
+    localdb = LocalGaiaSQL()  
+    localdb.upload_user_table(pd.DataFrame({"source_id": [123442534525, 245674254234,3345234535]}), tablename="my_table_1")
+
+and then carry on to do query with ``my_table_1`` cross-matchde with other tables like 
+
+..  code-block:: python
+
+    local_db.query("""SELECT * FROM gaiadr3.gaia_source as G  INNER JOIN user_table.my_table_1 as MY on MY.source_id = G.source_id""")
+
+You can check the list of your own user tables with column names by doing
+
+..  code-block:: python
+
+    local_db.get_user_tables()
+
+and you can remove a user table like ``my_table_1`` in this case by
+
+..  code-block:: python
+
+    a.remove_user_table("my_table_1")
 
 Spectroscopy Query
 --------------------
