@@ -191,7 +191,7 @@ utility functions to see list of tables and table's columns. Brief description o
     | This table is a lite version of ALLWISE source catalog with only essential useful columns are kept
     | Official description: https://wise2.ipac.caltech.edu/docs/release/allwise/expsup/sec2_1a.html
 
-You can use ``get_all_tables()`` to get a list of tables. do 
+You can use ``list_all_tables()`` to get a list of tables excluding ``user_table``. do 
 
 ..  code-block:: python
 
@@ -201,10 +201,10 @@ You can use ``get_all_tables()`` to get a list of tables. do
     local_db = LocalGaiaSQL()
 
     # print a list of tables
-    print(local_db.get_all_tables())
+    print(local_db.list_all_tables())
 
 
-You can use ``get_table_cols(table_name)`` to get a list of columns of a table which must be in the format of 
+You can use ``get_table_column(table_name)`` to get a list of columns of a table which must be in the format of 
 ``{database_name}.{table_name}``, ``gaiadr3.gaia_source`` in this case
 
 ..  code-block:: python
@@ -215,7 +215,7 @@ You can use ``get_table_cols(table_name)`` to get a list of columns of a table w
     local_db = LocalGaiaSQL()
 
     # print a list of columns of a table
-    print(local_db.get_table_cols("gaiadr3.gaia_source"))
+    print(local_db.get_table_column("gaiadr3.gaia_source"))
 
 
 If you want to manage and edit the databases with GUI, you can try to use `SQLiteStudio`_  or `DB Browser for SQLite`_.
@@ -331,13 +331,13 @@ and then carry on to do query with ``my_table_1`` cross-matching with other tabl
 
     local_db.query("""SELECT * FROM gaiadr3.gaia_source as G  INNER JOIN user_table.my_table_1 as MY on MY.source_id = G.source_id""")
 
-You can check the list of your own user tables with column names by doing
+You can check the list of your own user tables with column names by using ``list_user_tables()``
 
 ..  code-block:: python
 
-    local_db.get_user_tables()
+    local_db.list_user_tables()
 
-and you can remove a user table like ``my_table_1`` in this case by
+and you can remove a user table like ``my_table_1`` in this case by using ``remove_user_table()``
 
 ..  code-block:: python
 

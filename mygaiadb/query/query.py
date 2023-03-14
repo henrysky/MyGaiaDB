@@ -314,7 +314,7 @@ class LocalGaiaSQL:
             if reclaim:
                 conn.execute("""VACUUM""")
 
-    def get_user_tables(self):
+    def list_user_tables(self):
         """
         Get the list of user table name
 
@@ -336,12 +336,12 @@ class LocalGaiaSQL:
         # TODO: add table length??
         for i in a:
             name = i[0]
-            cols = self.get_table_cols(name=f"user_table.{name}")
+            cols = self.get_table_column(name=f"user_table.{name}")
             result[name] = cols
 
         return result
 
-    def get_all_tables(self):
+    def list_all_tables(self):
         """
         Get the list of all table name
 
@@ -362,7 +362,7 @@ class LocalGaiaSQL:
             result.extend(list(f"{i}.{_a[0]}" for _a in a))
         return result
 
-    def get_table_cols(self, name=None):
+    def get_table_column(self, name=None):
         """
         Get the list of column from a table
 

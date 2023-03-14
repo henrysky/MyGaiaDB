@@ -4,6 +4,8 @@ import pathlib
 import mygaiadb
 from mygaiadb.query import LocalGaiaSQL
 from mygaiadb.data import download, compile
+import pandas as pd
+
 
 @pytest.mark.order(1)
 def test_download():
@@ -29,6 +31,24 @@ def test_compile():
 
 
 @pytest.mark.order(3)
+def test_user_table():
+    localdb = LocalGaiaSQL(load_allwise=False)
+    localdb.upload_user_table(pd.DataFrame({"source_id": [5188146770731873152, 4611686018427432192, 5764607527332179584]}), "user_table_1")
+    result = localdb.query("""SELECT * FROM user_table.user_table_1""")
+    assert result["source_id"].tolist() == [5188146770731873152, 4611686018427432192, 5764607527332179584]
+    localdb.remove_user_table("user_table_1")
+    assert localdb.list_user_tables() == {}
+
+@pytest.mark.order(4)
+def test_utilities():
+    localdb = LocalGaiaSQL(load_allwise=False)
+    localdb.list_all_tables()
+    localdb.get_table_column("gaiadr3.gaia_source")
+    localdb.get_table_column("gaiadr3.tmasspscxsc_best_neighbour")
+    localdb.get_table_column("tmass.twomass_psc")
+
+
+@pytest.mark.order(5)
 def test_query():
     query = """
     SELECT * 
@@ -45,7 +65,7 @@ def test_query():
     query_df = localdb.query(query)
 
 
-@pytest.mark.order(4)
+@pytest.mark.order(6)
 def test_cleanup():
     # undo read-only premission
     mygaiadb.gaia_sql_db_path.chmod(stat.S_IWRITE)
