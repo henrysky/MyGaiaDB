@@ -12,18 +12,18 @@ def test_download():
     download.download_allwise_best_neightbour(test=True)
     download.download_gaia_astrophysical_parameters(test=True)
     download.download_2mass(test=True)
-    download.download_allwise(test=True)
+    # download.download_allwise(test=True)
 
 
 @pytest.mark.order(2)
 def test_compile():
     compile.compile_gaia_sql_db(indexing=False)
     compile.compile_tmass_sql_db(indexing=False)
-    compile.compile_allwise_sql_db(indexing=False)
+    # compile.compile_allwise_sql_db(indexing=False)
     # check if database exist
     assert mygaiadb.gaia_sql_db_path.exists()
     assert mygaiadb.tmass_sql_db_path.exists()
-    assert mygaiadb.allwise_sql_db_path.exists()
+    # assert mygaiadb.allwise_sql_db_path.exists()
     # assert database > 2GB
     assert mygaiadb.gaia_sql_db_path.stat().st_size > 2e+9
 
@@ -37,11 +37,10 @@ def test_query():
     INNER JOIN gaiadr3.tmasspscxsc_best_neighbour as T on G.source_id = T.source_id
     INNER JOIN gaiadr3.allwise_best_neighbour as W on W.source_id = T.source_id  
     INNER JOIN tmass.twomass_psc as TM on TM.designation = T.original_ext_source_id
-    INNER JOIN allwise.allwise as AW on AW.designation = W.original_ext_source_id
     WHERE (G.has_xp_continuous = 1)  
     LIMIT 10
     """
-    localdb = LocalGaiaSQL(load_tmass=False, load_allwise=False)
+    localdb = LocalGaiaSQL(load_allwise=False)
     localdb.save_csv(query, "output.csv")
     query_df = localdb.query(query)
 

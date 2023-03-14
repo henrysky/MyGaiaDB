@@ -318,9 +318,9 @@ User tables
 
     from mygaiadb.query import LocalGaiaSQL 
     localdb = LocalGaiaSQL()  
-    localdb.upload_user_table(pd.DataFrame({"source_id": [123442534525, 245674254234,3345234535]}), tablename="my_table_1")
+    localdb.upload_user_table(pd.DataFrame({"source_id": [5188146770731873152, 4611686018427432192, 5764607527332179584]}), tablename="my_table_1")
 
-and then carry on to do query with ``my_table_1`` cross-matchde with other tables like 
+and then carry on to do query with ``my_table_1`` cross-matching with other tables like 
 
 ..  code-block:: python
 
