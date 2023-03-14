@@ -50,9 +50,9 @@ def test_cleanup():
     # undo read-only premission
     mygaiadb.gaia_sql_db_path.chmod(stat.S_IWRITE)
     mygaiadb.tmass_sql_db_path.chmod(stat.S_IWRITE)
-    mygaiadb.allwise_sql_db_path.chmod(stat.S_IWRITE)
+    # mygaiadb.allwise_sql_db_path.chmod(stat.S_IWRITE)
 
     # cleanup to prevent caching
     mygaiadb.gaia_sql_db_path.unlink()
     mygaiadb.tmass_sql_db_path.unlink()
-    mygaiadb.allwise_sql_db_path.unlink()
+    # mygaiadb.allwise_sql_db_path.unlink()
