@@ -16,9 +16,7 @@ to finish (where the online ESA `Gaia archive`_ has timeout limitation).
 
 You are welcome to modify the code, make pull request to make this code to suit your and others need.
 
-**This code probably will never be properly continuously tested since no way I can run this code with a few TB of gaia data on Github Actions**
-
-(🚧Work in progress🏗️)
+**Part of this code will never be contiuously tested properly since no way I can run this code with a few TB of gaia data on Github Actions**
 
 .. contents:: **Contents**
     :depth: 3
@@ -128,6 +126,13 @@ To download with ``MyGaiaDB``, you can do
     download.download_2mass()
     # for allwise
     download.download_allwise()
+    # for xp continuous
+    download.download_gaia_xp_continuous()
+    # for xp sampled
+    download.download_gaia_xp_sampled()    
+    # for rvs spectra
+    download.download_gaia_rvs()
+
 
 Official data links:
 
@@ -199,7 +204,7 @@ You can use ``get_all_tables()`` to get a list of tables. do
     print(local_db.get_all_tables())
 
 
-You can use ``get_table_cols(table_name)`` To get a list of columns of a table which must be in the format of 
+You can use ``get_table_cols(table_name)`` to get a list of columns of a table which must be in the format of 
 ``{database_name}.{table_name}``, ``gaiadr3.gaia_source`` in this case
 
 ..  code-block:: python
@@ -342,7 +347,7 @@ Spectroscopy Query
 --------------------
 
 There can be use case where you want to run a function (e.g. a machine learning model) to a large batch of source_id with reasonable memory usage. 
-You can use ``MyGaiaDB`` to do that too in batch provided to have compiled a single h5 with ``mygaiadb.compile.compile_xp_continuous_allinone_h5()``
+You can use ``MyGaiaDB`` to do that in batch provided you have compiled a single h5 with ``mygaiadb.compile.compile_xp_continuous_allinone_h5()``
 
 ..  code-block:: python
 

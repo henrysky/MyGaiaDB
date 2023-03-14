@@ -6,6 +6,9 @@ from . import (
     _GAIA_DR3_ASTROPHYS_PARENT,
     _GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT,
     _GAIA_DR3_2MASS_NEIGHBOUR_PARENT,
+    _GAIA_DR3_XP_CONTINUOUS_PARENT,
+    _GAIA_DR3_XP_SAMPLED_PARENT,
+    _GAIA_DR3_RVS_PARENT,
     _ALLWISE_PARENT,
     _2MASS_PARENT,
 )
@@ -148,3 +151,39 @@ def download_allwise(test=False):
     else:
         for cmd_str in cmd_list:
             subprocess.run(cmd_str, shell=True)
+
+
+def download_gaia_xp_continuous(test=False):
+    _GAIA_DR3_XP_CONTINUOUS_PARENT.mkdir(parents=True, exist_ok=True)
+    _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/xp_continuous_mean_spectrum/"
+    if test:
+        downloader(_url, "test", "test", test=test)
+        cmd_str = f"wget -P {_GAIA_DR3_XP_CONTINUOUS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}XpContinuousMeanSpectrum_000000-003111.csv.gz"
+        subprocess.run(cmd_str, shell=True)
+    else:
+        cmd_str = f"wget -P {_GAIA_DR3_XP_CONTINUOUS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
+        subprocess.run(cmd_str, shell=True)
+
+
+def download_gaia_xp_sampled(test=False):
+    _GAIA_DR3_XP_SAMPLED_PARENT.mkdir(parents=True, exist_ok=True)
+    _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/xp_sampled_mean_spectrum/"
+    if test:
+        downloader(_url, "test", "test", test=test)
+        cmd_str = f"wget -P {_GAIA_DR3_XP_SAMPLED_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}XpSampledMeanSpectrum_000000-003111.csv.gz"
+        subprocess.run(cmd_str, shell=True)
+    else:
+        cmd_str = f"wget -P {_GAIA_DR3_XP_SAMPLED_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
+        subprocess.run(cmd_str, shell=True)
+
+
+def download_gaia_rvs(test=False):
+    _GAIA_DR3_RVS_PARENT.mkdir(parents=True, exist_ok=True)
+    _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/rvs_mean_spectrum/"
+    if test:
+        downloader(_url, "test", "test", test=test)
+        cmd_str = f"wget -P {_GAIA_DR3_RVS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}RvsMeanSpectrum_000000-003111.csv.gz"
+        subprocess.run(cmd_str, shell=True)
+    else:
+        cmd_str = f"wget -P {_GAIA_DR3_RVS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
+        subprocess.run(cmd_str, shell=True)
