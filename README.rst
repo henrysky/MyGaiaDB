@@ -110,47 +110,54 @@ The **case sensitive** folder structure should look something like the following
 Downloading Data
 ---------------------------
 
+To download with ``MyGaiaDB``, you can do
+
+..  code-block:: python
+
+    from mygaiadb import download
+
+    # for gaia_source
+    download.download_gaia_source()
+    # for gaia astrophysical_parameters
+    download.download_gaia_astrophysical_parameters()
+    # for 2mass best neightbour
+    download.download_2mass_best_neightbour()
+    # for allwise best neightbour
+    download.download_allwise_best_neightbour()
+    # for 2MASS
+    download.download_2mass()
+    # for allwise
+    download.download_allwise()
+
 Official data links:
 
 * Official Gaia data can be accessed here: https://cdn.gea.esac.esa.int/Gaia/
 * Official 2MASS data can be accessed here: https://irsa.ipac.caltech.edu/2MASS/download/allsky/
 * Official ALLWISE data can be accessed here: https://irsa.ipac.caltech.edu/data/download/wise-allwise/
 
-To download ``gaia_source``, 
+Compiling Datasets
+--------------------
+Here are funcstions (each only need to be ran once on each computer you store the data). 
+**Each function will generate large sized file(s)**. Moreover if you are using a shared computing server, 
+only one user need to run the functions and share **MY_ASTRO_DATA** folder path to other user so
+they can setup their own enviroment variable **MY_ASTRO_DATA** to that folder too. Multiple users can use the SQL 
+database at the same time since ``MyGaiaDB`` will set read-only premission before loading databases.
 
-Post installation scripts
---------------------------------
-Here are some post installation scripts (each only need to be ran once on each computer you store the data). 
-**Each sctipt will generate large sized file(s)**. You can simply run ``python scripts/{name-of-the-script}.py``. 
-Moreover if you are using a shared computing server, only one user need to run the scripts and share **MY_ASTRO_DATA** folder path to other user so
-they can setup their own enviroment variable **MY_ASTRO_DATA** to that folder too. Multiple users can use the SQL database at the same time as long as you have set permission 
-correctly so no accidential delete or modification.
+..  code-block:: python
 
--   | `scripts/gen_gaia_sql_dataset.py`_
-    | Script to generate ``gaia_source_lite`` table (same layout as ``gaia_source_lite`` on `Gaia Archive`_ with addition of ``grvs_mag``) along with 2MASS and ALLWISE best neightbour table into a singele SQL database
-    | This script will also do indexing on commonly used column. The whole script will take ~20 hours to run.
--   | `scripts/gen_gaia_astro_param_sql_dataset.py`_
-    | Script to generate a stripped down version of ``astrophysical_parameters`` table into a singele SQL database
-    | This script will also do indexing on commonly used column. The whole script will take ~12 hours to run.
--   | `scripts/gen_allwise_sql_dataset.py`_
-    | Script to generate a stripped down version of ALLWISE photometry table into a singele SQL database
-    | This script will also do indexing on commonly used column. The whole script will take ~16 hours to run.
--   | `scripts/gen_tmass_sql_dataset.py`_
-    | Script to generate a stripped down version of 2MASS photometry table into a singele SQL database
-    | This script will also do indexing on commonly used column. The whole script will take ~1 hours to run.
--   | `scripts/gen_spectra_h5.py`_
-    | Script to turn all spectra files into h5 file format
-    | This script will also do indexing on commonly used column. The whole script will take ~4 hours to run.
--   | `scripts/gen_xp_coeffs_h5.py`_
-    | Script to generate a single h5 file while preserving the original healpix level 8 structure without correlation matrix
-    | This script will also do indexing on commonly used column. The whole script will take ~1 hours to run.
+    from mygaiadb import compile
 
-.. _scripts/gen_gaia_sql_dataset.py: scripts/gen_gaia_sql_dataset.py
-.. _scripts/gen_gaia_astro_param_sql_dataset.py: scripts/gen_gaia_astro_param_sql_dataset.py
-.. _scripts/gen_allwise_sql_dataset.py: scripts/gen_allwise_sql_dataset.py
-.. _scripts/gen_tmass_sql_dataset.py: scripts/gen_tmass_sql_dataset.py
-.. _scripts/gen_spectra_h5.py: scripts/gen_spectra_h5.py
-.. _scripts/gen_xp_coeffs_h5.py: scripts/gen_xp_coeffs_h5.py
+    # compile Gaia SQL dataset
+    compile.compile_gaia_sql_db()
+    # compile 2MASS SQL dataset
+    compile.compile_tmass_sql_db()
+    # compile ALLWISE SQL dataset
+    compile.compile_allwise_sql_db()
+
+    # turn compressed XP coeffs files to h5, with options to save correlation matrix too
+    compile.compile_xp_continuous_h5(save_correlation_matrix=False)
+    # compile all XP coeffs into a single h5, partitioned batches of stars by their HEALPix
+    compile.compile_xp_continuous_allinone_h5()
 
 SQL Databases Data Model
 ---------------------------
@@ -335,7 +342,7 @@ Spectroscopy Query
 --------------------
 
 There can be use case where you want to run a function (e.g. a machine learning model) to a large batch of source_id with reasonable memory usage. 
-You can use ``MyGaiaDB`` to do that too in batch
+You can use ``MyGaiaDB`` to do that too in batch provided to have compiled a single h5 with ``mygaiadb.compile.compile_xp_continuous_allinone_h5()``
 
 ..  code-block:: python
 

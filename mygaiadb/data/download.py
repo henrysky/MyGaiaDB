@@ -18,7 +18,7 @@ def download_gaia_source(test=False):
         downloader(_url, "test", "test", test=test)
         cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}GaiaSource_000000-003111.csv.gz"
         subprocess.run(cmd_str, shell=True)
-        cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}GaiaSource_000000-003111.csv.gz"
+        cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}GaiaSource_003112-005263.csv.gz"
         subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
@@ -62,7 +62,7 @@ def download_2mass_best_neightbour(test=False):
         downloader(_url, "test", "test", test=test)
         cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}tmasspscxscBestNeighbour0001.csv.gz"
         subprocess.run(cmd_str, shell=True)
-        cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}tmasspscxscBestNeighbour0001.csv.gz"
+        cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}tmasspscxscBestNeighbour0002.csv.gz"
         subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
