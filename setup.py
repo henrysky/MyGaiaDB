@@ -9,7 +9,7 @@ with open(
 
 setup(
     name="MyGaiaDB",
-    version="0.1.dev0",
+    version="0.1",
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",

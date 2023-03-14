@@ -24,10 +24,13 @@ You are welcome to modify the code, make pull request to make this code to suit 
 Installation and Dependencies
 -------------------------------
 
-This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy``, ``tqdm``, ``beautifulsoup4`` and ``sqlite3``. 
+This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy``, ``tqdm`` and ``sqlite3``. 
 Some optional functionalities require ``galpy``, ``mwdust``. Downloading functions require ``wget``.
 
-You can simply do ``python -m pip install .`` to use or ``python -m pip install -e .`` to develop ``MyGaiaDB`` locally.
+You can simply do ``pip install mygaiadb`` to install ``MyGaiaDB``
+
+Moreover, you can do ``python -m pip install .`` to install the latest commits from github or ``python -m pip install -e .`` 
+to develop ``MyGaiaDB`` locally.
 
 Folder Structure
 -------------------
@@ -47,7 +50,7 @@ If you already have the data on your computer but in a different directory struc
 you can use symbolic link to create the required folder structure without 
 duplicating files. For Linux and MacOS, you can use ``ln -s {source-dir-or-file-path} {symbolic-dir-or-file-path}``. 
 For Windows, you can use ``mklink {symbolic-file-path} {source-file-path}`` or ``mklink /D {symbolic-dir-path} {source-dir-path}``. 
-The **case sensitive** folder structure should look something like the following chart. 
+The **case sensitive** folder structure should look something like the following chart:
 
 ::
 
