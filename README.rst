@@ -5,18 +5,18 @@ MyGaiaDB
 
 ``MyGaiaDB`` is simple python package with a set of scripts to help you setup a local 
 Gaia **DR3** database (also local 2MASS and ALLWISE databases too) without the need of administrator privilege 
-and is compatible to all major platforms (Linux, Mac and Windows) beacuse ``MyGaiaDB`` is **serverless** 
+and is compatible to all major platforms (Linux, Mac and Windows) because ``MyGaiaDB`` is **serverless** 
 and requires Python only using ``sqlite`` as long as you have enough disk space.
 
 This code is mainly to help myself managing data for my research project with Gaia DR3 XP spectra 
 and not meant to fit research usage from every aspect of Gaia's 1 billion stars. The main motivation of this 
-code is to make seting up local Gaia database with 2MASS and ALLWISE accessible to everyone. Possible use cases include 
-but not limited to make very long complex query cross-matching to multiple databses that can take a long time 
+code is to make setting up local Gaia database with 2MASS and ALLWISE accessible to everyone. Possible use cases include 
+but not limited to make very long complex query cross-matching to multiple databases that can take a long time 
 to finish (where the online ESA `Gaia archive`_ has timeout limitation).
 
 You are welcome to modify the code, make pull request to make this code to suit your and others need.
 
-**Part of this code will never be contiuously tested properly since no way I can run this code with a few TB of gaia data on Github Actions**
+**Part of this code will never be continuously tested properly since no way I can run this code with a few TB of gaia data on Github Actions**
 
 .. contents:: **Contents**
     :depth: 3
@@ -25,7 +25,7 @@ Installation and Dependencies
 -------------------------------
 
 This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy``, ``tqdm``, ``beautifulsoup4`` and ``sqlite3``. 
-Some optional functionalities requires ``galpy``, ``mwdust``. Downloading functions require ``wget``.
+Some optional functionalities require ``galpy``, ``mwdust``. Downloading functions require ``wget``.
 
 You can simply do ``python -m pip install .`` to use or ``python -m pip install -e .`` to develop ``MyGaiaDB`` locally.
 
@@ -34,16 +34,16 @@ Folder Structure
 
 You need to make sure you have at least ~8TB of free disk space with fast **random read** speed for optimal query performance. 
 First set an environment variable called **MY_ASTRO_DATA** which point to a folder that (will) contains your 
-astronomical data in general. To be compatiable with other python package, under **MY_ASTRO_DATA** there should be a folder called ``gaia_mirror`` that contains all 
+astronomical data in general. To be compatible with other python package, under **MY_ASTRO_DATA** there should be a folder called ``gaia_mirror`` that contains all 
 gaia data (i.e. **GAIA_TOOLS_DATA** environment variable from Jo Bovy's gaia_tools_).
 
 .. _apogee: https://github.com/jobovy/apogee
 .. _gaia_tools: https://github.com/jobovy/gaia_tools
 
-If you start from stratch, you only need to set **MY_ASTRO_DATA** environment variable and ``MyGaiaDB`` will populate the files and folders. 
-``MyGaiaDB`` will use ``~/.mygaiadb`` folder to save user specific settings an tables.
+If you start from scratch, you only need to set **MY_ASTRO_DATA** environment variable and ``MyGaiaDB`` will populate the files and folders. 
+``MyGaiaDB`` will use ``~/.mygaiadb`` folder to save user specific settings and tables.
 
-If you already have the data on your computer but in a  different directory structure and you do  not want or can not move them, 
+If you already have the data on your computer but in a different directory structure and you do not want or can not move them, 
 you can use symbolic link to create the required folder structure without 
 duplicating files. For Linux and MacOS, you can use ``ln -s {source-dir-or-file-path} {symbolic-dir-or-file-path}``. 
 For Windows, you can use ``mklink {symbolic-file-path} {source-file-path}`` or ``mklink /D {symbolic-dir-path} {source-dir-path}``. 
@@ -140,13 +140,13 @@ Official data links:
 * Official 2MASS data can be accessed here: https://irsa.ipac.caltech.edu/2MASS/download/allsky/
 * Official ALLWISE data can be accessed here: https://irsa.ipac.caltech.edu/data/download/wise-allwise/
 
-Compiling Datasets
---------------------
-Here are funcstions (each only need to be ran once on each computer you store the data). 
-**Each function will generate large sized file(s)**. Moreover if you are using a shared computing server, 
+Compiling Databases
+---------------------
+Here are functions to compile databases (each function only need to be ran once on each computer you store the data). 
+**Each function will generate large sized file(s)**. Moreover, if you are using a shared computing server, 
 only one user need to run the functions and share **MY_ASTRO_DATA** folder path to other user so
-they can setup their own enviroment variable **MY_ASTRO_DATA** to that folder too. Multiple users can use the SQL 
-database at the same time since ``MyGaiaDB`` will set read-only premission before loading databases.
+they can setup their own environment variable **MY_ASTRO_DATA** to that folder too. Multiple users can use the SQL 
+database at the same time since ``MyGaiaDB`` will set read-only permission mission before loading databases.
 
 ..  code-block:: python
 
@@ -167,7 +167,7 @@ database at the same time since ``MyGaiaDB`` will set read-only premission befor
 SQL Databases Data Model
 ---------------------------
 
-Currently for Gaia DR3 in ``MyGaiaDB``, these tales are avaliable if you have compiled all databases: 
+Currently for Gaia DR3 in ``MyGaiaDB``, these databases are only available if you have compiled all of them: 
 ``gaiadr3.gaia_source``, ``gaiadr3.allwise_best_neighbour``, ``gaiadr3.tmasspscxsc_best_neighbour``, 
 ``gaiadr3.astrophysical_parameters``, ``tmass.twomass_psc``, ``allwise.allwise``. But there are a few 
 utility functions to see list of tables and table's columns. Brief description of the tables are as following:
@@ -218,7 +218,7 @@ You can use ``get_table_column(table_name)`` to get a list of columns of a table
     print(local_db.get_table_column("gaiadr3.gaia_source"))
 
 
-If you want to manage and edit the databases with GUI, you can try to use `SQLiteStudio`_  or `DB Browser for SQLite`_.
+If you want to manage and edit the databases with GUI, you can try to use `SQLiteStudio`_ or `DB Browser for SQLite`_.
 
 
 SQL Query
@@ -244,10 +244,10 @@ To run this query in ``MyGaiaDB``, you can do the following and will get a panda
     local_db = LocalGaiaSQL()
     local_db.query("""SELECT TOP 100 * FROM gaiadr3.gaia_source as G  WHERE (G.has_xp_continuous = 'True')""")
 
-The following example query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily you've got ``MyGaiaDB`` to do the job. 
+The following example query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily, you've got ``MyGaiaDB`` to do the job. 
 The following example query from ``gaia_source`` table, ``astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
-Moreover, ``MyGaiaDB`` set each dataset to **read-only** before loading it. If you want to edit the database afterward, you have to set the 
-appropiate premission manually each time you have used ``MyGaiaDB``.
+Moreover, ``MyGaiaDB`` set each dataset to **read-only** before loading it. If you want to edit the database afterward, you must set the 
+appropriate permission manually each time you have used ``MyGaiaDB``.
 
 ..  code-block:: python
 
@@ -271,11 +271,11 @@ appropiate premission manually each time you have used ``MyGaiaDB``.
     # take ~12 hours to complete
     local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True)
 
-As you can see for ``has_xp_continuous``, we use ``1`` to represent ``TRUE`` which is different from Gaia archive.
+As you can see for ``has_xp_continuous``, we can also use ``1`` to represent ``true`` which is used by Gaia archive but both are fine with ``MyGaiaDB``.
 
-``MyGaiaDB`` also has callbacks funcationality called ``QueryCallback``, these callbacks can be used when you do query. For example, 
+``MyGaiaDB`` also has callbacks functionality called ``QueryCallback``, these callbacks can be used when you do query. For example, 
 you can create a callbacks to convert ``ra`` in degree to `ra_rad` in radian. So your csv file in the end will have a new column 
-called ``ra_rad``. Functions in ``QueryCallback`` must have argeuments with **exact** column names in your query so ``MyGaiaDB`` knows 
+called ``ra_rad``. Functions in ``QueryCallback`` must have arguments with **exact** column names in your query so ``MyGaiaDB`` knows 
 which columns to use on the fly.
 
 ..  code-block:: python
@@ -325,7 +325,7 @@ User tables
     localdb = LocalGaiaSQL()  
     localdb.upload_user_table(pd.DataFrame({"source_id": [5188146770731873152, 4611686018427432192, 5764607527332179584]}), tablename="my_table_1")
 
-and then carry on to do query with ``my_table_1`` cross-matching with other tables like 
+and then carry-on doing query with ``my_table_1`` cross-matching with other tables like 
 
 ..  code-block:: python
 
@@ -346,7 +346,7 @@ and you can remove a user table like ``my_table_1`` in this case by using ``remo
 Spectroscopy Query
 --------------------
 
-There can be use case where you want to run a function (e.g. a machine learning model) to a large batch of source_id with reasonable memory usage. 
+There can be use case where you want to run a function (e.g., a machine learning model) to a large batch of source_id with reasonable memory usage. 
 You can use ``MyGaiaDB`` to do that in batch provided you have compiled a single h5 with ``mygaiadb.compile.compile_xp_continuous_allinone_h5()``
 
 ..  code-block:: python
@@ -376,7 +376,7 @@ Author
 
 License
 -------------
-This project is licensed under the MIT License - see the `LICENSE`_ file for details
+This project is licensed under the MIT License - see the `LICENSE`_ file for details.
 
 .. _Gaia Archive: https://gea.esac.esa.int/archive/
 .. _SQLiteStudio: https://sqlitestudio.pl/
