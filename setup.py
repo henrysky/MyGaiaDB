@@ -29,7 +29,6 @@ setup(
         "h5py",
         "pandas",
         "tqdm",
-        "beautifulsoup4",
     ],
     url="https://github.com/henrysky/MyGaiaDB",
     project_urls={
