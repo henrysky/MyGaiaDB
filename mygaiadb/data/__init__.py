@@ -33,7 +33,7 @@ def downloader(url, fullfilename, name, test=False, session=None):
     r.raise_for_status()  # Will only raise for 4xx codes\
     path = pathlib.Path(fullfilename).expanduser().resolve()
     path.parent.mkdir(parents=True, exist_ok=True)
-    if not test and not path.exists():
+    if not test or not path.exists():
         file_size = int(r.headers.get('Content-Length', 0))
         # r.raw.read
         with tqdm.tqdm.wrapattr(r.raw, "read", total=file_size, desc=f"Download {name}") as r_raw:
