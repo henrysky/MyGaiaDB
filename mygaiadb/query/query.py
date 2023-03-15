@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import stat
+import ctypes
 import pathlib
 import inspect
 import sqlite3
@@ -183,11 +184,22 @@ class LocalGaiaSQL:
     @staticmethod
     def _load_sqlite3_ext(c):
         c.enable_load_extension(True)
-        try:
-            c.load_extension(pathlib.Path(__file__).parents[2].joinpath(f"astroqlite_c{sysconfig.get_config_var('EXT_SUFFIX')}").as_posix())
-        except:
-            c.load_extension(pathlib.Path(__file__).parents[2].joinpath(f"astroqlite_c{sysconfig.get_config_var('EXT_SUFFIX')}").as_posix()[:-3])
 
+        # Find and load the library
+        _lib = None
+        _libname = ctypes.util.find_library("astroqlite_c")
+        _ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        if _libname:
+            _lib = _libname
+        if _lib is None:
+            for path in sys.path:
+                _temp_lib = pathlib.Path(path).joinpath(f"astroqlite_c{_ext_suffix}")
+                if _temp_lib.exists():
+                    _lib = _temp_lib.as_posix()
+                    c.load_extension(_lib)
+                    break
+        if _lib is None:
+            raise IOError("MyGaiaDB SQL C extension not found")
 
     @preprocess_query
     def save_csv(
