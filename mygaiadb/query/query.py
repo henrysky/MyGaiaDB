@@ -183,7 +183,10 @@ class LocalGaiaSQL:
     @staticmethod
     def _load_sqlite3_ext(c):
         c.enable_load_extension(True)
-        c.load_extension(pathlib.Path(__file__).parents[2].joinpath(f"astroqlite_c{sysconfig.get_config_var('EXT_SUFFIX')}").as_posix())
+        try:
+            c.load_extension(pathlib.Path(__file__).parents[2].joinpath(f"astroqlite_c{sysconfig.get_config_var('EXT_SUFFIX')}").as_posix())
+        except:
+            c.load_extension(pathlib.Path(__file__).parents[2].joinpath(f"astroqlite_c{sysconfig.get_config_var('EXT_SUFFIX')}").as_posix()[:-3])
 
 
     @preprocess_query

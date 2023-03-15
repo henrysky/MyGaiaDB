@@ -24,7 +24,8 @@ You are welcome to modify the code, make pull request to make this code to suit 
 Installation and Dependencies
 -------------------------------
 
-This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy``, ``tqdm`` and ``sqlite3``. 
+This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy`` and ``tqdm`` while only need to use 
+``sqlite3`` bundled with your python installation without additional installation.
 Some optional functionalities require ``galpy``, ``mwdust``. Downloading functions require ``wget``.
 
 You can simply do ``pip install mygaiadb`` to install compiled ``MyGaiaDB`` wheels.
