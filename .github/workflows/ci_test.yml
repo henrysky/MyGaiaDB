@@ -49,7 +49,9 @@ jobs:
           conda install -y pytest pytest-order galpy
           python -m pip install gaiadr3-zeropoint build
       - name: Install the package
+        shell: bash -l {0}
         run: |
+          pwd
           python -m pip install .
       - name: Cache my astro data
         uses: actions/cache@v3
