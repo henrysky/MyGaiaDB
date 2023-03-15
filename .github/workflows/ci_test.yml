@@ -13,7 +13,7 @@ jobs:
     env:
       MY_ASTRO_DATA: ${{ github.workspace }}/my_astro_data/
     steps:
-      # - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       # - name: Set up Python
       #   uses: actions/setup-python@v4
       #   with:
@@ -52,6 +52,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pwd
+          ls
           python -m pip install .
       - name: Cache my astro data
         uses: actions/cache@v3
