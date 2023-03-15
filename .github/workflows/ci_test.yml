@@ -44,6 +44,10 @@ jobs:
           echo "LIBPATH=$CONDA_PREFIX\\Library\\lib" >> $GITHUB_ENV
           echo "$CONDA_PREFIX\\Library\\bin" >> $GITHUB_PATH
           New-Item -ItemType directory -Force -Path $env:MY_ASTRO_DATA
+      - name: make data folder on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          New-Item -ItemType directory -Force -Path $env:MY_ASTRO_DATA
       - name: Install dependencies
         shell: bash -l {0}
         run: |
