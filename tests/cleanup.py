@@ -9,13 +9,13 @@ if len(sys.arg) > 0:
         astro_data_path = pathlib.Path(astro_data_path).expanduser()
 
         # delete every files ending with db
-        for i in list(astro_data_path.glob("*.db")):
+        for i in list(astro_data_path.rglob("*.db")):
             # undo read-only premission in case any
             i.chmod(stat.S_IWRITE)
             i.gaia_sql_db_path.unlink()
 
         # delete every files ending with h5
-        for i in list(astro_data_path.glob("*.h5")):
+        for i in list(astro_data_path.rglob("*.h5")):
             # undo read-only premission in case any
             i.chmod(stat.S_IWRITE)
             i.gaia_sql_db_path.unlink()
