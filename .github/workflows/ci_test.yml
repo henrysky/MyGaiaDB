@@ -5,20 +5,47 @@ on: [push]
 jobs:
   test:
     if: "!contains(github.event.head_commit.message, '[ci skip]')"  # respect [ci skip] commit
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     env:
       MY_ASTRO_DATA: ${{ github.workspace }}/my_astro_data/
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      # - uses: actions/checkout@v3
+      # - name: Set up Python
+      #   uses: actions/setup-python@v4
+      #   with:
+      #     python-version: "3.x"
+      # - name: Install dependencies
+      #   run: |
+      #     sudo apt-get install -y libsqlite3-dev
+      #     python -m pip install pytest pytest-order galpy gaiadr3-zeropoint mwdust
+      #     python -m pip install .
+      - uses: conda-incubator/setup-miniconda@v2
         with:
-          python-version: "3.x"
-      - name: Install dependencies
+          auto-update-conda: true
+      - name: Set environment variables on Mac OS
+        if: matrix.os == 'macos-latest'
+        shell: bash -l {0}
         run: |
-          sudo apt-get install -y libsqlite3-dev
-          pip install pytest pytest-order galpy gaiadr3-zeropoint mwdust
-          pip install .
+          echo ::set-env name=CFLAGS::-I$CONDA_PREFIX/include
+          echo ::set-env name=LDFLAGS::-I$CONDA_PREFIX/lib
+          echo ::set-env name=LD_LIBRARY_PATH::-I$CONDA_PREFIX/lib
+      - name: Set environment variables on Windows
+        if: matrix.os == 'windows-latest'
+        shell: bash -l {0}
+        run: |
+          echo ::set-env name=INCLUDE::$CONDA_PREFIX\\Library\\include
+          echo ::set-env name=LIB::$CONDA_PREFIX\\Library\\lib
+          echo ::set-env name=LIBPATH::$CONDA_PREFIX\\Library\\lib
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          conda install -y pytest pytest-order galpy
+          python -m pip install gaiadr3-zeropoint build
+          python -m pip install .
       - name: Cache my astro data
         uses: actions/cache@v3
         with:
