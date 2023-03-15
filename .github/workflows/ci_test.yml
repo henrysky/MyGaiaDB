@@ -46,13 +46,11 @@ jobs:
       - name: Install dependencies
         shell: bash -l {0}
         run: |
-          conda install -y pytest pytest-order galpy
-          python -m pip install gaiadr3-zeropoint build
+          conda install -y numpy astropy h5py pandas tqdm wheel pytest pytest-order galpy
+          python -m pip install gaiadr3-zeropoint build mwdust
       - name: Install the package
         shell: bash -l {0}
         run: |
-          pwd
-          ls
           python -m pip install .
       - name: Cache my astro data
         uses: actions/cache@v3
@@ -60,5 +58,6 @@ jobs:
           path: ${{ github.workspace }}/my_astro_data/
           key: mygaiadb-${{ runner.os }}-2023march13
       - name: Test
-        run: >
+        shell: bash -l {0}
+        run: |
           python -m pytest -v -s tests/
