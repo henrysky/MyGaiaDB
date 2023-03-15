@@ -12,10 +12,10 @@ if len(sys.argv) > 0:
         for i in list(astro_data_path.rglob("*.db")):
             # undo read-only premission in case any
             i.chmod(stat.S_IWRITE)
-            i.gaia_sql_db_path.unlink()
+            i.unlink()
 
         # delete every files ending with h5
         for i in list(astro_data_path.rglob("*.h5")):
             # undo read-only premission in case any
             i.chmod(stat.S_IWRITE)
-            i.gaia_sql_db_path.unlink()
+            i.unlink()
