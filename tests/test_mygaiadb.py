@@ -1,3 +1,4 @@
+import sys
 import stat
 import pytest
 import pathlib
@@ -72,7 +73,8 @@ def test_cleanup():
     mygaiadb.tmass_sql_db_path.chmod(stat.S_IWRITE)
     # mygaiadb.allwise_sql_db_path.chmod(stat.S_IWRITE)
 
-    # cleanup to prevent caching
-    mygaiadb.gaia_sql_db_path.unlink()
-    mygaiadb.tmass_sql_db_path.unlink()
-    # mygaiadb.allwise_sql_db_path.unlink()
+    if not sys.platform.startswith("win32"):
+        # cleanup to prevent caching
+        mygaiadb.gaia_sql_db_path.unlink()
+        mygaiadb.tmass_sql_db_path.unlink()
+        # mygaiadb.allwise_sql_db_path.unlink()

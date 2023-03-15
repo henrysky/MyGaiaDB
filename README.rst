@@ -18,7 +18,7 @@ You are welcome to modify the code, make pull request to make this code to suit 
 
 **Part of this code will never be continuously tested properly since no way I can run this code with a few TB of gaia data on Github Actions**
 
-.. contents:: **Contents**
+.. contents:: **Table of Contents**
     :depth: 3
 
 Installation and Dependencies
