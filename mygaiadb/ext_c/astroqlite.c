@@ -16,6 +16,8 @@ PyMODINIT_FUNC PyInit_astroqlite_c(void)
 {
     return NULL;
 };
+#else
+#define EXPORT
 #endif
 
 /* Constants */
@@ -130,7 +132,6 @@ static void math4Func(sqlite3_context *context, int argc, sqlite3_value **argv)
  */
 EXPORT int sqlite3_extension_init(sqlite3 *db, char **pzErrMsg, const sqlite3_api_routines *pApi)
 {
-    static const int flags = SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC;
     SQLITE_EXTENSION_INIT2(pApi);
     srand(time(NULL));
 
