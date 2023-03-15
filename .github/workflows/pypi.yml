@@ -9,7 +9,15 @@ jobs:
   build_sdist:
     name: Run sdist
     if: github.event_name == 'release' && github.event.action == 'created'
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        buildplat:
+        - [ubuntu-latest, manylinux, x86_64]
+        - [macos-latest, macosx, x86_64]
+        - [macos-latest, macosx, arm64]
+        - [windows-latest, win, amd64]
+        python: ["cp38", "cp39", "cp310", "cp311"]
+    runs-on: ${{ matrix.os }}
     steps:
       # check-out this repository
       - uses: actions/checkout@v3
