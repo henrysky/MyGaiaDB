@@ -229,7 +229,7 @@ SQL Query
 ------------
 
 SQL query in ``MyGaiaDB`` is largely the same as `Gaia Archive`_. Although ``MyGaiaDB`` has implemented all mathematical functions in way aligned with `ADQL`_, 
-``MyGaiaDB`` has only implemented a few advanced `ADQL`_ function liek ``DISTANCE``. 
+``MyGaiaDB`` has only implemented a few advanced `ADQL`_ function like ``DISTANCE`` as well as `additional functions`_ on ESA Gaia TAP+. 
 
 For example the following query that works on `Gaia Archive`_ will also work in ``MyGaiaDB`` to select the first 100 gaia sources with XP coefficients
 
@@ -385,6 +385,7 @@ This project is licensed under the MIT License - see the `LICENSE`_ file for det
 
 .. _Gaia Archive: https://gea.esac.esa.int/archive/
 .. _ADQL: https://www.ivoa.net/documents/ADQL/
+.. _additional functions: https://www.cosmos.esa.int/web/gaia-users/archive/writing-queries#adql_syntax_1
 .. _SQLiteStudio: https://sqlitestudio.pl/
 .. _DB Browser for SQLite: https://sqlitebrowser.org/
 .. _LICENSE: LICENSE
