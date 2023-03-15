@@ -1,5 +1,6 @@
 import os
-from setuptools import setup, find_packages
+import pathlib
+from setuptools import Extension, setup, find_packages
 
 with open(
     os.path.join(os.path.abspath(os.path.dirname(__file__)), "README.rst"),
@@ -7,9 +8,19 @@ with open(
 ) as f:
     long_description = f.read()
 
+astroqlite_c_src = pathlib.Path("./mygaiadb/ext_c/astroqlite.c")
+
+astroqlite_c = Extension(
+    "astroqlite_c",
+    sources=[astroqlite_c_src.as_posix()],
+    include_dirs=[pathlib.Path("./mygaiadb/ext_c/").as_posix()],
+)
+
+ext_modules = [astroqlite_c]
+
 setup(
     name="MyGaiaDB",
-    version="0.1",
+    version="0.2dev0",
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
@@ -30,6 +41,7 @@ setup(
         "pandas",
         "tqdm",
     ],
+    ext_modules=ext_modules,
     url="https://github.com/henrysky/MyGaiaDB",
     project_urls={
         "Bug Tracker": "https://github.com/henrysky/MyGaiaDB/issues",

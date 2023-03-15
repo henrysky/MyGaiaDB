@@ -2,8 +2,10 @@ import os
 import re
 import sys
 import stat
+import pathlib
 import inspect
 import sqlite3
+import sysconfig
 import contextlib
 import numpy as np
 import pandas as pd
@@ -14,7 +16,6 @@ from mygaiadb import (
     gaia_sql_db_path,
     tmass_sql_db_path,
     allwise_sql_db_path,
-    gaia_astro_param_sql_db_path,
 )
 
 
@@ -44,7 +45,7 @@ class LocalGaiaSQL:
         self,
         load_tmass=True,
         load_allwise=True,
-        # load_gaia_astro_params=True,
+        load_ext=True,
         readonly_guard=True,
     ):
         """
@@ -54,14 +55,14 @@ class LocalGaiaSQL:
             whether to load 2mass table
         load_allwise : bool
             whether to load allwise table
-        load_gaia_astro_params : bool
-            whether to load gaia astrophysical parameters table
+        load_ext : bool
+            whether to load sqlite extension
         readonly_guard : bool
             whether to ensure the databases are read-only
         """
         self.load_tmass = load_tmass
         self.load_allwise = load_allwise
-        # self.load_gaia_astro_params = load_gaia_astro_params
+        self.load_ext = load_ext
         self.readonly_guard = readonly_guard
         self.attached_db_name = []
 
@@ -148,6 +149,8 @@ class LocalGaiaSQL:
         self._file_exist(mygaiadb_default_db)
         conn = sqlite3.connect(gaia_sql_db_path)
         c = conn.cursor()
+        if self.load_ext:
+            self._load_sqlite3_ext(conn)
 
         # ======================= must load table =======================
         self._file_exist(gaia_sql_db_path)
@@ -174,18 +177,14 @@ class LocalGaiaSQL:
                 self._read_only(allwise_sql_db_path)  # set read-only before loading it
             c.execute(f"""ATTACH DATABASE '{allwise_sql_db_path}' AS allwise""")
             self.attached_db_name.append("allwise")
-        # if self.load_gaia_astro_params:
-        #     self._file_exist(gaia_astro_param_sql_db_path)
-        #     if self.readonly_guard:
-        #         self._read_only(
-        #             gaia_astro_param_sql_db_path
-        #         )  # set read-only before loading it
-        #     c.execute(
-        #         f"""ATTACH DATABASE '{gaia_astro_param_sql_db_path}' AS gastrophysical_params"""
-        #     )
-        #     self.attached_db_name.append("gastrophysical_params")
         # ======================= optional table =======================
         return conn, c
+    
+    @staticmethod
+    def _load_sqlite3_ext(c):
+        c.enable_load_extension(True)
+        c.load_extension(pathlib.Path(__file__).parents[2].joinpath(f"astroqlite_c{sysconfig.get_config_var('EXT_SUFFIX')}").as_posix())
+
 
     @preprocess_query
     def save_csv(

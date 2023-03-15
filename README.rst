@@ -27,10 +27,10 @@ Installation and Dependencies
 This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy``, ``tqdm`` and ``sqlite3``. 
 Some optional functionalities require ``galpy``, ``mwdust``. Downloading functions require ``wget``.
 
-You can simply do ``pip install mygaiadb`` to install ``MyGaiaDB``
+You can simply do ``pip install mygaiadb`` to install compiled ``MyGaiaDB`` wheels.
 
-Moreover, you can do ``python -m pip install .`` to install the latest commits from github or ``python -m pip install -e .`` 
-to develop ``MyGaiaDB`` locally.
+Other, you need to compile the code locally from source code by doing ``python -m pip install .`` to install the 
+latest commits from github or ``python -m pip install -e .``  to develop ``MyGaiaDB`` locally.
 
 Folder Structure
 -------------------
@@ -227,9 +227,10 @@ If you want to manage and edit the databases with GUI, you can try to use `SQLit
 SQL Query
 ------------
 
-SQL query in ``MyGaiaDB`` is largely the same as `Gaia Archive`_ except ``MyGaiaDB`` does not have advanced SQL functions 
-like geometrical functions. For example the following query that works on `Gaia Archive`_ will also work in ``MyGaiaDB`` to 
-select the first 100 gaia sources with XP coefficients
+SQL query in ``MyGaiaDB`` is largely the same as `Gaia Archive`_. Although ``MyGaiaDB`` has implemented all mathematical functions in way aligned with `ADQL`_, 
+``MyGaiaDB`` has only implemented a few advanced `ADQL`_ function liek ``DISTANCE``. 
+
+For example the following query that works on `Gaia Archive`_ will also work in ``MyGaiaDB`` to select the first 100 gaia sources with XP coefficients
 
 ..  code-block:: sql
 
@@ -382,6 +383,7 @@ License
 This project is licensed under the MIT License - see the `LICENSE`_ file for details.
 
 .. _Gaia Archive: https://gea.esac.esa.int/archive/
+.. _ADQL: https://www.ivoa.net/documents/ADQL/
 .. _SQLiteStudio: https://sqlitestudio.pl/
 .. _DB Browser for SQLite: https://sqlitebrowser.org/
 .. _LICENSE: LICENSE

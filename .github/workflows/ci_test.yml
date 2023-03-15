@@ -16,6 +16,7 @@ jobs:
           python-version: "3.x"
       - name: Install dependencies
         run: |
+          sudo apt-get install -y libsqlite3-dev
           pip install pytest pytest-order galpy gaiadr3-zeropoint mwdust
           pip install .
       - name: Cache my astro data
