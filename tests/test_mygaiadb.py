@@ -64,17 +64,3 @@ def test_query():
     localdb = LocalGaiaSQL(load_allwise=False)
     localdb.save_csv(query, "output.csv")
     query_df = localdb.query(query)
-
-
-@pytest.mark.order(6)
-def test_cleanup():
-    # undo read-only premission
-    mygaiadb.gaia_sql_db_path.chmod(stat.S_IWRITE)
-    mygaiadb.tmass_sql_db_path.chmod(stat.S_IWRITE)
-    # mygaiadb.allwise_sql_db_path.chmod(stat.S_IWRITE)
-
-    if not sys.platform.startswith("win32"):
-        # cleanup to prevent caching
-        mygaiadb.gaia_sql_db_path.unlink()
-        mygaiadb.tmass_sql_db_path.unlink()
-        # mygaiadb.allwise_sql_db_path.unlink()
