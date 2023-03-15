@@ -72,6 +72,11 @@ static double gaia_healpix_index(double level, double source_id)
     return healpix;
 }
 
+static double sign(double x)
+{
+    return (x > 0) - (x < 0);
+}
+
 
 /*
 ** Implementation of 1-argument SQL maths functions:
@@ -180,6 +185,8 @@ EXPORT int sqlite3_extension_init(sqlite3 *db, char **pzErrMsg, const sqlite3_ap
     sqlite3_create_function(db, "distance", 4, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, distance, math4Func, NULL, NULL);
 
     // Gaia TAP+ ADQL functions
+    sqlite3_create_function(db, "sign", 1, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, sign, math1Func, NULL, NULL);
     sqlite3_create_function(db, "gaia_healpix_index", 2, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, gaia_healpix_index, math2Func, NULL, NULL);
+
     return SQLITE_OK;
 }
