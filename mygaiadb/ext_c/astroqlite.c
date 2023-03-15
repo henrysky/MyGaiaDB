@@ -62,6 +62,15 @@ static double distance(double pt1, double pt2, double pt3, double pt4)
     return ang_sep;
 }
 
+
+static double gaia_healpix_index(double level, double source_id)
+{
+    double healpix;
+    healpix = source_id / (pow(2, 35) * pow(4, 12 - level));
+    return healpix;
+}
+
+
 /*
 ** Implementation of 1-argument SQL maths functions:
 */
@@ -168,5 +177,7 @@ EXPORT int sqlite3_extension_init(sqlite3 *db, char **pzErrMsg, const sqlite3_ap
     // ADQL Geometrical functions
     sqlite3_create_function(db, "distance", 4, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, distance, math4Func, NULL, NULL);
 
+    // Gaia TAP+ ADQL functions
+    sqlite3_create_function(db, "gaia_healpix_index", 2, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, gaia_healpix_index, math2Func, NULL, NULL);
     return SQLITE_OK;
 }
