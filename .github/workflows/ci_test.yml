@@ -56,7 +56,7 @@ jobs:
       - name: Cache my astro data
         uses: actions/cache@v3
         with:
-          path: ${{ MY_ASTRO_DATA }}
+          path: ${{ github.workspace }}/my_astro_data/
           key: mygaiadb-${{ runner.os }}-2023march13
       - name: Test
         shell: bash -l {0}
