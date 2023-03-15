@@ -17,11 +17,12 @@ def download_gaia_source(test=False):
     _GAIA_DR3_GAIASOURCE_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/gaia_source/"
     if test:
-        downloader(_url, "test", "test", test=test)
-        cmd_str = f"cd {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} && curl --no-clobber -s -O {_url}GaiaSource_000000-003111.csv.gz"
-        subprocess.run(cmd_str, shell=True)
-        cmd_str = f"cd {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} && curl --no-clobber -s -O {_url}GaiaSource_003112-005263.csv.gz"
-        subprocess.run(cmd_str, shell=True)
+        downloader(f"{_url}GaiaSource_000000-003111.csv.gz", _GAIA_DR3_GAIASOURCE_PARENT.joinpath("GaiaSource_000000-003111.csv.gz"), "test", test=test)
+        downloader(f"{_url}GaiaSource_003112-005263.csv.gz", _GAIA_DR3_GAIASOURCE_PARENT.joinpath("GaiaSource_003112-005263.csv.gz"), "test", test=test)
+        # cmd_str = f"cd {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} && curl --no-clobber -s -O {_url}GaiaSource_000000-003111.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
+        # cmd_str = f"cd {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} && curl --no-clobber -s -O {_url}GaiaSource_003112-005263.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
@@ -31,11 +32,12 @@ def download_gaia_astrophysical_parameters(test=False):
     _GAIA_DR3_ASTROPHYS_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Astrophysical_parameters/astrophysical_parameters/"
     if test:
-        downloader(_url, "test", "test", test=test)
-        cmd_str = f"cd {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}AstrophysicalParameters_000000-003111.csv.gz"
-        subprocess.run(cmd_str, shell=True)
-        cmd_str = f"cd {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}AstrophysicalParameters_003112-005263.csv.gz"
-        subprocess.run(cmd_str, shell=True)
+        downloader(f"{_url}AstrophysicalParameters_000000-003111.csv.gz", _GAIA_DR3_ASTROPHYS_PARENT.joinpath("AstrophysicalParameters_000000-003111.csv.gz"), "test", test=test)
+        downloader(f"{_url}AstrophysicalParameters_003112-005263.csv.gz", _GAIA_DR3_ASTROPHYS_PARENT.joinpath("AstrophysicalParameters_003112-005263.csv.gz"), "test", test=test)
+        # cmd_str = f"cd {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}AstrophysicalParameters_000000-003111.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
+        # cmd_str = f"cd {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}AstrophysicalParameters_003112-005263.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
@@ -45,11 +47,12 @@ def download_allwise_best_neightbour(test=False):
     _GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gedr3/cross_match/allwise_best_neighbour/"
     if test:
-        downloader(_url, "test", "test", test=test)
-        cmd_str = f"cd {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}allwiseBestNeighbour0001.csv.gz"
-        subprocess.run(cmd_str, shell=True)
-        cmd_str = f"cd {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}allwiseBestNeighbour0002.csv.gz"
-        subprocess.run(cmd_str, shell=True)
+        downloader(f"{_url}allwiseBestNeighbour0001.csv.gz", _GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.joinpath("allwiseBestNeighbour0001.csv.gz"), "test", test=test)
+        downloader(f"{_url}allwiseBestNeighbour0002.csv.gz", _GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.joinpath("allwiseBestNeighbour0002.csv.gz"), "test", test=test)
+        # cmd_str = f"cd {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}allwiseBestNeighbour0001.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
+        # cmd_str = f"cd {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}allwiseBestNeighbour0002.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
@@ -61,11 +64,12 @@ def download_2mass_best_neightbour(test=False):
         "http://cdn.gea.esac.esa.int/Gaia/gedr3/cross_match/tmasspscxsc_best_neighbour/"
     )
     if test:
-        downloader(_url, "test", "test", test=test)
-        cmd_str = f"cd {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}tmasspscxscBestNeighbour0001.csv.gz"
-        subprocess.run(cmd_str, shell=True)
-        cmd_str = f"cd {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}tmasspscxscBestNeighbour0002.csv.gz"
-        subprocess.run(cmd_str, shell=True)
+        downloader(f"{_url}tmasspscxscBestNeighbour0001.csv.gz", _GAIA_DR3_2MASS_NEIGHBOUR_PARENT.joinpath("tmasspscxscBestNeighbour0001.csv.gz"), "test", test=test)
+        downloader(f"{_url}tmasspscxscBestNeighbour0002.csv.gz", _GAIA_DR3_2MASS_NEIGHBOUR_PARENT.joinpath("tmasspscxscBestNeighbour0002.csv.gz"), "test", test=test)
+        # cmd_str = f"cd {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}tmasspscxscBestNeighbour0001.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
+        # cmd_str = f"cd {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}tmasspscxscBestNeighbour0002.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
@@ -76,11 +80,12 @@ def download_2mass(test=False):
         "https://irsa.ipac.caltech.edu/2MASS/download/allsky/"
     )
     if test:
-        downloader(_url, "test", "test", test=test)
-        cmd_str = f"cd {_2MASS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}psc_aaa.gz"
-        subprocess.run(cmd_str, shell=True)
-        cmd_str = f"cd {_2MASS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}psc_aab.gz"
-        subprocess.run(cmd_str, shell=True)
+        downloader(f"{_url}psc_aaa.gz", _2MASS_PARENT.joinpath("psc_aaa.gz"), "test", test=test)
+        downloader(f"{_url}psc_aab.gz", _2MASS_PARENT.joinpath("psc_aab.gz"), "test", test=test)
+        # cmd_str = f"cd {_2MASS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}psc_aaa.gz"
+        # subprocess.run(cmd_str, shell=True)
+        # cmd_str = f"cd {_2MASS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}psc_aab.gz"
+        # subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_2MASS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
@@ -145,8 +150,8 @@ def download_allwise(test=False):
     ]
 
     if test:
-        downloader(_url, "test", "test", test=test)
-        subprocess.run(cmd_list[3], shell=True)
+        downloader(f"http://irsa.ipac.caltech.edu/data/download/wise-allwise/wise-allwise-cat-part01.bz2", _ALLWISE_PARENT.joinpath("wise-allwise-cat-part01.bz2"), "test", test=test)
+        # subprocess.run(cmd_list[3], shell=True)
     else:
         for cmd_str in cmd_list:
             subprocess.run(cmd_str, shell=True)
@@ -156,9 +161,9 @@ def download_gaia_xp_continuous(test=False):
     _GAIA_DR3_XP_CONTINUOUS_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/xp_continuous_mean_spectrum/"
     if test:
-        downloader(_url, "test", "test", test=test)
-        cmd_str = f"cd {_GAIA_DR3_XP_CONTINUOUS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}XpContinuousMeanSpectrum_000000-003111.csv.gz"
-        subprocess.run(cmd_str, shell=True)
+        downloader(f"{_url}XpContinuousMeanSpectrum_000000-003111.csv.gz", _GAIA_DR3_XP_CONTINUOUS_PARENT.joinpath("XpContinuousMeanSpectrum_000000-003111.csv.gz"), "test", test=test)
+        # cmd_str = f"cd {_GAIA_DR3_XP_CONTINUOUS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}XpContinuousMeanSpectrum_000000-003111.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_XP_CONTINUOUS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
@@ -168,9 +173,9 @@ def download_gaia_xp_sampled(test=False):
     _GAIA_DR3_XP_SAMPLED_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/xp_sampled_mean_spectrum/"
     if test:
-        downloader(_url, "test", "test", test=test)
-        cmd_str = f"cd {_GAIA_DR3_XP_SAMPLED_PARENT.as_posix()} && curl --no-clobber -s -O {_url}XpSampledMeanSpectrum_000000-003111.csv.gz"
-        subprocess.run(cmd_str, shell=True)
+        downloader(f"{_url}XpSampledMeanSpectrum_000000-003111.csv.gz", _GAIA_DR3_XP_SAMPLED_PARENT.joinpath("XpSampledMeanSpectrum_000000-003111.csv.gz"), "test", test=test)
+        # cmd_str = f"cd {_GAIA_DR3_XP_SAMPLED_PARENT.as_posix()} && curl --no-clobber -s -O {_url}XpSampledMeanSpectrum_000000-003111.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_XP_SAMPLED_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
@@ -180,9 +185,9 @@ def download_gaia_rvs(test=False):
     _GAIA_DR3_RVS_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/rvs_mean_spectrum/"
     if test:
-        downloader(_url, "test", "test", test=test)
-        cmd_str = f"cd {_GAIA_DR3_RVS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}RvsMeanSpectrum_000000-003111.csv.gz"
-        subprocess.run(cmd_str, shell=True)
+        downloader(f"{_url}RvsMeanSpectrum_000000-003111.csv.gz", _GAIA_DR3_RVS_PARENT.joinpath("RvsMeanSpectrum_000000-003111.csv.gz"), "test", test=test)
+        # cmd_str = f"cd {_GAIA_DR3_RVS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}RvsMeanSpectrum_000000-003111.csv.gz"
+        # subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_RVS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)

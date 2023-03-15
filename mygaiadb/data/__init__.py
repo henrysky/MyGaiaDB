@@ -30,12 +30,11 @@ def downloader(url, fullfilename, name, test=False, session=None):
     r = requests.get(url, stream=True, allow_redirects=True, verify=True, headers={"User-Agent": user_agent})
     if r.status_code == 404:
         raise ConnectionError(f"Cannot find {name} data file at {url}")
-    r.raise_for_status()  # Will only raise for 4xx codes
-    if not test:
+    r.raise_for_status()  # Will only raise for 4xx codes\
+    path = pathlib.Path(fullfilename).expanduser().resolve()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not test and not path.exists():
         file_size = int(r.headers.get('Content-Length', 0))
-        path = pathlib.Path(fullfilename).expanduser().resolve()
-        path.parent.mkdir(parents=True, exist_ok=True)
-
         # r.raw.read
         with tqdm.tqdm.wrapattr(r.raw, "read", total=file_size, desc=f"Download {name}") as r_raw:
             with path.open("wb") as f:
