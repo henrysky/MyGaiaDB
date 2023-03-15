@@ -18,9 +18,9 @@ def download_gaia_source(test=False):
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/gaia_source/"
     if test:
         downloader(_url, "test", "test", test=test)
-        cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}GaiaSource_000000-003111.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} && curl --no-clobber -s -O {_url}GaiaSource_000000-003111.csv.gz"
         subprocess.run(cmd_str, shell=True)
-        cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}GaiaSource_003112-005263.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} && curl --no-clobber -s -O {_url}GaiaSource_003112-005263.csv.gz"
         subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
@@ -32,9 +32,9 @@ def download_gaia_astrophysical_parameters(test=False):
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Astrophysical_parameters/astrophysical_parameters/"
     if test:
         downloader(_url, "test", "test", test=test)
-        cmd_str = f"wget -P {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}AstrophysicalParameters_000000-003111.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}AstrophysicalParameters_000000-003111.csv.gz"
         subprocess.run(cmd_str, shell=True)
-        cmd_str = f"wget -P {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}AstrophysicalParameters_003112-005263.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}AstrophysicalParameters_003112-005263.csv.gz"
         subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
@@ -46,9 +46,9 @@ def download_allwise_best_neightbour(test=False):
     _url = "http://cdn.gea.esac.esa.int/Gaia/gedr3/cross_match/allwise_best_neighbour/"
     if test:
         downloader(_url, "test", "test", test=test)
-        cmd_str = f"wget -P {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}allwiseBestNeighbour0001.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}allwiseBestNeighbour0001.csv.gz"
         subprocess.run(cmd_str, shell=True)
-        cmd_str = f"wget -P {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}allwiseBestNeighbour0002.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}allwiseBestNeighbour0002.csv.gz"
         subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
@@ -62,9 +62,9 @@ def download_2mass_best_neightbour(test=False):
     )
     if test:
         downloader(_url, "test", "test", test=test)
-        cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}tmasspscxscBestNeighbour0001.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}tmasspscxscBestNeighbour0001.csv.gz"
         subprocess.run(cmd_str, shell=True)
-        cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}tmasspscxscBestNeighbour0002.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}tmasspscxscBestNeighbour0002.csv.gz"
         subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
@@ -77,9 +77,9 @@ def download_2mass(test=False):
     )
     if test:
         downloader(_url, "test", "test", test=test)
-        cmd_str = f"wget -P {_2MASS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}psc_aaa.gz"
+        cmd_str = f"cd {_2MASS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}psc_aaa.gz"
         subprocess.run(cmd_str, shell=True)
-        cmd_str = f"wget -P {_2MASS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}psc_aab.gz"
+        cmd_str = f"cd {_2MASS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}psc_aab.gz"
         subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_2MASS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
@@ -157,7 +157,7 @@ def download_gaia_xp_continuous(test=False):
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/xp_continuous_mean_spectrum/"
     if test:
         downloader(_url, "test", "test", test=test)
-        cmd_str = f"wget -P {_GAIA_DR3_XP_CONTINUOUS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}XpContinuousMeanSpectrum_000000-003111.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_XP_CONTINUOUS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}XpContinuousMeanSpectrum_000000-003111.csv.gz"
         subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_XP_CONTINUOUS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
@@ -169,7 +169,7 @@ def download_gaia_xp_sampled(test=False):
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/xp_sampled_mean_spectrum/"
     if test:
         downloader(_url, "test", "test", test=test)
-        cmd_str = f"wget -P {_GAIA_DR3_XP_SAMPLED_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}XpSampledMeanSpectrum_000000-003111.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_XP_SAMPLED_PARENT.as_posix()} && curl --no-clobber -s -O {_url}XpSampledMeanSpectrum_000000-003111.csv.gz"
         subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_XP_SAMPLED_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
@@ -181,7 +181,7 @@ def download_gaia_rvs(test=False):
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/rvs_mean_spectrum/"
     if test:
         downloader(_url, "test", "test", test=test)
-        cmd_str = f"wget -P {_GAIA_DR3_RVS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent {_url}RvsMeanSpectrum_000000-003111.csv.gz"
+        cmd_str = f"cd {_GAIA_DR3_RVS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}RvsMeanSpectrum_000000-003111.csv.gz"
         subprocess.run(cmd_str, shell=True)
     else:
         cmd_str = f"wget -P {_GAIA_DR3_RVS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
