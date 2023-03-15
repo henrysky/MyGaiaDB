@@ -28,7 +28,7 @@ jobs:
           channels: conda-forge
           auto-update-conda: true
       - name: Set environment variables on Mac OS
-        if: matrix.os == "macos-latest"
+        if: matrix.os == 'macos-latest'
         shell: bash -l {0}
         run: |
           echo "CFLAGS=-I$CONDA_PREFIX/include" >> $GITHUB_ENV
@@ -36,7 +36,7 @@ jobs:
           echo "REPAIR_LIBRARY_PATH=$CONDA_PREFIX/lib" >> $GITHUB_ENV
           echo "$CONDA_PREFIX/bin" >> $GITHUB_PATH
       - name: Set environment variables on Windows
-        if: matrix.os == "windows-latest"
+        if: matrix.os == 'windows-latest'
         shell: bash -l {0}
         run: |
           echo "INCLUDE=$CONDA_PREFIX\\Library\\include" >> $GITHUB_ENV
