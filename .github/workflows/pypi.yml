@@ -2,7 +2,9 @@
 name: Wheels and deployments
 
 on:
-  push
+  push:
+    branches:
+    - master
   release:
     types: [created]
 

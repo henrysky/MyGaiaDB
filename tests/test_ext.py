@@ -23,4 +23,4 @@ def test_c_exts():
     np.testing.assert_approx_equal(c.execute("""SELECT DISTANCE(165.458, 56.3825, 165.933, 61.7511)""").fetchall()[0][0], 5.37411, 4)
 
     # examples on https://www.cosmos.esa.int/web/gaia-users/archive/writing-queries#adql_syntax_1
-    np.testing.assert_equal(c.execute("""SELECT GAIA_HEALPIX_INDEX(4, 2060294888487267584)""").fetchall()[0][0], np.cos(1.), 914)
+    np.testing.assert_equal(c.execute("""SELECT GAIA_HEALPIX_INDEX(4, 2060294888487267584)""").fetchall()[0][0], 914)

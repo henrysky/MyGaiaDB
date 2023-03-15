@@ -66,7 +66,9 @@ static double distance(double pt1, double pt2, double pt3, double pt4)
 static double gaia_healpix_index(double level, double source_id)
 {
     double healpix;
-    healpix = source_id / (pow(2, 35) * pow(4, 12 - level));
+    long long int factor;
+    factor = (pow(2, 35) * pow(4, 12 - level));
+    healpix = floor(source_id / factor);
     return healpix;
 }
 

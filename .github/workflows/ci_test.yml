@@ -61,8 +61,7 @@ jobs:
         shell: bash -l {0}
         run: |
           python -m pytest -v -s tests/
-      - name: Cleanup on Windows
+      - name: Cleanup files from cache
         shell: bash -l {0}
         run: |
-          rm -rf %MY_ASTRO_DATA%/gaia_mirror/gaiadr3.db
-          rm -rf %MY_ASTRO_DATA%/2mass_mirror/tmass.db
+          python tests/cleanup.py 'i_swear_i_am_on_gh_action'
