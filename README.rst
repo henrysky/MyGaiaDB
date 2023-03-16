@@ -231,7 +231,31 @@ SQL Query
 SQL query in ``MyGaiaDB`` is largely the same as `Gaia Archive`_. Although ``MyGaiaDB`` has implemented all mathematical functions in way aligned with `ADQL`_, 
 ``MyGaiaDB`` has only implemented a few advanced `ADQL`_ function like ``DISTANCE`` as well as `additional functions`_ on ESA Gaia TAP+. 
 
-For example the following query that works on `Gaia Archive`_ will also work in ``MyGaiaDB`` to select the first 100 gaia sources with XP coefficients
+For example the following query which used a special function called ``DISTANCE`` defined in `ADQL`_
+
+..  code-block:: sql
+
+    SELECT DISTANCE(179., 10., G.ra, G.dec) as ang_sep
+    FROM gaiadr3.gaia_source as G
+    WHERE G.source_id = 4472832130942575872
+
+returns 89.618118 on `Gaia Archive`_. And you can also use such query in the same manner as you would on `Gaia Archive`_
+
+..  code-block:: python
+
+    from mygaiadb.query import LocalGaiaSQL
+
+    # initialize a local Gaia SQL database instance
+    local_db = LocalGaiaSQL()
+    local_db.query("""
+        SELECT DISTANCE(179., 10., G.ra, G.dec) as ang_sep
+        FROM gaiadr3.gaia_source as G
+        WHERE G.source_id = 4472832130942575872
+    """)
+
+and you will get the same result of 89.618118.
+
+Another example is the following query that works on `Gaia Archive`_ will also work in ``MyGaiaDB`` to select the first 100 gaia sources with XP coefficients
 
 ..  code-block:: sql
 
