@@ -1,5 +1,8 @@
 import os
 import pathlib
+from pkg_resources import get_distribution
+
+version = __version__ = get_distribution("MyGaiaDB").version
 
 # make sure (shared) database folder exists
 astro_data_path = os.getenv("MY_ASTRO_DATA")

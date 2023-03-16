@@ -21,6 +21,12 @@ def test_c_exts():
 
     # merak and dubhe for all amateur stargazer
     np.testing.assert_approx_equal(c.execute("""SELECT DISTANCE(165.458, 56.3825, 165.933, 61.7511)""").fetchall()[0][0], 5.37411, 4)
+    np.testing.assert_approx_equal(c.execute("""SELECT DISTANCE(165.933, 61.7511, 165.458, 56.3825)""").fetchall()[0][0], 5.37411, 4)
+    # known bad G.source_id = 4472832130942575872
+    np.testing.assert_approx_equal(c.execute("""SELECT DISTANCE(179., 10., 269.448503, 4.73942)""").fetchall()[0][0], 89.6181177, 4)
+
+    # examples on https://www.cosmos.esa.int/web/gaia-users/archive/writing-queries#adql_syntax_2
+    np.testing.assert_equal(c.execute("""SELECT CBRT(27.)""").fetchall()[0][0], 3.)
 
     # examples on https://www.cosmos.esa.int/web/gaia-users/archive/writing-queries#adql_syntax_1
     np.testing.assert_equal(c.execute("""SELECT GAIA_HEALPIX_INDEX(4, 2060294888487267584)""").fetchall()[0][0], 914)

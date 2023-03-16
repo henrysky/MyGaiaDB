@@ -40,11 +40,24 @@ static void piFunc(sqlite3_context *context, int argc, sqlite3_value **argv)
     sqlite3_result_double(context, M_PI);
 }
 
+static void piFunc2(sqlite3_context *context, int argc, sqlite3_value **argv)
+{
+    double *tpix = (double *)malloc((size_t)(sizeof(double) * 2));
+    tpix[0] = M_PI;
+    tpix[1] = M_PI;
+    sqlite3_result_double(context, *tpix);
+}
+
 static void randFunc(sqlite3_context *context, int argc, sqlite3_value **argv)
 {
     double r;
     r = (double)rand() / RAND_MAX;
     sqlite3_result_double(context, r);
+}
+
+static double divFunc(double y, double x)
+{
+    return y / x;
 }
 
 static double distance(double pt1, double pt2, double pt3, double pt4)
@@ -58,10 +71,13 @@ static double distance(double pt1, double pt2, double pt3, double pt4)
     pt4 = radians(pt4);
     top = sqrt(pow(cos(pt4), 2) * pow(sin(pt3 - pt1), 2) + pow(cos(pt2) * sin(pt4) - sin(pt2) * cos(pt4) * cos(pt3 - pt1), 2));
     bottom = sin(pt2) * sin(pt4) + cos(pt2) * cos(pt4) * cos(pt3 - pt1);
-    ang_sep = degrees(atan(top / bottom));
+    ang_sep = fmod(degrees(atan(top / bottom)), 180.);
+    if (ang_sep < 0)
+    {
+        ang_sep += 180;
+    }
     return ang_sep;
 }
-
 
 static double gaia_healpix_index(double level, double source_id)
 {
@@ -76,7 +92,6 @@ static double sign(double x)
 {
     return (x > 0) - (x < 0);
 }
-
 
 /*
 ** Implementation of 1-argument SQL maths functions:
@@ -180,11 +195,14 @@ EXPORT int sqlite3_extension_init(sqlite3 *db, char **pzErrMsg, const sqlite3_ap
     sqlite3_create_function(db, "acosh", 1, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, acosh, math1Func, NULL, NULL);
     sqlite3_create_function(db, "asinh", 1, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, asinh, math1Func, NULL, NULL);
     sqlite3_create_function(db, "atanh", 1, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, atanh, math1Func, NULL, NULL);
+    // https://www.cosmos.esa.int/web/gaia-users/archive/writing-queries#adql_syntax_2
+    sqlite3_create_function(db, "cbrt", 1, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, cbrt, math1Func, NULL, NULL);
+    sqlite3_create_function(db, "div", 2, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, divFunc, math2Func, NULL, NULL);
 
     // ADQL Geometrical functions
     sqlite3_create_function(db, "distance", 4, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, distance, math4Func, NULL, NULL);
 
-    // Gaia TAP+ ADQL functions
+    // Gaia TAP+ ADQL functions at https://www.cosmos.esa.int/web/gaia-users/archive/writing-queries#adql_syntax_1
     sqlite3_create_function(db, "sign", 1, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, sign, math1Func, NULL, NULL);
     sqlite3_create_function(db, "gaia_healpix_index", 2, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, gaia_healpix_index, math2Func, NULL, NULL);
 

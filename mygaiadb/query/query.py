@@ -17,6 +17,7 @@ from mygaiadb import (
     gaia_sql_db_path,
     tmass_sql_db_path,
     allwise_sql_db_path,
+    __version__
 )
 
 
@@ -149,6 +150,7 @@ class LocalGaiaSQL:
         """
         self._file_exist(mygaiadb_default_db)
         conn = sqlite3.connect(gaia_sql_db_path)
+        conn.create_function("mygaiadb_version", 0, lambda: __version__, deterministic=True)
         c = conn.cursor()
         if self.load_ext:
             self._load_sqlite3_ext(conn)
@@ -184,7 +186,6 @@ class LocalGaiaSQL:
     @staticmethod
     def _load_sqlite3_ext(c):
         c.enable_load_extension(True)
-
         # Find and load the library
         _lib = None
         _libname = ctypes.util.find_library("astroqlite_c")
