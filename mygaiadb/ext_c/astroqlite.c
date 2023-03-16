@@ -135,8 +135,9 @@ static void math2Func(sqlite3_context *context, int argc, sqlite3_value **argv)
 static void math2Func_int(sqlite3_context *context, int argc, sqlite3_value **argv)
 {
     int type0, type1;
-    int v0, v1, ans;
-    int (*x)(long long int, long long int);
+    int v0, ans;
+    long long int v1; // source_id
+    int (*x)(int, long long int);
     type0 = sqlite3_value_numeric_type(argv[0]);
     type1 = sqlite3_value_numeric_type(argv[1]);
     if ((type0 != SQLITE_INTEGER && type0 != SQLITE_FLOAT) || (type1 != SQLITE_INTEGER && type1 != SQLITE_FLOAT))
@@ -144,8 +145,8 @@ static void math2Func_int(sqlite3_context *context, int argc, sqlite3_value **ar
         return;
     }
     v0 = sqlite3_value_int(argv[0]);
-    v1 = sqlite3_value_int(argv[1]);
-    x = (long long int (*)(long long int, long long int))sqlite3_user_data(context);
+    v1 = sqlite3_value_int64(argv[1]);
+    x = (int (*)(int, long long int))sqlite3_user_data(context);
     ans = x(v0, v1);
     sqlite3_result_int(context, ans);
 }
