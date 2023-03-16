@@ -30,7 +30,9 @@ Some optional functionalities require ``galpy``, ``mwdust``. Downloading functio
 
 You can simply do ``pip install mygaiadb`` to install compiled ``MyGaiaDB`` wheels.
 
-Other, you need to compile the code locally from source code by doing ``python -m pip install .`` to install the 
+Otherwise, you need to compile the code locally from source code. You need to add the folder which contains ``sqlite3ext.h`` to **INCLUDE** environment variable.
+If you are using Conda, you can do ``set INCLUDE=%CONDA_PREFIX%\Library\include;%INCLUDE%`` for Windows CMD or ``$env:INCLUDE="$env:CONDA_PREFIX\Library\include"`` for Windows PowerShell 
+or ``export CFLAGS=-I$CONDA_PREFIX/include`` for MacOS or nothing for Linux. Then you can run ``python -m pip install .`` to install the 
 latest commits from github or ``python -m pip install -e .``  to develop ``MyGaiaDB`` locally.
 
 Folder Structure

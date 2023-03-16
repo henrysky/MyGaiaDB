@@ -79,9 +79,9 @@ static double distance(double pt1, double pt2, double pt3, double pt4)
     return ang_sep;
 }
 
-static double gaia_healpix_index(double level, double source_id)
+static int gaia_healpix_index(int level, long long int source_id)
 {
-    double healpix;
+    int healpix;
     long long int factor;
     factor = (pow(2, 35) * pow(4, 12 - level));
     healpix = floor(source_id / factor);
@@ -132,7 +132,23 @@ static void math2Func(sqlite3_context *context, int argc, sqlite3_value **argv)
     ans = x(v0, v1);
     sqlite3_result_double(context, ans);
 }
-
+static void math2Func_int(sqlite3_context *context, int argc, sqlite3_value **argv)
+{
+    int type0, type1;
+    int v0, v1, ans;
+    int (*x)(long long int, long long int);
+    type0 = sqlite3_value_numeric_type(argv[0]);
+    type1 = sqlite3_value_numeric_type(argv[1]);
+    if ((type0 != SQLITE_INTEGER && type0 != SQLITE_FLOAT) || (type1 != SQLITE_INTEGER && type1 != SQLITE_FLOAT))
+    {
+        return;
+    }
+    v0 = sqlite3_value_int(argv[0]);
+    v1 = sqlite3_value_int(argv[1]);
+    x = (long long int (*)(long long int, long long int))sqlite3_user_data(context);
+    ans = x(v0, v1);
+    sqlite3_result_int(context, ans);
+}
 /*
 ** Implementation of 4-argument SQL maths functions:
 */
@@ -204,7 +220,7 @@ EXPORT int sqlite3_extension_init(sqlite3 *db, char **pzErrMsg, const sqlite3_ap
 
     // Gaia TAP+ ADQL functions at https://www.cosmos.esa.int/web/gaia-users/archive/writing-queries#adql_syntax_1
     sqlite3_create_function(db, "sign", 1, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, sign, math1Func, NULL, NULL);
-    sqlite3_create_function(db, "gaia_healpix_index", 2, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, gaia_healpix_index, math2Func, NULL, NULL);
+    sqlite3_create_function(db, "gaia_healpix_index", 2, SQLITE_UTF8 | SQLITE_INNOCUOUS | SQLITE_DETERMINISTIC, gaia_healpix_index, math2Func_int, NULL, NULL);
 
     return SQLITE_OK;
 }

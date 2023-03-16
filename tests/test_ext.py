@@ -30,4 +30,6 @@ def test_c_exts():
 
     # examples on https://www.cosmos.esa.int/web/gaia-users/archive/writing-queries#adql_syntax_1
     np.testing.assert_approx_equal(c.execute("""SELECT GAIA_HEALPIX_INDEX(4, 2060294888487267584)""").fetchall()[0][0], 914, 15)
+    np.testing.assert_approx_equal(c.execute("""SELECT GAIA_HEALPIX_INDEX(8, 539853444666465792)""").fetchall()[0][0], 61374, 15)
+    np.testing.assert_approx_equal(c.execute("""SELECT GAIA_HEALPIX_INDEX(8, 1678668421246394624)""").fetchall()[0][0], 190842, 15)
     np.testing.assert_approx_equal(c.execute("""SELECT SIGN(-0.001)""").fetchall()[0][0], -1, 15)
