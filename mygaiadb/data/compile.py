@@ -599,6 +599,8 @@ def compile_tmass_sql_db(indexing=True):
             sep="|",
             usecols=[tmass_allcol.index(i) for i in dtypes.keys()],
             names=dtypes.keys(),
+            # turn null to proper NaN
+            na_values=["\\N"],
             # dont allow white space in names since gaia best neightbour do not have white space
             converters={"designation": str.strip},
         )
