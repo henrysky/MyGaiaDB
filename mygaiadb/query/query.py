@@ -73,6 +73,18 @@ class LocalGaiaSQL:
 
         self.conn, self.cursor = self._load_db()
 
+        # ipython Auto-completion
+        try:
+            from IPython import get_ipython
+            def name_completer(ipython, event):
+                out = self.list_all_tables()
+                out.extend(list(f"user_table.{i}" for i in self.list_user_tables().keys()))
+                return out
+            get_ipython().set_hook("complete_command", name_completer,
+                                   re_key=".*get_table_column")
+        except:
+            pass
+
     def _check_callbacks_header(self, headers, callbacks):
         """
         Helper function to check if all columns required by all callbacks are presented in query
