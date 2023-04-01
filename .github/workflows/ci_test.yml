@@ -14,15 +14,6 @@ jobs:
       MY_ASTRO_DATA: ${{ github.workspace }}/my_astro_data/
     steps:
       - uses: actions/checkout@v3
-      # - name: Set up Python
-      #   uses: actions/setup-python@v4
-      #   with:
-      #     python-version: "3.x"
-      # - name: Install dependencies
-      #   run: |
-      #     sudo apt-get install -y libsqlite3-dev
-      #     python -m pip install pytest pytest-order galpy gaiadr3-zeropoint mwdust
-      #     python -m pip install .
       - uses: conda-incubator/setup-miniconda@v2
         with:
           channels: conda-forge
@@ -51,7 +42,6 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
-          python -m build --sdist
           python -m pip install .
       - name: Cache my astro data
         uses: actions/cache@v3

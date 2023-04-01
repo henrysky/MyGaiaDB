@@ -84,13 +84,14 @@ jobs:
           conda install -y numpy astropy h5py pandas tqdm wheel pytest pytest-order galpy
           python -m pip install gaiadr3-zeropoint build mwdust
       - name: Build sdist
+        shell: bash -l {0}
         run: |
           python -m build --sdist
       - uses: actions/upload-artifact@v3
         with:
           name: sdist
           path: ./dist/*.tar.gz
-# Deploy wheels and sdist to PyPI (upon release creation)
+  # Deploy wheels and sdist to PyPI (upon release creation)
   deploy_pypi:
     name: Deploy to PyPI
     needs: [build_wheels, build_sdist]
