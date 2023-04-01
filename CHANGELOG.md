@@ -1,4 +1,15 @@
-## [0.2] - 2023-xx-xx
+## [0.3] - 2023-xx-xx
+
+### Added
+- N/A
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
+## [0.2] - 2023-04-01
 
 ### Added
 - SQL C extension for all maths and limited subset of geometrical functions mimicing ADQL
