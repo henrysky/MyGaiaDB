@@ -22,7 +22,7 @@ PyMODINIT_FUNC PyInit_astroqlite_c(void)
 
 /* Constants */
 #ifndef M_PI
-#define M_PI 3.141592653589793238462643383279502884
+#define M_PI 3.14159265358979323846
 #endif
 
 static double radians(double x)

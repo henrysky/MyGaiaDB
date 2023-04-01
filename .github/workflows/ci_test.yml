@@ -51,6 +51,7 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
+          python -m build --sdist
           python -m pip install .
       - name: Cache my astro data
         uses: actions/cache@v3
