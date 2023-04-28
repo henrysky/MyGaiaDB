@@ -216,7 +216,7 @@ class LocalGaiaSQL:
 
     @preprocess_query
     def save_csv(
-        self, query, filename, chunchsize=50000, overwrite=True, callbacks=None
+        self, query, filename, chunchsize=50000, overwrite=True, callbacks=None, comments=True
     ):
         """
         Given query, save the fetchall() result to csv, "chunchsize" number of rows at each time until finished
@@ -227,6 +227,14 @@ class LocalGaiaSQL:
             Query string
         filename : string
             filename (*.csv) to be saved
+        chunchsize : int
+            number of rows to do in one batch
+        overwrite : bool
+            whether to overwrite csv file if it already exists
+        callbacks : list
+            list of mygaiadb callbacks
+        comments : bool
+            whether to save the query as comment lines in csv file
         Returns
         -------
         None
@@ -237,6 +245,17 @@ class LocalGaiaSQL:
         self.cursor.execute(query)
         if os.path.exists(filename) and not overwrite:
             raise SystemError(f"{os.path.abspath(filename)} already existed!")
+        f = open(filename, "a")
+        if comments:
+            comment_char = "# "
+            query_commented = query.replace("\n", "\n" + comment_char)
+            if "\n" in query[:1]:
+                # in case the first character is new line
+                query = query[1:]
+            else:
+                # in case the first character is NOT new line so we need to add comment in the first line
+                query = comment_char + query
+            f.write(query_commented)
         # write header rows
         header_og = [d[0] for d in self.cursor.description]
         if callbacks is not None:
@@ -245,7 +264,7 @@ class LocalGaiaSQL:
             self._check_callbacks_header(header_og, callbacks)
         else:
             header_big = header_og
-        pd.DataFrame(columns=header_big).to_csv(filename, index=False)
+        pd.DataFrame(columns=header_big).to_csv(f, index=False)
         # csv_out.writerow(header)
         first_flag = True
         with tqdm(unit=" rows") as pbar:
@@ -258,7 +277,7 @@ class LocalGaiaSQL:
                 if callbacks is not None:
                     _df = self._result_after_callbacks(_df, callbacks)
                 _df.to_csv(
-                    filename,
+                    f,
                     mode="a" if not first_flag else "w",
                     index=False,
                     header=False if not first_flag else True,

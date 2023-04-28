@@ -300,7 +300,7 @@ appropriate permission manually each time you have used ``MyGaiaDB``.
     """
 
     # take ~12 hours to complete
-    local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True)
+    local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True, comments=True)
 
 As you can see for ``has_xp_continuous``, we can also use ``1`` to represent ``true`` which is used by Gaia archive but both are fine with ``MyGaiaDB``.
 
@@ -324,7 +324,7 @@ which columns to use on the fly.
     """
     ra_conversion = QueryCallback(new_col_name="ra_rad", func=lambda ra: ra / 180 * np.pi)
 
-    local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True, callbacks=[ra_conversion])
+    local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True, callbacks=[ra_conversion], comments=True)
 
 We also have a few useful callbacks included by default to add columns like zero-point corrected parallax or extinction
 
@@ -353,8 +353,8 @@ User tables
 ..  code-block:: python
 
     from mygaiadb.query import LocalGaiaSQL 
-    localdb = LocalGaiaSQL()  
-    localdb.upload_user_table(pd.DataFrame({"source_id": [5188146770731873152, 4611686018427432192, 5764607527332179584]}), tablename="my_table_1")
+    local_db = LocalGaiaSQL()  
+    local_db.upload_user_table(pd.DataFrame({"source_id": [5188146770731873152, 4611686018427432192, 5764607527332179584]}), tablename="my_table_1")
 
 and then carry-on doing query with ``my_table_1`` cross-matching with other tables like 
 
