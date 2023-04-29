@@ -216,10 +216,10 @@ class LocalGaiaSQL:
 
     @preprocess_query
     def save_csv(
-        self, query, filename, chunchsize=50000, overwrite=True, callbacks=None, comments=True
+        self, query, filename, chunksize=50000, overwrite=True, callbacks=None, comments=True
     ):
         """
-        Given query, save the fetchall() result to csv, "chunchsize" number of rows at each time until finished
+        Given query, save the fetchall() result to csv, "chunksize" number of rows at each time until finished
 
         Parameters
         ----------
@@ -227,7 +227,7 @@ class LocalGaiaSQL:
             Query string
         filename : string
             filename (*.csv) to be saved
-        chunchsize : int
+        chunksize : int
             number of rows to do in one batch
         overwrite : bool
             whether to overwrite csv file if it already exists
@@ -270,7 +270,7 @@ class LocalGaiaSQL:
         with tqdm(unit=" rows") as pbar:
             pbar.set_description_str("Rows written: ")
             while True:  # looping until the end
-                results = self.cursor.fetchmany(chunchsize)
+                results = self.cursor.fetchmany(chunksize)
                 if results == []:
                     break
                 _df = pd.DataFrame(results, columns=header_og)

@@ -300,7 +300,7 @@ appropriate permission manually each time you have used ``MyGaiaDB``.
     """
 
     # take ~12 hours to complete
-    local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True, comments=True)
+    local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, comments=True)
 
 As you can see for ``has_xp_continuous``, we can also use ``1`` to represent ``true`` which is used by Gaia archive but both are fine with ``MyGaiaDB``.
 
@@ -324,7 +324,7 @@ which columns to use on the fly.
     """
     ra_conversion = QueryCallback(new_col_name="ra_rad", func=lambda ra: ra / 180 * np.pi)
 
-    local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True, callbacks=[ra_conversion], comments=True)
+    local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, callbacks=[ra_conversion], comments=True)
 
 We also have a few useful callbacks included by default to add columns like zero-point corrected parallax or extinction
 
@@ -343,7 +343,7 @@ We also have a few useful callbacks included by default to add columns like zero
     # adding SFD E(B-V) in H band filter using mwdust python package
     dust_callback = DustCallback(new_col_name="sfd_ebv", filter="H", dustmap="SFD")
 
-    local_db.save_csv(query, "output.csv", chunchsize=50000, overwrite=True, callbacks=[zp_callback, dust_callback])
+    local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, callbacks=[zp_callback, dust_callback])
 
 User tables
 -------------
