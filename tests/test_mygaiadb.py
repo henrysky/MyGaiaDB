@@ -5,6 +5,7 @@ import pathlib
 import mygaiadb
 from mygaiadb.query import LocalGaiaSQL
 from mygaiadb.data import download, compile
+import numpy as np
 import pandas as pd
 
 
@@ -62,5 +63,9 @@ def test_query():
     LIMIT 10
     """
     localdb = LocalGaiaSQL(load_allwise=False)
-    localdb.save_csv(query, "output.csv")
+    localdb.save_csv(query, "output.csv", comments=True)
     query_df = localdb.query(query)
+
+    query_df_from_saved = pd.read_csv("output.csv", comment="#")
+    # make sure saved csv has the same result of simply query
+    assert np.all(query_df.loc[0] == query_df_from_saved.loc[0])

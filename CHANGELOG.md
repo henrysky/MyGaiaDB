@@ -1,7 +1,7 @@
 ## [0.3] - 2023-xx-xx
 
 ### Added
-- N/A
+- Option to save original query as comments in csv file
 
 ### Changed
 - N/A
