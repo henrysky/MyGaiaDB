@@ -63,7 +63,19 @@ def test_query():
     LIMIT 10
     """
     localdb = LocalGaiaSQL(load_allwise=False)
-    localdb.save_csv(query, "output.csv", comments=True)
+    localdb.save_csv(query, "output.csv", comments=False)
+    query_df = localdb.query(query)
+
+
+@pytest.mark.order(5)
+def test_query_saving():
+    query = """
+    SELECT * 
+    FROM gaiadr3.gaia_source as G
+    LIMIT 10
+    """
+    localdb = LocalGaiaSQL(load_allwise=False)
+    localdb.save_csv(query, "output.csv", overwrite=True, comments=True)
     query_df = localdb.query(query)
 
     query_df_from_saved = pd.read_csv("output.csv", comment="#")
