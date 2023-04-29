@@ -245,16 +245,23 @@ class LocalGaiaSQL:
         self.cursor.execute(query)
         if os.path.exists(filename) and not overwrite:
             raise SystemError(f"{os.path.abspath(filename)} already existed!")
-        f = open(filename, "a")
+        f = open(filename, "w")
         if comments:
             comment_char = "# "
             query_commented = query.replace("\n", "\n" + comment_char)
-            if "\n" in query[:1]:
+            if "\n" in query_commented[:1]:
                 # in case the first character is new line
-                query = query[1:]
+                query_commented = query_commented[1:]
             else:
                 # in case the first character is NOT new line so we need to add comment in the first line
-                query = comment_char + query
+                query_commented = comment_char + query_commented
+            print(query_commented)
+            if "\n" in query_commented[-3:-2]:
+                # in case the last character is new line, so will mess up the csv header
+                query_commented = query_commented[:-2]
+            else:
+                # if not we need to add a new line so header wont be in the comment line
+                query_commented = query_commented + "\n"
             f.write(query_commented)
         # write header rows
         header_og = [d[0] for d in self.cursor.description]
@@ -264,8 +271,6 @@ class LocalGaiaSQL:
             self._check_callbacks_header(header_og, callbacks)
         else:
             header_big = header_og
-        pd.DataFrame(columns=header_big).to_csv(f, index=False)
-        # csv_out.writerow(header)
         first_flag = True
         with tqdm(unit=" rows") as pbar:
             pbar.set_description_str("Rows written: ")
@@ -281,6 +286,7 @@ class LocalGaiaSQL:
                     mode="a" if not first_flag else "w",
                     index=False,
                     header=False if not first_flag else True,
+                    lineterminator="\n"
                 )
                 first_flag = False
                 pbar.update(len(_df))

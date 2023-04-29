@@ -69,8 +69,37 @@ def test_query():
 
 @pytest.mark.order(5)
 def test_query_saving():
+    # ================= query with new line in both start and end =================
     query = """
-    SELECT * 
+    SELECT G.ra, G.dec
+    FROM gaiadr3.gaia_source as G
+    LIMIT 10
+    """
+    localdb = LocalGaiaSQL(load_allwise=False)
+    localdb.save_csv(query, "output.csv", overwrite=True, comments=True)
+    query_df = localdb.query(query)
+
+    query_df_from_saved = pd.read_csv("output.csv", comment="#")
+    # make sure saved csv has the same result of simply query
+    assert np.all(query_df.loc[0] == query_df_from_saved.loc[0])
+
+
+    # ================= query with new line in start =================
+    query = """
+    SELECT G.ra, G.dec
+    FROM gaiadr3.gaia_source as G
+    LIMIT 10"""
+    localdb = LocalGaiaSQL(load_allwise=False)
+    localdb.save_csv(query, "output.csv", overwrite=True, comments=True)
+    query_df = localdb.query(query)
+
+    query_df_from_saved = pd.read_csv("output.csv", comment="#")
+    # make sure saved csv has the same result of simply query
+    assert np.all(query_df.loc[0] == query_df_from_saved.loc[0])
+
+
+    # ================= query with new line in end =================
+    query = """SELECT G.ra, G.dec
     FROM gaiadr3.gaia_source as G
     LIMIT 10
     """
