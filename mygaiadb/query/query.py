@@ -76,12 +76,17 @@ class LocalGaiaSQL:
         # ipython Auto-completion
         try:
             from IPython import get_ipython
-            def name_completer(ipython, event):
+            def list_all_tables_completer(ipython, event):
                 out = self.list_all_tables()
                 out.extend(list(f"user_table.{i}" for i in self.list_user_tables().keys()))
                 return out
-            get_ipython().set_hook("complete_command", name_completer,
+            def usertable_completer(ipython, event):
+                out = self.list_user_tables()
+                return out
+            get_ipython().set_hook("complete_command", list_all_tables_completer,
                                    re_key=".*get_table_column")
+            get_ipython().set_hook("complete_command", usertable_completer,
+                                   re_key=".*remove_user_table")
         except:
             pass
 

@@ -2,6 +2,7 @@
 
 ### Added
 - Option to save original query as comments in csv file
+- IPython autocomplete in remove_user_table()
 
 ### Changed
 - N/A
