@@ -372,7 +372,7 @@ and you can remove a user table like ``my_table_1`` in this case by using ``remo
 
 ..  code-block:: python
 
-    a.remove_user_table("my_table_1")
+    local_db.remove_user_table("my_table_1")
 
 Spectroscopy Query
 --------------------
