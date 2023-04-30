@@ -52,6 +52,7 @@ def test_utilities():
 
 @pytest.mark.order(5)
 def test_query():
+    # just making sure a complex query like this can run without issue
     query = """
     SELECT * 
     FROM gaiadr3.gaia_source as G

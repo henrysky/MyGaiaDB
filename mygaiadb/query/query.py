@@ -255,7 +255,6 @@ class LocalGaiaSQL:
             else:
                 # in case the first character is NOT new line so we need to add comment in the first line
                 query_commented = comment_char + query_commented
-            print(query_commented)
             if "\n" in query_commented[-3:-2]:
                 # in case the last character is new line, so will mess up the csv header
                 query_commented = query_commented[:-2]
