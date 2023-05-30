@@ -4,7 +4,7 @@ import numpy as np
 from .. import astro_data_path, gaia_xp_coeff_h5_path
 
 
-def yield_xp_coeffs(source_ids, assume_unique=True, rdcc_nbytes=16*1024**3, rdcc_nslots=10e7):
+def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, rdcc_nbytes=16*1024**3, rdcc_nslots=10e7):
     """
     Function to yield XP coeffs according to their healpixs from source_id
 
@@ -14,6 +14,8 @@ def yield_xp_coeffs(source_ids, assume_unique=True, rdcc_nbytes=16*1024**3, rdcc
         source id
     assume_unique: bool
         whether to assume the list of source id is unique
+    return_errors: bool
+        whether to return xp coeffs error
     rdcc_nbytes: int
         h5py cache in bytes
     rdcc_nslots: int
@@ -52,7 +54,13 @@ def yield_xp_coeffs(source_ids, assume_unique=True, rdcc_nbytes=16*1024**3, rdcc
 
         if len(matches) > 0:
             coeffs = np.hstack([bp_coeffs[idx2], rp_coeffs[idx2]])
-            yield coeffs, np.arange(total_num)[good_idx][idx1]
+            if not return_errors:
+                yield coeffs, np.arange(total_num)[good_idx][idx1]
+            else:
+                bp_coeffs_err = spec_f["bp_coefficient_errors"][()]
+                rp_coeffs_err = spec_f["rp_coefficient_errors"][()]
+                coeffs_err = np.hstack([bp_coeffs_err[idx2], rp_coeffs_err[idx2]])
+                yield coeffs, np.arange(total_num)[good_idx][idx1], coeffs_err
         else:
             # TODO: I think maybe should not pass, need more test
             pass

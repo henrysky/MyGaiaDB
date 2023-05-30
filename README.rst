@@ -6,7 +6,7 @@ MyGaiaDB
 ``MyGaiaDB`` is simple python package with a set of scripts to help you setup a local 
 Gaia **DR3** database (also local 2MASS and ALLWISE databases too) without the need of administrator privilege 
 and is compatible to all major platforms (Linux, Mac and Windows) because ``MyGaiaDB`` is **serverless** 
-and requires Python only using ``sqlite`` as long as you have enough disk space.
+which requires Python only using ``sqlite`` as long as you have enough disk space.
 
 This code is mainly to help myself managing data for my research project with Gaia DR3 XP spectra 
 and not meant to fit research usage from every aspect of Gaia's 1 billion stars. The main motivation of this 
@@ -374,8 +374,8 @@ and you can remove a user table like ``my_table_1`` in this case by using ``remo
 
     local_db.remove_user_table("my_table_1")
 
-Spectroscopy Query
---------------------
+Gaia XP Spectroscopy Query
+----------------------------
 
 There can be use case where you want to run a function (e.g., a machine learning model) to a large batch of source_id with reasonable memory usage. 
 You can use ``MyGaiaDB`` to do that in batch provided you have compiled a single h5 with ``mygaiadb.compile.compile_xp_continuous_allinone_h5()``
@@ -388,7 +388,11 @@ You can use ``MyGaiaDB`` to do that in batch provided you have compiled a single
         coeffs, idx = i
         # XP coeffs of idx from the original a_very_long_source_id_array
 
-For example you want to infer ``M_H`` with your machine learning model
+    # alternatively if you also want coeffs error
+    for i in yield_xp_coeffs(a_very_long_source_id_array, return_errors=True):
+        coeffs, idx, coeffs_err = i  # unpack
+
+For example you want to infer ``M_H`` with your machine learning model on many XP spectra
 
 ..  code-block:: python
 
@@ -396,7 +400,7 @@ For example you want to infer ``M_H`` with your machine learning model
 
     m_h = np.ones(len(a_very_long_source_id_array)) * -9999.
     for i in yield_xp_coeffs(a_very_long_source_id_array):
-        coeffs, idx = i
+        coeffs, idx = i  # unpack
         m_h[idx] = your_ml_model(coeffs)
 
 Author
