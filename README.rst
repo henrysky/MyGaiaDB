@@ -257,6 +257,21 @@ returns 89.618118 on `Gaia Archive`_. And you can also use such query in the sam
 
 and you will get the same result of 89.618118.
 
+For example the following query which utilize conventional maths function to approximate uncertainty in Gaia G magnitude
+
+..  code-block:: python
+
+    from mygaiadb.query import LocalGaiaSQL
+
+    # initialize a local Gaia SQL database instance
+    local_db = LocalGaiaSQL()
+    # CDS equation for conversion: http://vizier.cds.unistra.fr/viz-bin/VizieR-n?-source=METAnot&catid=1350&notid=63&-out=text
+    local_db.query("""
+        SELECT sqrt(power(((2.5 / log(10)) * (1 / G.phot_g_mean_flux_over_error)), 2) + power(0.0027553202, 2)) as phot_g_mean_mag_error
+        FROM gaiadr3.gaia_source as G
+        WHERE G.source_id = 3158175803069175680
+    """)
+
 Another example is the following query that works on `Gaia Archive`_ will also work in ``MyGaiaDB`` to select the first 100 gaia sources with XP coefficients
 
 ..  code-block:: sql
