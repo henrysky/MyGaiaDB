@@ -302,7 +302,17 @@ appropriate permission manually each time you have used ``MyGaiaDB``.
     # take ~12 hours to complete
     local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, comments=True)
 
-As you can see for ``has_xp_continuous``, we can also use ``1`` to represent ``true`` which is used by Gaia archive but both are fine with ``MyGaiaDB``.
+As you can see for ``has_xp_continuous``, we can also use ``1`` to represent ``true`` which is used by Gaia archive but both are fine with ``MyGaiaDB``. 
+The ``overwrite=True`` means the function will save the file even if the file with the same name already exists. The ``comments=True`` means the function will 
+save the query as a comment in the csv file so you know how to reproduce the query result. To read the comments from the csv file, you can use the following code
+
+..  code-block:: python
+
+    from itertools import takewhile
+    with open("output.csv", "r") as fobj:
+        headiter = takewhile(lambda s: s.startswith("#"), fobj)
+        header = list(headiter)
+    print(" ".join(header).replace(" # ", "").replace("# ", ""))
 
 ``MyGaiaDB`` also has callbacks functionality called ``QueryCallback``, these callbacks can be used when you do query. For example, 
 you can create a callbacks to convert ``ra`` in degree to `ra_rad` in radian. So your csv file in the end will have a new column 
