@@ -2,10 +2,10 @@
 
 ### Added
 - Option to save original query as comments in csv file
-- IPython autocomplete in remove_user_table()
+- IPython autocomplete in ``remove_user_table()``
 
 ### Changed
-- N/A
+- Improve performance for ``yield_xp_coeffs()``
 
 ### Fixed
 - N/A

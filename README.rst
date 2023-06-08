@@ -152,7 +152,7 @@ Here are functions to compile databases (each function only need to be ran once 
 **Each function will generate large sized file(s)**. Moreover, if you are using a shared computing server, 
 only one user need to run the functions and share **MY_ASTRO_DATA** folder path to other user so
 they can setup their own environment variable **MY_ASTRO_DATA** to that folder too. Multiple users can use the SQL 
-database at the same time since ``MyGaiaDB`` will set read-only permission mission before loading databases.
+database at the same time since ``MyGaiaDB`` will set read-only permission before loading databases to prevent accidential modification.
 
 ..  code-block:: python
 
