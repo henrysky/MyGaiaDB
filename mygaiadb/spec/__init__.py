@@ -4,18 +4,21 @@ import numpy as np
 from .. import astro_data_path, gaia_xp_coeff_h5_path
 
 
-def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, rdcc_nbytes=16*1024**3, rdcc_nslots=10e7):
+def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_additional_columns=None, rdcc_nbytes=16*1024**3, rdcc_nslots=10e7):
     """
     Function to yield XP coeffs according to their healpixs from source_id
 
     Parameters
     ----------
-    source_ids: (int, list, ndarray)
-        source id
+    source_ids: Union[int, list, ndarray]
+        Gaia source id
     assume_unique: bool
-        whether to assume the list of source id is unique
+        Whether to assume the list of Gaia source id is unique
     return_errors: bool
-        whether to return xp coeffs error
+        Whether to return xp coeffs error
+    return_additional_columns: Union[None, list] 
+        Additional columns to return
+        If you want coefficients error, please use return_errors=True
     rdcc_nbytes: int
         h5py cache in bytes
     rdcc_nslots: int
@@ -50,17 +53,25 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, rdcc_nb
                 assume_unique=assume_unique,
                 return_indices=True,
             )
+            # load all to memory to be faster, although this is kinda memory intensive
             bp_coeffs = spec_f["bp_coefficients"][()]
             rp_coeffs = spec_f["rp_coefficients"][()]
 
             if len(matches) > 0:
                 coeffs = np.hstack([bp_coeffs[idx2], rp_coeffs[idx2]])
+                extra_columns = tuple(spec_f[i][()][idx2] for i in return_additional_columns)
                 if not return_errors:
-                    yield coeffs, np.arange(total_num)[good_idx][idx1]
+                    if return_additional_columns is None:
+                        yield coeffs, np.arange(total_num)[good_idx][idx1]
+                    else:
+                        yield coeffs, np.arange(total_num)[good_idx][idx1], *extra_columns
                 else:
                     bp_coeffs_err = spec_f["bp_coefficient_errors"][()]
                     rp_coeffs_err = spec_f["rp_coefficient_errors"][()]
                     coeffs_err = np.hstack([bp_coeffs_err[idx2], rp_coeffs_err[idx2]])
-                    yield coeffs, np.arange(total_num)[good_idx][idx1], coeffs_err
+                    if return_additional_columns is None:
+                        yield coeffs, np.arange(total_num)[good_idx][idx1], coeffs_err
+                    else:
+                        yield coeffs, np.arange(total_num)[good_idx][idx1], coeffs_err, *extra_columns
             else:  # this is the case where the source_id is within healpix but does not have xp coeffs
                 pass

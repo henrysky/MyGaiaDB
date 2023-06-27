@@ -11,12 +11,12 @@ which requires Python only using ``sqlite`` as long as you have enough disk spac
 This code is mainly to help myself managing data for my research project with Gaia DR3 XP spectra 
 and not meant to fit research usage from every aspect of Gaia's 1 billion stars. The main motivation of this 
 code is to make setting up local Gaia database with 2MASS and ALLWISE accessible to everyone. Possible use cases include 
-but not limited to make very long complex query cross-matching to multiple databases that can take a long time 
+but not limited to making very long complex query cross-matching to multiple databases that can take a long time 
 to finish (where the online ESA `Gaia archive`_ has timeout limitation).
 
 You are welcome to modify the code, make pull request to make this code to suit your and others need.
 
-**Part of this code will never be continuously tested properly since no way I can run this code with a few TB of gaia data on Github Actions**
+**Part of this code will never be continuously tested properly since no way I can run this code with a few TBs of gaia data on Github Actions**
 
 .. contents:: **Table of Contents**
     :depth: 3
@@ -417,13 +417,18 @@ You can use ``MyGaiaDB`` to do that in batch provided you have compiled a single
     for i in yield_xp_coeffs(a_very_long_source_id_array, return_errors=True):
         coeffs, idx, coeffs_err = i  # unpack
 
+    # alternatively if you want coeffs error and some other columns like bp_n_relevant_basesand rp_n_relevant_bases
+    # ref: https://gea.esac.esa.int/archive/documentation/GDR3//Gaia_archive/chap_datamodel/sec_dm_spectroscopic_tables/ssec_dm_xp_summary.html
+    for i in yield_xp_coeffs(a_very_long_source_id_array, return_errors=True, return_additional_columns=["bp_n_relevant_bases", "rp_n_relevant_bases"]):
+        coeffs, idx, coeffs_err, bp_n_relevant_bases, rp_n_relevant_bases = i  # unpack
+
 For example you want to infer ``M_H`` with your machine learning model on many XP spectra
 
 ..  code-block:: python
 
     from mygaiadb.spec import yield_xp_coeffs
 
-    m_h = np.ones(len(a_very_long_source_id_array)) * -9999.
+    m_h = np.ones(len(a_very_long_source_id_array)) * np.nan
     for i in yield_xp_coeffs(a_very_long_source_id_array):
         coeffs, idx = i  # unpack
         m_h[idx] = your_ml_model(coeffs)

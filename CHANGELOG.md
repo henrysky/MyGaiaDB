@@ -3,6 +3,7 @@
 ### Added
 - Option to save original query as comments in csv file
 - IPython autocomplete in ``remove_user_table()``
+- Option to get additional columns in ``yield_xp_coeffs()``
 
 ### Changed
 - Improve performance for ``yield_xp_coeffs()``
