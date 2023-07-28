@@ -59,11 +59,11 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
 
             if len(matches) > 0:
                 coeffs = np.hstack([bp_coeffs[idx2], rp_coeffs[idx2]])
-                extra_columns = tuple(spec_f[i][()][idx2] for i in return_additional_columns)
                 if not return_errors:
                     if return_additional_columns is None:
                         yield coeffs, np.arange(total_num)[good_idx][idx1]
                     else:
+                        extra_columns = tuple(spec_f[i][()][idx2] for i in return_additional_columns)
                         yield coeffs, np.arange(total_num)[good_idx][idx1], *extra_columns
                 else:
                     bp_coeffs_err = spec_f["bp_coefficient_errors"][()]
@@ -72,6 +72,7 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
                     if return_additional_columns is None:
                         yield coeffs, np.arange(total_num)[good_idx][idx1], coeffs_err
                     else:
+                        extra_columns = tuple(spec_f[i][()][idx2] for i in return_additional_columns)
                         yield coeffs, np.arange(total_num)[good_idx][idx1], coeffs_err, *extra_columns
             else:  # this is the case where the source_id is within healpix but does not have xp coeffs
                 pass
