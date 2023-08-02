@@ -290,5 +290,5 @@ def download_catwise(test=False):
         # cmd_str = f"cd {_CATWISE_PARENT.as_posix()} && curl --no-clobber -s -O {_url}catwise_2020a.tbl"
         # subprocess.run(cmd_str, shell=True)
     else:
-        cmd_str = f"wget -P {_CATWISE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive -R 'index.html*' --level=2 -e robots=off -–no-host-directories --cut-dirs=5 {_url}"
+        cmd_str = f"wget -P {_CATWISE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive -R 'index.html*' --level=2 -e robots=off --no-host-directories --cut-dirs=5 {_url}"
         subprocess.run(cmd_str, shell=True)

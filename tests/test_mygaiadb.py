@@ -25,6 +25,7 @@ def test_compile():
     compile.compile_gaia_sql_db(indexing=False)
     compile.compile_tmass_sql_db(indexing=False)
     # compile.compile_allwise_sql_db(indexing=False)
+    compile.compile_catwise_sql_db(indexing=False)
     # check if database exist
     assert mygaiadb.gaia_sql_db_path.exists()
     assert mygaiadb.tmass_sql_db_path.exists()
@@ -49,7 +50,7 @@ def test_utilities():
     localdb.get_table_column("gaiadr3.gaia_source")
     localdb.get_table_column("gaiadr3.tmasspscxsc_best_neighbour")
     localdb.get_table_column("tmass.twomass_psc")
-
+    localdb.get_table_column("catwise.catwise")
 
 @pytest.mark.order(5)
 def test_query():
