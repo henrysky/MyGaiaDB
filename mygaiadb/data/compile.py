@@ -1215,6 +1215,7 @@ def compile_catwise_sql_db(indexing=True):
     for p in tqdm.tqdm(list(_CATWISE_PARENT.glob("*/*cat_b0.tbl.gz"))):
         dtypes = {
             "source_name": str,  # source_name does not seems to be unique, dont use it as primary key
+            "source_id": str,
             "ra": np.float64,
             "dec": np.float64,
             "sigra": np.float32,
@@ -1236,6 +1237,7 @@ def compile_catwise_sql_db(indexing=True):
             "w2mJDmean": np.float64,
             "w1ab_map": "Int32",
             "w2ab_map": "Int32",
+            "unwise_objid": str,
         }
         data = pd.read_table(
             p,

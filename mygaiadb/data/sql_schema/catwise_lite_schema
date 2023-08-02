@@ -1,5 +1,6 @@
 CREATE TABLE catwise (
     source_name character(21),
+    source_id character(25),
     ra double precision,
     dec double precision,
     sigra double precision,
@@ -19,5 +20,6 @@ CREATE TABLE catwise (
     w2mJDmean double precision,
     w1ab_map smallint,
     w2ab_map smallint,
-    PRIMARY KEY (source_name)
+    unwise_objid character(20),
+    PRIMARY KEY (unwise_objid)
 );
