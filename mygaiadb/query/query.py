@@ -128,7 +128,7 @@ class LocalGaiaSQL:
 
     def _file_exist(self, path):
         if not os.path.exists(path):
-            raise FileExistsError(f"Database at {path} does not exist")
+            raise FileNotFoundError(f"Database at {path} does not exist. You should set loading that database to False.")
 
     def preprocess_query(func):
         """

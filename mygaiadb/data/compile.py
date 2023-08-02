@@ -1023,6 +1023,7 @@ def compile_catwise_sql_db(indexing=True):
     # only the first part, not all actually
     # https://portal.nersc.gov/project/cosmo/data/CatWISE/2020cwcat.sis20200318.txt
     allwise_allcol = [
+        # Note that the first column in the width is occupied by a "pipe" or "bar" delimiter ("|")
         "source_name",
         "source_id",
         "ra",
@@ -1030,14 +1031,17 @@ def compile_catwise_sql_db(indexing=True):
         "sigra",
         "sigdec",
         "sigradec",
+        # the following positions reflect the source xy position in the unWISE full depth coadd
         "wx",
         "wy",
+        # The next set of columns are aperture/annulus measurements from the unWISE epoch coadds
         "w1sky",
         "w1sigsk",
         "w1conf",
         "w2sky",
         "w2sigsk",
         "w2conf",
+        # WPRO epoch coadd measurements
         "w1fitr",
         "w2fitr",
         "w1snr",
@@ -1057,6 +1061,8 @@ def compile_catwise_sql_db(indexing=True):
         "na",
         "w1Sat",
         "w2Sat",
+        # full depth coadd measurements: WAPPco, standard aperture w/ aperture correction;
+        # the standard (aperture corrected) aperture radius is 8.25 arcsec.
         "w1mag",
         "w1sigm",
         "w1flg",
@@ -1065,6 +1071,8 @@ def compile_catwise_sql_db(indexing=True):
         "w2sigm",
         "w2flg",
         "w2Cov",
+        # full depth coadd measurements: WAPPco, circular apertures, no aperture correction is applied;
+        # radii:    5.50   8.25  11.00  13.75  16.50  19.25  22.00  24.75 arcsec
         "w1mag_1",
         "w1sigm_1",
         "w1flg_1",
@@ -1113,6 +1121,12 @@ def compile_catwise_sql_db(indexing=True):
         "w2mag_8",
         "w2sigm_8",
         "w2flg_8",
+        # the following are "N of M" counters for WPRO measurements
+        # w?M   - The number of individual epochs for band ? that are
+        #         available to make a profile-fit measurement.
+        # w?NM  - The number of individual epochs for band ? on which
+        #         WPRO extracted a flux measurement that has snr>3.
+        # w?mLQ - variability indicator mLogQ for the flux array
         "w1NM",
         "w1M",
         "w1magP",
@@ -1221,20 +1235,22 @@ def compile_catwise_sql_db(indexing=True):
             "sigra": np.float32,
             "sigdec": np.float32,
             "sigradec": np.float32,
-            "w1mpro": np.float32,
-            "w1sigmpro": np.float32,
-            "w1snr": np.float32,
-            "w2mpro": np.float32,
-            "w2sigmpro": np.float32,
-            "w2snr": np.float32,
-            "nb": "Int32",
-            "na": "Int32",
+            "w1snr": np.float32,  # 18
+            "w2snr": np.float32,  # 19
+            "w1mpro": np.float32,  # 24
+            "w1sigmpro": np.float32,  # 25
+            "w2mpro": np.float32,  # 27
+            "w2sigmpro": np.float32,  # 28
+            "nb": "Int32",  # 31
+            "na": "Int32",  # 32
+            "w1mag": np.float32,  # 35
+            "w2mag": np.float32,  # 39
+            "w1k": np.float32,  # 96
+            "w1mJDmean": np.float64,  # 101
+            "w2k": np.float32,  # 107
+            "w2mJDmean": np.float64,  # 112
             # TODO: cc_flags currently not working, if worked need to add to schema
             # "cc_flags": str,
-            "w1k": np.float32,
-            "w2k": np.float32,
-            "w1mJDmean": np.float64,
-            "w2mJDmean": np.float64,
             "w1ab_map": "Int32",
             "w2ab_map": "Int32",
             "unwise_objid": str,

@@ -112,9 +112,11 @@ The **case sensitive** folder structure should look something like the following
     └── catwise_mirror/
         └── 2020/
             ├── 000/
-            │   ├── 0000m016_opt1_20191208_213403_ab_v5_cat_b0.tbl
+            │   ├── 0000m016_opt1_20191208_213403_ab_v5_cat_b0.tbl.gz
             │   └── ******
             ├── 001/
+            │   ├── 0015m016_opt1_20191209_054819_ab_v5_cat_b0.tbl.gz
+            │   └── ******
             └── ******
 
 Downloading Data
