@@ -297,9 +297,9 @@ def compile_gaia_sql_db(do_gaia_source_table=True, do_gaia_astrophysical_table=T
         # =================== setup Gaia schema and first two tables ===================
         # this section will take ~30 minutes to run
         for schema in [
-            "gaia_source_lite_schema",
-            "allwise_best_neighbour_schema",
-            "tmasspscxsc_best_neighbour_schema",
+            "gaia_source_lite_schema.sql",
+            "allwise_best_neighbour_schema.sql",
+            "tmasspscxsc_best_neighbour_schema.sql",
         ]:
             schema_filename = os.path.join(
                 os.path.dirname(__file__), "sql_schema", f"{schema}"
@@ -386,7 +386,7 @@ def compile_gaia_sql_db(do_gaia_source_table=True, do_gaia_astrophysical_table=T
             data.to_sql("gaia_source", conn, if_exists="append", index=False)
 
     if do_gaia_astrophysical_table:
-        schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "astrophysical_parameters_lite_schema")
+        schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "astrophysical_parameters_lite_schema.sql")
 
         with open(schema_filename) as f:
             lines = f.read().replace("\n", "")
@@ -493,7 +493,7 @@ def compile_tmass_sql_db(indexing=True):
 
     # =================== 2MASS ===================
     # this section will take 1 hour to run
-    schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "twomass_psc_lite_schema")
+    schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "twomass_psc_lite_schema.sql")
 
     with open(schema_filename) as f:
         lines = f.read().replace("\n", "")
@@ -630,7 +630,7 @@ def compile_allwise_sql_db(indexing=True):
     c = conn.cursor()
 
     # this section will take ~16 hours to run
-    schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "allwise_lite_schema")
+    schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "allwise_lite_schema.sql")
 
     with open(schema_filename) as f:
         lines = f.read().replace("\n", "")
@@ -1014,7 +1014,7 @@ def compile_catwise_sql_db(indexing=True):
     c = conn.cursor()
 
     # this section will take ~16 hours to run
-    schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "catwise_lite_schema")
+    schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "catwise_lite_schema.sql")
 
     with open(schema_filename) as f:
         lines = f.read().replace("\n", "")
