@@ -1244,12 +1244,13 @@ def compile_catwise_sql_db(indexing=True):
             "nb": "Int32",  # 31
             "na": "Int32",  # 32
             "w1mag": np.float32,  # 35
+            "w1flg": "Int32",  # 37
             "w2mag": np.float32,  # 39
+            "w2flg": "Int32",  # 41
             "w1k": np.float32,  # 96
             "w1mJDmean": np.float64,  # 101
             "w2k": np.float32,  # 107
             "w2mJDmean": np.float64,  # 112
-            # TODO: cc_flags currently not working, if worked need to add to schema
             # "cc_flags": str,
             "w1ab_map": "Int32",
             "w2ab_map": "Int32",

@@ -16,7 +16,9 @@ to finish (where the online ESA `Gaia archive`_ has timeout limitation).
 
 You are welcome to modify the code, make pull request to make this code to suit your and others need.
 
-**Part of this code will never be continuously tested properly since no way I can run this code with a few TBs of gaia data on Github Actions**
+..
+
+    Part of this code will never be continuously tested properly since no way I can run this code with a few TBs of gaia data on Github Actions
 
 .. contents:: **Table of Contents**
     :depth: 3
@@ -31,7 +33,7 @@ Some optional functionalities require ``galpy``, ``mwdust``. Downloading functio
 You can simply do ``pip install mygaiadb`` to install compiled ``MyGaiaDB`` wheels.
 
 Otherwise, you need to compile the code locally from source code. You need to add the folder which contains ``sqlite3ext.h`` to **INCLUDE** environment variable.
-If you are using Conda, you can do ``set INCLUDE=%CONDA_PREFIX%\Library\include;%INCLUDE%`` for Windows CMD or ``$env:INCLUDE="$env:CONDA_PREFIX\Library\include"`` for Windows PowerShell 
+If you are using Conda, you can do ``set INCLUDE=%CONDA_PREFIX%\Library\include;%INCLUDE%`` for Windows Command Prompt or ``$env:INCLUDE="$env:CONDA_PREFIX\Library\include"`` for Windows PowerShell 
 or ``export CFLAGS=-I$CONDA_PREFIX/include`` for MacOS or nothing for Linux. Then you can run ``python -m pip install .`` to install the 
 latest commits from github or ``python -m pip install -e .``  to develop ``MyGaiaDB`` locally.
 
@@ -46,7 +48,7 @@ gaia data (i.e. **GAIA_TOOLS_DATA** environment variable from Jo Bovy's gaia_too
 .. _apogee: https://github.com/jobovy/apogee
 .. _gaia_tools: https://github.com/jobovy/gaia_tools
 
-If you start from scratch, you only need to set **MY_ASTRO_DATA** environment variable and ``MyGaiaDB`` will populate the files and folders. 
+If you start from scratch on a clean computer, you only need to set **MY_ASTRO_DATA** environment variable and ``MyGaiaDB`` will populate the files and folders. 
 ``MyGaiaDB`` will use ``~/.mygaiadb`` folder to save user specific settings and tables.
 
 If you already have the data on your computer but in a different directory structure and you do not want or can not move them, 
