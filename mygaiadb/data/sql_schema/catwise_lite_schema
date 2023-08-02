@@ -1,0 +1,23 @@
+CREATE TABLE catwise (
+    source_name character(21),
+    ra double precision,
+    dec double precision,
+    sigra double precision,
+    sigdec double precision,
+    sigradec double precision,
+    w1mpro real,
+    w1sigmpro real,
+    w1snr real,
+    w2mpro real,
+    w2sigmpro real,
+    w2snr real,
+    nb smallint,
+    na smallint,
+    w1k real,
+    w2k real,
+    w1mJDmean double precision,
+    w2mJDmean double precision,
+    w1ab_map smallint,
+    w2ab_map smallint,
+    PRIMARY KEY (source_name)
+);

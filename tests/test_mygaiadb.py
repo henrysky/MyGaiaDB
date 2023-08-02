@@ -17,6 +17,7 @@ def test_download():
     download.download_gaia_astrophysical_parameters(test=True)
     download.download_2mass(test=True)
     # download.download_allwise(test=True)
+    download.download_catwise(test=True)
 
 
 @pytest.mark.order(2)

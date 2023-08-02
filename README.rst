@@ -4,13 +4,13 @@ MyGaiaDB
 *Why share when you can have the whole Gaia database on your own locally?*
 
 ``MyGaiaDB`` is simple python package with a set of scripts to help you setup a local 
-Gaia **DR3** database (also local 2MASS and ALLWISE databases too) without the need of administrator privilege 
+Gaia **DR3** database (local 2MASS, ALLWISE and CATWISE databases too) without the need of administrator privilege 
 and is compatible to all major platforms (Linux, Mac and Windows) because ``MyGaiaDB`` is **serverless** 
 which requires Python only using ``sqlite`` as long as you have enough disk space.
 
 This code is mainly to help myself managing data for my research project with Gaia DR3 XP spectra 
 and not meant to fit research usage from every aspect of Gaia's 1 billion stars. The main motivation of this 
-code is to make setting up local Gaia database with 2MASS and ALLWISE accessible to everyone. Possible use cases include 
+code is to make setting up local Gaia database with 2MASS, ALLWISE and CATWISE accessible to everyone. Possible use cases include 
 but not limited to making very long complex query cross-matching to multiple databases that can take a long time 
 to finish (where the online ESA `Gaia archive`_ has timeout limitation).
 
@@ -105,11 +105,17 @@ The **case sensitive** folder structure should look something like the following
     │   ├── psc_aaa.gz
     │   ├── ******
     │   └── xsc_baa.gz
-    └── allwise_mirror/
-        ├── wise-allwise-cat-part01.bz2
-        ├── ******
-        └── wise-allwise-cat-part48.bz2
-
+    ├── allwise_mirror/
+    │   ├── wise-allwise-cat-part01.bz2
+    │   ├── ******
+    │   └── wise-allwise-cat-part48.bz2
+    └── catwise_mirror/
+        └── 2020/
+            ├── 000/
+            │   ├── 0000m016_opt1_20191208_213403_ab_v5_cat_b0.tbl
+            │   └── ******
+            ├── 001/
+            └── ******
 
 Downloading Data
 ---------------------------
@@ -132,6 +138,8 @@ To download with ``MyGaiaDB``, you can do
     download.download_2mass()
     # for allwise
     download.download_allwise()
+    # for catwise
+    download.download_catwise()
     # for xp continuous
     download.download_gaia_xp_continuous()
     # for xp sampled
@@ -145,6 +153,7 @@ Official data links:
 * Official Gaia data can be accessed here: https://cdn.gea.esac.esa.int/Gaia/
 * Official 2MASS data can be accessed here: https://irsa.ipac.caltech.edu/2MASS/download/allsky/
 * Official ALLWISE data can be accessed here: https://irsa.ipac.caltech.edu/data/download/wise-allwise/
+* Official CATWISE data can be accessed here: https://catwise.github.io/
 
 Compiling Databases
 ---------------------
@@ -164,6 +173,8 @@ database at the same time since ``MyGaiaDB`` will set read-only permission befor
     compile.compile_tmass_sql_db()
     # compile ALLWISE SQL dataset
     compile.compile_allwise_sql_db()
+    # compile CATWISE SQL dataset
+    compile.compile_catwise_sql_db()
 
     # turn compressed XP coeffs files to h5, with options to save correlation matrix too
     compile.compile_xp_continuous_h5(save_correlation_matrix=False)
@@ -175,7 +186,7 @@ SQL Databases Data Model
 
 Currently for Gaia DR3 in ``MyGaiaDB``, these databases are only available if you have compiled all of them: 
 ``gaiadr3.gaia_source``, ``gaiadr3.allwise_best_neighbour``, ``gaiadr3.tmasspscxsc_best_neighbour``, 
-``gaiadr3.astrophysical_parameters``, ``tmass.twomass_psc``, ``allwise.allwise``. But there are a few 
+``gaiadr3.astrophysical_parameters``, ``tmass.twomass_psc``, ``allwise.allwise``, ``catwise.catwise``. But there are a few 
 utility functions to see list of tables and table's columns. Brief description of the tables are as following:
 
 -   | ``gaiadr3.gaia_source``
@@ -196,6 +207,9 @@ utility functions to see list of tables and table's columns. Brief description o
 -   | ``allwise.allwise``
     | This table is a lite version of ALLWISE source catalog with only essential useful columns are kept
     | Official description: https://wise2.ipac.caltech.edu/docs/release/allwise/expsup/sec2_1a.html
+-   | ``catwise.catwise``
+    | This table is a lite version of CATWISE source catalog with only essential useful columns are kept
+    | Official description: https://irsa.ipac.caltech.edu/data/WISE/CatWISE/gator_docs/catwise_colDescriptions.html
 
 You can use ``list_all_tables()`` to get a list of tables excluding ``user_table``. do 
 

@@ -15,6 +15,7 @@ _GAIA_DR3_XP_SAMPLED_PARENT = _GAIA_DR3_PARENT.joinpath("Spectroscopy", "xp_samp
 _GAIA_DR3_RVS_PARENT = _GAIA_DR3_PARENT.joinpath("Spectroscopy", "rvs_mean_spectrum")
 _2MASS_PARENT = astro_data_path.joinpath("2mass_mirror")
 _ALLWISE_PARENT = astro_data_path.joinpath("allwise_mirror")
+_CATWISE_PARENT = astro_data_path.joinpath("catwise_mirror", "2020")
 
 
 def downloader(url, fullfilename, name, test=False, session=None):

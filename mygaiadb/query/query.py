@@ -17,6 +17,7 @@ from mygaiadb import (
     gaia_sql_db_path,
     tmass_sql_db_path,
     allwise_sql_db_path,
+    catwise_sql_db_path,
     __version__
 )
 
@@ -47,6 +48,7 @@ class LocalGaiaSQL:
         self,
         load_tmass=True,
         load_allwise=True,
+        load_catwise=True,
         load_ext=True,
         readonly_guard=True,
     ):
@@ -64,6 +66,7 @@ class LocalGaiaSQL:
         """
         self.load_tmass = load_tmass
         self.load_allwise = load_allwise
+        self.load_catwise = load_catwise
         self.load_ext = load_ext
         self.readonly_guard = readonly_guard
         self.attached_db_name = []
@@ -197,6 +200,12 @@ class LocalGaiaSQL:
                 self._read_only(allwise_sql_db_path)  # set read-only before loading it
             c.execute(f"""ATTACH DATABASE '{allwise_sql_db_path}' AS allwise""")
             self.attached_db_name.append("allwise")
+        if self.load_catwise:
+            self._file_exist(catwise_sql_db_path)
+            if self.readonly_guard:
+                self._read_only(catwise_sql_db_path)  # set read-only before loading it
+            c.execute(f"""ATTACH DATABASE '{catwise_sql_db_path}' AS catwise""")
+            self.attached_db_name.append("catwise")
         # ======================= optional table =======================
         return conn, c
     

@@ -4,6 +4,7 @@ import os
 import glob
 import tqdm
 import h5py
+import warnings
 import numpy as np
 import pandas as pd
 from . import (
@@ -12,9 +13,10 @@ from . import (
     _GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT,
     _GAIA_DR3_2MASS_NEIGHBOUR_PARENT,
     _2MASS_PARENT,
-    _ALLWISE_PARENT
+    _ALLWISE_PARENT,
+    _CATWISE_PARENT,
 )
-from .. import astro_data_path, gaia_sql_db_path, tmass_sql_db_path, allwise_sql_db_path, gaia_xp_coeff_h5_path
+from .. import astro_data_path, gaia_sql_db_path, tmass_sql_db_path, allwise_sql_db_path, gaia_xp_coeff_h5_path, catwise_sql_db_path
 
 
 def compile_xp_continuous_allinone_h5():
@@ -1001,3 +1003,252 @@ def compile_allwise_sql_db(indexing=True):
         c.execute(
             """CREATE INDEX allwise_designation_mags ON allwise (designation, w1mpro, w2mpro, w3mpro, w4mpro, w1snr, w2snr, w3snr, w4snr, ph_qual);"""
         )
+
+
+def compile_catwise_sql_db(indexing=True):
+    """
+    This function compile allwise SQL database
+    """
+    Path(catwise_sql_db_path).touch()
+    conn = sqlite3.connect(catwise_sql_db_path)
+    c = conn.cursor()
+
+    # this section will take ~16 hours to run
+    schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "catwise_lite_schema")
+
+    with open(schema_filename) as f:
+        lines = f.read().replace("\n", "")
+    c.execute(lines)
+
+    # only the first part, not all actually
+    # https://portal.nersc.gov/project/cosmo/data/CatWISE/2020cwcat.sis20200318.txt
+    allwise_allcol = [
+        "source_name",
+        "source_id",
+        "ra",
+        "dec",
+        "sigra",
+        "sigdec",
+        "sigradec",
+        "wx",
+        "wy",
+        "w1sky",
+        "w1sigsk",
+        "w1conf",
+        "w2sky",
+        "w2sigsk",
+        "w2conf",
+        "w1fitr",
+        "w2fitr",
+        "w1snr",
+        "w2snr",
+        "w1flux",
+        "w1sigflux",
+        "w2flux",
+        "w2sigflux",
+        "w1mpro",
+        "w1sigmpro",
+        "w1rchi2",
+        "w2mpro",
+        "w2sigmpro",
+        "w2rchi2",
+        "rchi2",
+        "nb",
+        "na",
+        "w1Sat",
+        "w2Sat",
+        "w1mag",
+        "w1sigm",
+        "w1flg",
+        "w1Cov",
+        "w2mag",
+        "w2sigm",
+        "w2flg",
+        "w2Cov",
+        "w1mag_1",
+        "w1sigm_1",
+        "w1flg_1",
+        "w2mag_1",
+        "w2sigm_1",
+        "w2flg_1",
+        "w1mag_2",
+        "w1sigm_2",
+        "w1flg_2",
+        "w2mag_2",
+        "w2sigm_2",
+        "w2flg_2",
+        "w1mag_3",
+        "w1sigm_3",
+        "w1flg_3",
+        "w2mag_3",
+        "w2sigm_3",
+        "w2flg_3",
+        "w1mag_4",
+        "w1sigm_4",
+        "w1flg_4",
+        "w2mag_4",
+        "w2sigm_4",
+        "w2flg_4",
+        "w1mag_5",
+        "w1sigm_5",
+        "w1flg_5",
+        "w2mag_5",
+        "w2sigm_5",
+        "w2flg_5",
+        "w1mag_6",
+        "w1sigm_6",
+        "w1flg_6",
+        "w2mag_6",
+        "w2sigm_6",
+        "w2flg_6",
+        "w1mag_7",
+        "w1sigm_7",
+        "w1flg_7",
+        "w2mag_7",
+        "w2sigm_7",
+        "w2flg_7",
+        "w1mag_8",
+        "w1sigm_8",
+        "w1flg_8",
+        "w2mag_8",
+        "w2sigm_8",
+        "w2flg_8",
+        "w1NM",
+        "w1M",
+        "w1magP",
+        "w1sigP1",
+        "w1sigP2",
+        "w1k",
+        "w1Ndf",
+        "w1mLQ",
+        "w1mJDmin",
+        "w1mJDmax",
+        "w1mJDmean",
+        "w2NM",
+        "w2M",
+        "w2magP",
+        "w2sigP1",
+        "w2sigP2",
+        "w2k",
+        "w2Ndf",
+        "w2mLQ",
+        "w2mJDmin",
+        "w2mJDmax",
+        "w2mJDmean",
+        "rho12",
+        "q12",
+        "nIters",
+        "nSteps",
+        "mdetID",
+        "p1",
+        "p2",
+        "MeanObsMJD",
+        "ra_pm",
+        "dec_pm",
+        "sigra_pm",
+        "sigdec_pm",
+        "sigradec_pm",
+        "PMRA",
+        "PMDec",
+        "sigPMRA",
+        "sigPMDec",
+        "w1snr_pm",
+        "w2snr_pm",
+        "w1flux_pm",
+        "w1sigflux_pm",
+        "w2flux_pm",
+        "w2sigflux_pm",
+        "w1mpro_pm",
+        "w1sigmpro_pm",
+        "w1rchi2_pm",
+        "w2mpro_pm",
+        "w2sigmpro_pm",
+        "w2rchi2_pm",
+        "rchi2_pm",
+        "pmcode",
+        "nIters_pm",
+        "nSteps_pm",
+        "dist",
+        "dw1mag",
+        "rch2w1",
+        "dw2mag",
+        "rch2w2",
+        "elon_avg",
+        "elonSig",
+        "elat_avg",
+        "elatSig",
+        "Delon",
+        "DelonSig",
+        "Delat",
+        "DelatSig",
+        "DelonSNR",
+        "DelatSNR",
+        "chi2pmra",
+        "chi2pmdec",
+        "ka",
+        "k1",
+        "k2",
+        "km",
+        "par_pm",
+        "par_pmSig",
+        "par_stat",
+        "par_sigma",
+        "dist_x",
+        "cc_flags",
+        "w1cc_map",
+        "w1cc_map_str",
+        "w2cc_map",
+        "w2cc_map_str",
+        "n_aw",
+        "ab_flags",
+        "w1ab_map",
+        "w1ab_map_str",
+        "w2ab_map",
+        "w2ab_map_str",
+        "glon",
+        "glat",
+        "elon",
+        "elat",
+        "unwise_objid",
+    ]
+
+    for p in tqdm.tqdm(list(_CATWISE_PARENT.glob("*/*cat_b0.tbl.gz"))):
+        dtypes = {
+            "source_name": str,  # source_name does not seems to be unique, dont use it as primary key
+            "ra": np.float64,
+            "dec": np.float64,
+            "sigra": np.float32,
+            "sigdec": np.float32,
+            "sigradec": np.float32,
+            "w1mpro": np.float32,
+            "w1sigmpro": np.float32,
+            "w1snr": np.float32,
+            "w2mpro": np.float32,
+            "w2sigmpro": np.float32,
+            "w2snr": np.float32,
+            "nb": "Int32",
+            "na": "Int32",
+            # TODO: cc_flags currently not working, if worked need to add to schema
+            # "cc_flags": str,
+            "w1k": np.float32,
+            "w2k": np.float32,
+            "w1mJDmean": np.float64,
+            "w2mJDmean": np.float64,
+            "w1ab_map": "Int32",
+            "w2ab_map": "Int32",
+        }
+        data = pd.read_table(
+            p,
+            delim_whitespace=True,
+            skiprows=19,
+            usecols=[allwise_allcol.index(i) for i in dtypes.keys()],
+            names=dtypes.keys(),
+        )
+        data.astype(dtypes)
+        
+        # write the data to a sqlite table
+        data.to_sql(f"catwise", conn, if_exists="append", index=False)
+
+    # =================== indexing ===================
+    if indexing:
+        warnings.warn("Indexing for CATWISE is not implemented yet")

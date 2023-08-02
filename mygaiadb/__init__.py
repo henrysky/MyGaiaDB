@@ -27,3 +27,4 @@ gaia_astro_param_sql_db_path = astro_data_path.joinpath("gaia_mirror", "gaiadr3_
 gaia_xp_coeff_h5_path = astro_data_path.joinpath("gaia_mirror" ,"xp_continuous_mean_spectrum_allinone.h5")
 tmass_sql_db_path = astro_data_path.joinpath("2mass_mirror", "tmass.db")
 allwise_sql_db_path = astro_data_path.joinpath("allwise_mirror", "allwise.db")
+catwise_sql_db_path = astro_data_path.joinpath("catwise_mirror", "catwise.db")
