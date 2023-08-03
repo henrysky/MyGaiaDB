@@ -990,8 +990,8 @@ def compile_allwise_sql_db(indexing=True):
             sep="|",
             usecols=[allwise_allcol.index(i) for i in dtypes.keys()],
             names=dtypes.keys(),
+            dtype=dtypes
         )
-        data.astype(dtypes)
         
         # write the data to a sqlite table
         data.to_sql(f"allwise", conn, if_exists="append", index=False)
@@ -1022,7 +1022,7 @@ def compile_catwise_sql_db(indexing=True):
 
     # only the first part, not all actually
     # https://portal.nersc.gov/project/cosmo/data/CatWISE/2020cwcat.sis20200318.txt
-    allwise_allcol = [
+    catwise_allcol = [
         # Note that the first column in the width is occupied by a "pipe" or "bar" delimiter ("|")
         "source_name",
         "source_id",
@@ -1256,14 +1256,24 @@ def compile_catwise_sql_db(indexing=True):
             "w2ab_map": "Int32",
             "unwise_objid": str,
         }
-        data = pd.read_table(
-            p,
-            delim_whitespace=True,
-            skiprows=19,
-            usecols=[allwise_allcol.index(i) for i in dtypes.keys()],
-            names=dtypes.keys(),
-        )
-        data.astype(dtypes)
+        try:
+            data = pd.read_table(
+                p,
+                delim_whitespace=True,
+                skiprows=19,
+                usecols=[catwise_allcol.index(i) for i in dtypes.keys()],
+                names=dtypes.keys(),
+                dtype=dtypes,
+            )
+        except ValueError:  # sometimes there are 20 rows of comments
+            data = pd.read_table(
+                p,
+                delim_whitespace=True,
+                skiprows=20,
+                usecols=[catwise_allcol.index(i) for i in dtypes.keys()],
+                names=dtypes.keys(),
+                dtype=dtypes,
+            )
         
         # write the data to a sqlite table
         data.to_sql(f"catwise", conn, if_exists="append", index=False)
