@@ -1,12 +1,14 @@
-## [0.3] - 2023-xx-xx
+## [0.3] - 2023-08-05
 
 ### Added
+- Support for CATWISE database
 - Option to save original query as comments in csv file
 - IPython autocomplete in ``remove_user_table()``
 - Option to get additional columns in ``yield_xp_coeffs()``
+- Contribution guideline on Github
 
 ### Changed
-- Improve performance for ``yield_xp_coeffs()``
+- Improved performance for ``yield_xp_coeffs()``
 
 ### Fixed
 - N/A
