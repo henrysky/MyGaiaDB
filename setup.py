@@ -20,7 +20,7 @@ ext_modules = [astroqlite_c]
 
 setup(
     name="MyGaiaDB",
-    version="0.3",
+    version="0.4dev0",
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
@@ -51,6 +51,6 @@ setup(
     license="MIT",
     author="Henry Leung",
     author_email="henrysky.leung@utoronto.ca",
-    description="Setup local serverless ESA Gaia / 2MASS / ALLWISE databases and run query locally with python",
+    description="Setup local serverless ESA Gaia / 2MASS / ALLWISE / CATWISE databases and run query locally with python",
     long_description=long_description,
 )
