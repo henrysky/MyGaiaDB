@@ -23,7 +23,7 @@ jobs:
         - [windows-latest, win, amd64]
         python: ["cp38", "cp39", "cp310", "cp311"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: conda-incubator/setup-miniconda@v2
         with:
           channels: conda-forge
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # check-out this repository
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # Setup python
       - uses: conda-incubator/setup-miniconda@v2
         with:
@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'created'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           mkdir tmp_wheelhouse
           mkdir wheelhouse
