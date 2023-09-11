@@ -348,7 +348,7 @@ save the query as a comment in the csv file so you know how to reproduce the que
     print(" ".join(header).replace(" # ", "").replace("# ", ""))
 
 ``MyGaiaDB`` also has callbacks functionality called ``QueryCallback``, these callbacks can be used when you do query. For example, 
-you can create a callbacks to convert ``ra`` in degree to `ra_rad` in radian. So your csv file in the end will have a new column 
+you can create a callbacks to convert ``ra`` in degree to ``ra_rad`` in radian. So your csv file in the end will have a new column 
 called ``ra_rad``. Functions in ``QueryCallback`` must have arguments with **exact** column names in your query so ``MyGaiaDB`` knows 
 which columns to use on the fly.
 

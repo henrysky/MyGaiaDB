@@ -51,6 +51,6 @@ setup(
     license="MIT",
     author="Henry Leung",
     author_email="henrysky.leung@utoronto.ca",
-    description="Setup local serverless ESA Gaia / 2MASS / ALLWISE / CATWISE databases and run query locally with python",
+    description="Setup local serverless ESA Gaia / 2MASS / ALLWISE / CATWISE databases and run query locally with Python",
     long_description=long_description,
 )
