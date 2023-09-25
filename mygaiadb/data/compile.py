@@ -1,7 +1,7 @@
 import sqlite3
 from pathlib import Path
 import os
-import glob
+import gc
 import tqdm
 import h5py
 import warnings
@@ -157,10 +157,6 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
             file_path_f["bp_standard_deviation"], dtype=np.float32
         )
         bp_chi_squared = np.asarray(file_path_f["bp_chi_squared"], dtype=np.float32)
-        if save_correlation_matrix:
-            bp_coefficient_correlations = np.stack(
-                file_path_f["bp_coefficient_correlations"]
-            )
         bp_coefficient_errors = np.stack(file_path_f["bp_coefficient_errors"])
         bp_coefficients = np.stack(file_path_f["bp_coefficients"])
         bp_n_relevant_bases = np.asarray(
@@ -185,10 +181,6 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
             file_path_f["rp_standard_deviation"], dtype=np.float32
         )
         rp_chi_squared = np.asarray(file_path_f["rp_chi_squared"], dtype=np.float32)
-        if save_correlation_matrix:
-            rp_coefficient_correlations = np.stack(
-                file_path_f["rp_coefficient_correlations"]
-            )
         rp_coefficient_errors = np.stack(file_path_f["rp_coefficient_errors"])
         rp_coefficients = np.stack(file_path_f["rp_coefficients"])
         rp_n_relevant_bases = np.asarray(
@@ -212,9 +204,13 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
             h5f.create_dataset("bp_standard_deviation ", data=bp_standard_deviation)
             h5f.create_dataset("bp_chi_squared ", data=bp_chi_squared)
             if save_correlation_matrix:
+                bp_coefficient_correlations = np.stack(
+                    file_path_f["bp_coefficient_correlations"]
+                )
                 h5f.create_dataset(
                     "bp_coefficient_correlations ", data=bp_coefficient_correlations
                 )
+                del bp_coefficient_correlations  # prevent potential memory issue
             h5f.create_dataset("bp_coefficient_errors", data=bp_coefficient_errors)
             h5f.create_dataset("bp_coefficients", data=bp_coefficients)
             h5f.create_dataset("bp_n_relevant_bases", data=bp_n_relevant_bases)
@@ -230,14 +226,20 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
             h5f.create_dataset("rp_standard_deviation ", data=rp_standard_deviation)
             h5f.create_dataset("rp_chi_squared ", data=rp_chi_squared)
             if save_correlation_matrix:
+                rp_coefficient_correlations = np.stack(
+                    file_path_f["rp_coefficient_correlations"]
+                )
                 h5f.create_dataset(
                     "rp_coefficient_correlations ", data=rp_coefficient_correlations
                 )
+                del rp_coefficient_correlations  # prevent potential memory issue
             h5f.create_dataset("rp_coefficient_errors", data=rp_coefficient_errors)
             h5f.create_dataset("rp_coefficients", data=rp_coefficients)
             h5f.create_dataset("rp_n_relevant_bases", data=rp_n_relevant_bases)
             h5f.create_dataset("rp_relative_shrinking", data=rp_relative_shrinking)
-            h5f.close()
+        # prevent potential memory issue
+        del file_path_f
+        gc.collect()
 
 
 def compile_rvs_h5():
