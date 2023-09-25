@@ -16,6 +16,7 @@ from . import (
     _ALLWISE_PARENT,
     _CATWISE_PARENT,
 )
+from astropy.io import ascii
 from .. import astro_data_path, gaia_sql_db_path, tmass_sql_db_path, allwise_sql_db_path, gaia_xp_coeff_h5_path, catwise_sql_db_path
 
 
@@ -113,7 +114,7 @@ def compile_xp_continuous_allinone_h5():
 def compile_xp_continuous_h5(save_correlation_matrix=False):
     for i_path in tqdm.tqdm(
         list(astro_data_path.joinpath(
-            "Gaia", "gdr3", "Spectroscopy", "xp_continuous_mean_spectrum"
+            "gaia_mirror", "Gaia", "gdr3", "Spectroscopy", "xp_continuous_mean_spectrum"
         ).glob("*.csv.gz")),
         desc="XP coeffs",
     ):
@@ -221,7 +222,7 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
 
 def compile_rvs_h5():
     for i_path in tqdm.tqdm(
-        list(astro_data_path.joinpath("Gaia/gdr3/Spectroscopy/rvs_mean_spectrum/").glob(
+        list(astro_data_path.joinpath("gaia_mirror/Gaia/gdr3/Spectroscopy/rvs_mean_spectrum/").glob(
             "*.csv.gz"
         )),
         desc="RVS spec",
@@ -242,7 +243,7 @@ def compile_rvs_h5():
 
 def compile_rvs_h5():
     for i_path in tqdm.tqdm(
-        list(astro_data_path.joinpath("Gaia", "gdr3", "Spectroscopy", "rvs_mean_spectrum").glob(
+        list(astro_data_path.joinpath("gaia_mirror", "Gaia", "gdr3", "Spectroscopy", "rvs_mean_spectrum").glob(
             "*.csv.gz"
         )),
         desc="RVS spec",
@@ -264,7 +265,7 @@ def compile_rvs_h5():
 def comile_xp_mean_spec_h5():
     for i_path in tqdm.tqdm(
         list(astro_data_path.joinpath(
-            "Gaia", "gdr3", "Spectroscopy", "xp_sampled_mean_spectrum"
+            "gaia_mirror", "Gaia", "gdr3", "Spectroscopy", "xp_sampled_mean_spectrum"
         ).glob("*.csv.gz")),
         desc="XP specs",
     ):

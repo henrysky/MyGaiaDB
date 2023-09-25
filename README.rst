@@ -128,7 +128,7 @@ To download with ``MyGaiaDB``, you can do
 
 ..  code-block:: python
 
-    from mygaiadb import download
+    from mygaiadb.data import download
 
     # for gaia_source
     download.download_gaia_source()
@@ -169,7 +169,7 @@ database at the same time since ``MyGaiaDB`` will set read-only permission befor
 
 ..  code-block:: python
 
-    from mygaiadb import compile
+    from mygaiadb.data import compile
 
     # compile Gaia SQL dataset
     compile.compile_gaia_sql_db()
