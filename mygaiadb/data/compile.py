@@ -17,7 +17,14 @@ from . import (
     _CATWISE_PARENT,
 )
 from astropy.io import ascii
-from .. import astro_data_path, gaia_sql_db_path, tmass_sql_db_path, allwise_sql_db_path, gaia_xp_coeff_h5_path, catwise_sql_db_path
+from .. import (
+    astro_data_path,
+    gaia_sql_db_path,
+    tmass_sql_db_path,
+    allwise_sql_db_path,
+    gaia_xp_coeff_h5_path,
+    catwise_sql_db_path,
+)
 
 
 def compile_xp_continuous_allinone_h5():
@@ -107,15 +114,30 @@ def compile_xp_continuous_allinone_h5():
         gp.create_dataset(
             "rp_relative_shrinking", data=temp_h5_data["rp_relative_shrinking"][()]
         )
+        if "bp_coefficient_correlations" in temp_h5_data.keys():
+            gp.create_dataset(
+                "bp_coefficient_correlations",
+                data=temp_h5_data["bp_coefficient_correlations"][()],
+            )
+        if "rp_coefficient_correlations" in temp_h5_data.keys():
+            gp.create_dataset(
+                "rp_coefficient_correlations",
+                data=temp_h5_data["rp_coefficient_correlations"][()],
+            )
         temp_h5_data.close()
     h5f.close()
 
 
 def compile_xp_continuous_h5(save_correlation_matrix=False):
+    root_path = astro_data_path.joinpath(
+        "gaia_mirror",
+        "Gaia",
+        "gdr3",
+        "Spectroscopy",
+        "xp_continuous_mean_spectrum",
+    )
     for i_path in tqdm.tqdm(
-        list(astro_data_path.joinpath(
-            "gaia_mirror", "Gaia", "gdr3", "Spectroscopy", "xp_continuous_mean_spectrum"
-        ).glob("*.csv.gz")),
+        list(root_path.glob("*.csv.gz")),
         desc="XP coeffs",
     ):
         file_path_f = ascii.read(i_path)
@@ -177,9 +199,7 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
         )
 
         file_names_wo_ext = i_path.name[:-7]
-        with h5py.File(
-            f"./xp_continuous_mean_spectrum/{file_names_wo_ext}.h5", "w"
-        ) as h5f:
+        with h5py.File(root_path.joinpath(f"{file_names_wo_ext}.h5",), "w",) as h5f:
             h5f.create_dataset("source_id", data=file_path_f["source_id"].data)
             h5f.create_dataset("solution_id", data=file_path_f["solution_id"].data)
             h5f.create_dataset("bp_basis_function_id ", data=bp_basis_function_id)
@@ -221,10 +241,14 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
 
 
 def compile_rvs_h5():
-    for i_path in tqdm.tqdm(
-        list(astro_data_path.joinpath("gaia_mirror/Gaia/gdr3/Spectroscopy/rvs_mean_spectrum/").glob(
-            "*.csv.gz"
-        )),
+    root_path = astro_data_path.joinpath(
+        "gaia_mirror",
+        "Gaia",
+        "gdr3",
+        "Spectroscopy",
+        "rvs_mean_spectrum",
+    )
+    for i_path in tqdm.tqdm(list(root_path.glob("*.csv.gz")),
         desc="RVS spec",
     ):
         file_path_f = ascii.read(i_path)
@@ -232,28 +256,7 @@ def compile_rvs_h5():
         flux_error = np.vstack(file_path_f["flux_error"])
 
         file_names_wo_ext = i_path.name[:-7]
-        with h5py.File(f"./rvs_mean_spectrum/{file_names_wo_ext}.h5", "w") as f:
-            f.create_dataset("source_id", data=file_path_f["source_id"].data)
-            f.create_dataset("solution_id", data=file_path_f["solution_id"].data)
-            f.create_dataset("ra", data=file_path_f["ra"].data)
-            f.create_dataset("dec", data=file_path_f["dec"].data)
-            f.create_dataset("flux", data=flux)
-            f.create_dataset("flux_error", data=flux_error)
-
-
-def compile_rvs_h5():
-    for i_path in tqdm.tqdm(
-        list(astro_data_path.joinpath("gaia_mirror", "Gaia", "gdr3", "Spectroscopy", "rvs_mean_spectrum").glob(
-            "*.csv.gz"
-        )),
-        desc="RVS spec",
-    ):
-        file_path_f = ascii.read(i_path)
-        flux = np.vstack(file_path_f["flux"])
-        flux_error = np.vstack(file_path_f["flux_error"])
-
-        file_names_wo_ext = i_path.name[:-7]
-        with h5py.File(f"./rvs_mean_spectrum/{file_names_wo_ext}.h5", "w") as f:
+        with h5py.File(root_path.joinpath(f"{file_names_wo_ext}.h5"), "w") as f:
             f.create_dataset("source_id", data=file_path_f["source_id"].data)
             f.create_dataset("solution_id", data=file_path_f["solution_id"].data)
             f.create_dataset("ra", data=file_path_f["ra"].data)
@@ -263,18 +266,20 @@ def compile_rvs_h5():
 
 
 def comile_xp_mean_spec_h5():
-    for i_path in tqdm.tqdm(
-        list(astro_data_path.joinpath(
-            "gaia_mirror", "Gaia", "gdr3", "Spectroscopy", "xp_sampled_mean_spectrum"
-        ).glob("*.csv.gz")),
-        desc="XP specs",
-    ):
+    root_path = astro_data_path.joinpath(
+        "gaia_mirror",
+        "Gaia",
+        "gdr3",
+        "Spectroscopy",
+        "xp_sampled_mean_spectrum",
+    )
+    for i_path in tqdm.tqdm(list(root_path.glob("*.csv.gz")), desc="XP specs"):
         file_path_f = ascii.read(i_path)
         flux = np.vstack(file_path_f["flux"])
         flux_error = np.vstack(file_path_f["flux_error"])
 
         file_names_wo_ext = i_path.name[:-7]
-        with h5py.File(f"./xp_sampled_mean_spectrum/{file_names_wo_ext}.h5", "w") as f:
+        with h5py.File(root_path.joinpath(f"{file_names_wo_ext}.h5"), "w") as f:
             f.create_dataset("source_id", data=file_path_f["source_id"].data)
             f.create_dataset("solution_id", data=file_path_f["solution_id"].data)
             f.create_dataset("ra", data=file_path_f["ra"].data)
@@ -283,7 +288,9 @@ def comile_xp_mean_spec_h5():
             f.create_dataset("flux_error", data=flux_error)
 
 
-def compile_gaia_sql_db(do_gaia_source_table=True, do_gaia_astrophysical_table=True, indexing=True):
+def compile_gaia_sql_db(
+    do_gaia_source_table=True, do_gaia_astrophysical_table=True, indexing=True
+):
     """
     This function compile Gaia SQL database
     """
@@ -387,7 +394,11 @@ def compile_gaia_sql_db(do_gaia_source_table=True, do_gaia_astrophysical_table=T
             data.to_sql("gaia_source", conn, if_exists="append", index=False)
 
     if do_gaia_astrophysical_table:
-        schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "astrophysical_parameters_lite_schema.sql")
+        schema_filename = os.path.join(
+            os.path.dirname(__file__),
+            "sql_schema",
+            "astrophysical_parameters_lite_schema.sql",
+        )
 
         with open(schema_filename) as f:
             lines = f.read().replace("\n", "")
@@ -404,7 +415,7 @@ def compile_gaia_sql_db(do_gaia_source_table=True, do_gaia_astrophysical_table=T
                 "classprob_dsc_combmod_star": np.float32,
                 "classprob_dsc_combmod_whitedwarf": np.float32,
                 "classprob_dsc_combmod_binarystar": np.float32,
-                "classprob_dsc_specmod_quasar": np.float32, 
+                "classprob_dsc_specmod_quasar": np.float32,
                 "classprob_dsc_specmod_galaxy": np.float32,
                 "classprob_dsc_specmod_star": np.float32,
                 "classprob_dsc_specmod_whitedwarf": np.float32,
@@ -463,13 +474,15 @@ def compile_gaia_sql_db(do_gaia_source_table=True, do_gaia_astrophysical_table=T
                 "flags_gspspec": str,
                 "activityindex_espcs": np.float32,
                 "activityindex_espcs_uncertainty": np.float32,
-                "activityindex_espcs_input": str
+                "activityindex_espcs_input": str,
             }
             data = pd.read_csv(
                 p, header=1, sep=",", skiprows=1540, usecols=dtypes.keys(), dtype=dtypes
             )
             # write the data to a sqlite table
-            data.to_sql("astrophysical_parameters", conn, if_exists="append", index=False)
+            data.to_sql(
+                "astrophysical_parameters", conn, if_exists="append", index=False
+            )
 
     # =================== indexing ===================
     if indexing:
@@ -494,7 +507,9 @@ def compile_tmass_sql_db(indexing=True):
 
     # =================== 2MASS ===================
     # this section will take 1 hour to run
-    schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "twomass_psc_lite_schema.sql")
+    schema_filename = os.path.join(
+        os.path.dirname(__file__), "sql_schema", "twomass_psc_lite_schema.sql"
+    )
 
     with open(schema_filename) as f:
         lines = f.read().replace("\n", "")
@@ -545,8 +560,7 @@ def compile_tmass_sql_db(indexing=True):
         # Additional Photometric Information
         "j_psfchi",
         "h_psfchi",
-        "k_psfchi"
-        "j_m_stdap",
+        "k_psfchi" "j_m_stdap",
         "j_msig_stdap",
         "h_m_stdap",
         "h_msig_stdap",
@@ -569,7 +583,7 @@ def compile_tmass_sql_db(indexing=True):
         "ext_key",
         "scan_key",
         "coadd_key",
-        "coadd"
+        "coadd",
     ]
 
     for p in tqdm.tqdm(list(_2MASS_PARENT.glob("psc_*.gz"))):
@@ -631,7 +645,9 @@ def compile_allwise_sql_db(indexing=True):
     c = conn.cursor()
 
     # this section will take ~16 hours to run
-    schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "allwise_lite_schema.sql")
+    schema_filename = os.path.join(
+        os.path.dirname(__file__), "sql_schema", "allwise_lite_schema.sql"
+    )
 
     with open(schema_filename) as f:
         lines = f.read().replace("\n", "")
@@ -709,9 +725,9 @@ def compile_allwise_sql_db(indexing=True):
         "w1nm",
         "w1m",
         "w2nm",
-        "w2m",    
+        "w2m",
         "w3nm",
-        "w3m",    
+        "w3m",
         "w4nm",
         "w4m",
         "w1cov",
@@ -727,7 +743,7 @@ def compile_allwise_sql_db(indexing=True):
         "w4cc_map",
         "w4cc_map_str",
         "use_src",
-        "best_use_src", 
+        "best_use_src",
         "ngrp",
         # Additional Photometric Information
         "w1flux",
@@ -991,9 +1007,9 @@ def compile_allwise_sql_db(indexing=True):
             sep="|",
             usecols=[allwise_allcol.index(i) for i in dtypes.keys()],
             names=dtypes.keys(),
-            dtype=dtypes
+            dtype=dtypes,
         )
-        
+
         # write the data to a sqlite table
         data.to_sql(f"allwise", conn, if_exists="append", index=False)
 
@@ -1015,7 +1031,9 @@ def compile_catwise_sql_db(indexing=True):
     c = conn.cursor()
 
     # this section will take ~16 hours to run
-    schema_filename = os.path.join(os.path.dirname(__file__), "sql_schema", "catwise_lite_schema.sql")
+    schema_filename = os.path.join(
+        os.path.dirname(__file__), "sql_schema", "catwise_lite_schema.sql"
+    )
 
     with open(schema_filename) as f:
         lines = f.read().replace("\n", "")
@@ -1275,7 +1293,7 @@ def compile_catwise_sql_db(indexing=True):
                 names=dtypes.keys(),
                 dtype=dtypes,
             )
-        
+
         # write the data to a sqlite table
         data.to_sql(f"catwise", conn, if_exists="append", index=False)
 
