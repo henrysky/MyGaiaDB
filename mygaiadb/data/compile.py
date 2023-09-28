@@ -17,6 +17,7 @@ from . import (
     _CATWISE_PARENT,
 )
 from astropy.io import ascii
+from astropy.table import vstack
 from .. import (
     astro_data_path,
     gaia_sql_db_path,
@@ -140,7 +141,11 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
         list(root_path.glob("*.csv.gz")),
         desc="XP coeffs",
     ):
-        file_path_f = ascii.read(i_path)
+        # XpContinuousMeanSpectrum_614517-614573's bp_basis_function_id is problematic, need special treatment
+        if "614517-614573" in str(i_path):
+            file_path_f = vstack([ascii.read(i_path, data_end=31212), ascii.read(i_path, data_start=31213)])
+        else:
+            file_path_f = ascii.read(i_path)
 
         bp_basis_function_id = np.asarray(
             file_path_f["bp_basis_function_id"], dtype=np.int16
