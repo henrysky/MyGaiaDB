@@ -28,7 +28,7 @@ from .. import (
 )
 
 
-def compile_xp_continuous_allinone_h5():
+def compile_xp_continuous_allinone_h5(save_correlation_matrix=False):
     base_path = astro_data_path.joinpath(
         "gaia_mirror",
         "Gaia",
@@ -76,6 +76,10 @@ def compile_xp_continuous_allinone_h5():
             "bp_standard_deviation", data=temp_h5_data["bp_standard_deviation"][()]
         )
         gp.create_dataset("bp_chi_squared", data=temp_h5_data["bp_chi_squared"][()])
+        if save_correlation_matrix and "bp_coefficient_correlations" in temp_h5_data.keys():
+            gp.create_dataset("bp_coefficient_correlations", data=temp_h5_data["bp_coefficient_correlations"][()])
+        else:
+            warnings.warn("No bp_coefficient_correlations in the original data but you have set save_correlation_matrix=True, so bp_coefficient_correlations will not be saved.")
         gp.create_dataset(
             "bp_coefficient_errors", data=temp_h5_data["bp_coefficient_errors"][()]
         )
@@ -105,6 +109,10 @@ def compile_xp_continuous_allinone_h5():
             "rp_standard_deviation", data=temp_h5_data["rp_standard_deviation"][()]
         )
         gp.create_dataset("rp_chi_squared", data=temp_h5_data["rp_chi_squared"][()])
+        if save_correlation_matrix and "rp_coefficient_correlations" in temp_h5_data.keys():
+            gp.create_dataset("rp_coefficient_correlations", data=temp_h5_data["rp_coefficient_correlations"][()])
+        else:
+            warnings.warn("No bp_coefficient_correlations in the original data but you have set save_correlation_matrix=True, so bp_coefficient_correlations will not be saved.")
         gp.create_dataset(
             "rp_coefficient_errors", data=temp_h5_data["rp_coefficient_errors"][()]
         )
@@ -199,21 +207,21 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
         with h5py.File(root_path.joinpath(f"{file_names_wo_ext}.h5",), "w",) as h5f:
             h5f.create_dataset("source_id", data=file_path_f["source_id"].data)
             h5f.create_dataset("solution_id", data=file_path_f["solution_id"].data)
-            h5f.create_dataset("bp_basis_function_id ", data=bp_basis_function_id)
-            h5f.create_dataset("bp_degrees_of_freedom ", data=bp_degrees_of_freedom)
-            h5f.create_dataset("bp_n_parameters ", data=bp_n_parameters)
-            h5f.create_dataset("bp_n_measurements ", data=bp_n_measurements)
+            h5f.create_dataset("bp_basis_function_id", data=bp_basis_function_id)
+            h5f.create_dataset("bp_degrees_of_freedom", data=bp_degrees_of_freedom)
+            h5f.create_dataset("bp_n_parameters", data=bp_n_parameters)
+            h5f.create_dataset("bp_n_measurements", data=bp_n_measurements)
             h5f.create_dataset(
-                "bp_n_rejected_measurements ", data=bp_n_rejected_measurements
+                "bp_n_rejected_measurements", data=bp_n_rejected_measurements
             )
-            h5f.create_dataset("bp_standard_deviation ", data=bp_standard_deviation)
-            h5f.create_dataset("bp_chi_squared ", data=bp_chi_squared)
+            h5f.create_dataset("bp_standard_deviation", data=bp_standard_deviation)
+            h5f.create_dataset("bp_chi_squared", data=bp_chi_squared)
             if save_correlation_matrix:
                 bp_coefficient_correlations = np.stack(
                     file_path_f["bp_coefficient_correlations"]
                 )
                 h5f.create_dataset(
-                    "bp_coefficient_correlations ", data=bp_coefficient_correlations
+                    "bp_coefficient_correlations", data=bp_coefficient_correlations
                 )
                 del bp_coefficient_correlations  # prevent potential memory issue
             h5f.create_dataset("bp_coefficient_errors", data=bp_coefficient_errors)
@@ -221,21 +229,21 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
             h5f.create_dataset("bp_n_relevant_bases", data=bp_n_relevant_bases)
             h5f.create_dataset("bp_relative_shrinking", data=bp_relative_shrinking)
 
-            h5f.create_dataset("rp_basis_function_id ", data=rp_basis_function_id)
-            h5f.create_dataset("rp_degrees_of_freedom ", data=rp_degrees_of_freedom)
-            h5f.create_dataset("rp_n_parameters ", data=rp_n_parameters)
-            h5f.create_dataset("rp_n_measurements ", data=rp_n_measurements)
+            h5f.create_dataset("rp_basis_function_id", data=rp_basis_function_id)
+            h5f.create_dataset("rp_degrees_of_freedom", data=rp_degrees_of_freedom)
+            h5f.create_dataset("rp_n_parameters", data=rp_n_parameters)
+            h5f.create_dataset("rp_n_measurements", data=rp_n_measurements)
             h5f.create_dataset(
-                "rp_n_rejected_measurements ", data=rp_n_rejected_measurements
+                "rp_n_rejected_measurements", data=rp_n_rejected_measurements
             )
-            h5f.create_dataset("rp_standard_deviation ", data=rp_standard_deviation)
-            h5f.create_dataset("rp_chi_squared ", data=rp_chi_squared)
+            h5f.create_dataset("rp_standard_deviation", data=rp_standard_deviation)
+            h5f.create_dataset("rp_chi_squared", data=rp_chi_squared)
             if save_correlation_matrix:
                 rp_coefficient_correlations = np.stack(
                     file_path_f["rp_coefficient_correlations"]
                 )
                 h5f.create_dataset(
-                    "rp_coefficient_correlations ", data=rp_coefficient_correlations
+                    "rp_coefficient_correlations", data=rp_coefficient_correlations
                 )
                 del rp_coefficient_correlations  # prevent potential memory issue
             h5f.create_dataset("rp_coefficient_errors", data=rp_coefficient_errors)
