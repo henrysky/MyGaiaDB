@@ -39,7 +39,7 @@ def compile_xp_continuous_allinone_h5(save_correlation_matrix=False):
     file_paths = list(base_path.glob("*.h5"))
 
     if len(file_paths) == 0:
-        raise FileNotFoundError(f"Gaia data does not exist at {base_path}")
+        raise FileNotFoundError(f"Gaia data does not exist at {base_path}. Please run compile_xp_continuous_h5() first.")
 
     file_names = [x.name for x in file_paths]
     healpix_8_min = [

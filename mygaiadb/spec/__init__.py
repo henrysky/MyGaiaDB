@@ -24,6 +24,7 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
     rdcc_nslots: int
         h5py cache number of slots
     """
+    source_ids = np.asarray(source_ids, dtype=np.int64)
     reduced_source_ids = source_ids // 8796093022208
     total_num = len(source_ids)
 
@@ -49,7 +50,7 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
             spec_f = h5f[f"{reference_file['file'][i]}"]
             matches, idx1, idx2 = np.intersect1d(
                 current_source_ids,
-                spec_f["source_id"][()],
+                np.asanyarray(spec_f["source_id"][()], dtype=np.uint64),
                 assume_unique=assume_unique,
                 return_indices=True,
             )

@@ -4,7 +4,9 @@
 - N/A
 
 ### Changed
-- N/A
+- Fix ``compile_xp_continuous_h5()`` won't run on new computer since it assumed non-standard file structure
+- Reduce memory usage for ``compile_xp_continuous_h5()``
+- ``compile_xp_continuous_allinone_h5()`` can now save correlation matrix too
 
 ### Fixed
 - N/A

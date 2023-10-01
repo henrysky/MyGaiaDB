@@ -181,9 +181,12 @@ database at the same time since ``MyGaiaDB`` will set read-only permission befor
     compile.compile_catwise_sql_db()
 
     # turn compressed XP coeffs files to h5, with options to save correlation matrix too
+    # a large amount of disk space (~3TB) is required if save_correlation_matrix=True
     compile.compile_xp_continuous_h5(save_correlation_matrix=False)
     # compile all XP coeffs into a single h5, partitioned batches of stars by their HEALPix
-    compile.compile_xp_continuous_allinone_h5()
+    # with options to save correlation matrix too, BUT it requires yo to run compile_xp_continuous_h5(save_correlation_matrix=True) first
+    # a large amount of disk space (~3TB) is required if save_correlation_matrix=True
+    compile.compile_xp_continuous_allinone_h5(save_correlation_matrix=False)
 
 SQL Databases Data Model
 ---------------------------
@@ -456,6 +459,8 @@ Author
 -  | **Henry Leung** - henrysky_
    | University of Toronto
    | Contact Henry: henrysky.leung [at] utoronto.ca
+
+This package is original developed for the paper `Towards an astronomical foundation model for stars with a Transformer-based model <https://ui.adsabs.harvard.edu/abs/2023arXiv230810944L/>`__.
 
 License
 -------------
