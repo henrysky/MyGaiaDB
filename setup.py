@@ -20,7 +20,7 @@ ext_modules = [astroqlite_c]
 
 setup(
     name="MyGaiaDB",
-    version="0.4dev0",
+    version="0.4",
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
