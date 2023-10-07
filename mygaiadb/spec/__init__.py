@@ -50,7 +50,7 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
             spec_f = h5f[f"{reference_file['file'][i]}"]
             matches, idx1, idx2 = np.intersect1d(
                 current_source_ids,
-                np.asanyarray(spec_f["source_id"][()], dtype=np.uint64),
+                np.asanyarray(spec_f["source_id"][()], dtype=np.int64),
                 assume_unique=assume_unique,
                 return_indices=True,
             )
