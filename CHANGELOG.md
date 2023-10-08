@@ -1,4 +1,4 @@
-## [0.4] - 202x-xx-xx
+## [0.] - 202x-xx-xx
 
 ### Added
 - N/A
@@ -12,7 +12,7 @@
 ## [0.4] - 2023-10-01
 
 ### Added
-- N/A
+- [0.4.1] Python 3.12 wheels
 
 ### Changed
 - Fix ``compile_xp_continuous_h5()`` won't run on new computer since it assumed non-standard file structure
@@ -20,7 +20,7 @@
 - ``compile_xp_continuous_allinone_h5()`` can now save correlation matrix too
 
 ### Fixed
-- N/A
+- [0.4.1] Fix ``yield_xp_coeffs()`` fails for some gaia source id due to dtype issue
 
 ## [0.3] - 2023-08-05
 
