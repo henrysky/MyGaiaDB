@@ -13,7 +13,7 @@ jobs:
       MY_ASTRO_DATA: ${{ github.workspace }}/my_astro_data/
     steps:
       - uses: actions/checkout@v4
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           channels: conda-forge
           auto-update-conda: true

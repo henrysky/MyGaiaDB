@@ -24,7 +24,7 @@ jobs:
         python: ["cp38", "cp39", "cp310", "cp311", "cp312"]
     steps:
       - uses: actions/checkout@v4
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           channels: conda-forge
           auto-update-conda: true
@@ -73,7 +73,7 @@ jobs:
       # check-out this repository
       - uses: actions/checkout@v4
       # Setup python
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           channels: conda-forge
           auto-update-conda: true
