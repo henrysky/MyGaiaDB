@@ -61,10 +61,6 @@ jobs:
         with:
           name: ${{ matrix.python }}-${{ matrix.buildplat[1] }}_${{ matrix.buildplat[2] }}
           path: ./wheelhouse/*.whl
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.python }}-${{ matrix.buildplat[1] }}_${{ matrix.buildplat[2] }}
-          path: ./wheelhouse/*.whl
   build_sdist:
     name: Build source directory for release
     if: github.event_name == 'release' && github.event.action == 'created'
