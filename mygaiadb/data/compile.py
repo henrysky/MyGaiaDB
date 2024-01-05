@@ -640,7 +640,7 @@ def compile_tmass_sql_db(indexing=True):
         data.astype(dtypes)
 
         # write the data to a sqlite table
-        data.to_sql(f"twomass_psc", conn, if_exists="append", index=False)
+        data.to_sql("twomass_psc", conn, if_exists="append", index=False)
 
     # =================== indexing ===================
     if indexing:
@@ -1026,7 +1026,7 @@ def compile_allwise_sql_db(indexing=True):
         )
 
         # write the data to a sqlite table
-        data.to_sql(f"allwise", conn, if_exists="append", index=False)
+        data.to_sql("allwise", conn, if_exists="append", index=False)
 
     # =================== indexing ===================
     if indexing:
@@ -1310,7 +1310,7 @@ def compile_catwise_sql_db(indexing=True):
             )
 
         # write the data to a sqlite table
-        data.to_sql(f"catwise", conn, if_exists="append", index=False)
+        data.to_sql("catwise", conn, if_exists="append", index=False)
 
     # =================== indexing ===================
     if indexing:
