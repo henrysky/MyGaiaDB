@@ -64,7 +64,7 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
                 idx2_sorted = idx2[idx_argsort]
                 idx2_inv_argsort = np.argsort(idx_argsort)
 
-                coeffs = np.zeros((len(idx2), 110))
+                coeffs = np.zeros((len(idx2), 110), dtype=spec_f["bp_coefficients"].dtype)
                 coeffs[:, :55] = (spec_f["bp_coefficients"][idx2_sorted])[idx2_inv_argsort]
                 coeffs[:, 55:] = (spec_f["rp_coefficients"][idx2_sorted])[idx2_inv_argsort]
                 if not return_errors:
@@ -74,7 +74,7 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
                         extra_columns = tuple(spec_f[i][()][idx2] for i in return_additional_columns)
                         yield coeffs, np.arange(total_num)[good_idx][idx1], *extra_columns
                 else:
-                    coeffs_err = np.zeros((len(idx2), 110))
+                    coeffs_err = np.zeros((len(idx2), 110), dtype=spec_f["bp_coefficient_errors"].dtype)
                     coeffs_err[:, :55] = (spec_f["bp_coefficient_errors"][idx2_sorted])[idx2_inv_argsort]
                     coeffs_err[:, 55:] = (spec_f["rp_coefficient_errors"][idx2_sorted])[idx2_inv_argsort]
                     if return_additional_columns is None:
