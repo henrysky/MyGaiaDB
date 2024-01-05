@@ -136,18 +136,18 @@ def test_xp_query():
         f_xp[group_name].create_dataset("source_id", data=_source_ids, dtype=np.int64)
         f_xp[group_name].create_dataset("bp_coefficients", data=np.random.random((np.sum(good_source_ids), 55)))
         f_xp[group_name].create_dataset("rp_coefficients", data=np.random.random((np.sum(good_source_ids), 55)))
-        f_xp[group_name].create_dataset("bp_coefficient_error", data=np.random.random((np.sum(good_source_ids), 55)))
-        f_xp[group_name].create_dataset("rp_coefficient_error", data=np.random.random((np.sum(good_source_ids), 55)))
+        f_xp[group_name].create_dataset("bp_coefficient_errors", data=np.random.random((np.sum(good_source_ids), 55)))
+        f_xp[group_name].create_dataset("rp_coefficient_errors", data=np.random.random((np.sum(good_source_ids), 55)))
     f_xp.close()
     all_source_ids = np.concatenate(all_source_ids)
 
     # ================= Test query =================
     np.random.shuffle(all_source_ids)
 
-    all_source_ids = np.zeros((len(all_source_ids),), dtype=np.int64)
+    source_ids_result = np.zeros((len(all_source_ids),), dtype=np.int64)
 
     for i in yield_xp_coeffs(all_source_ids, return_errors=True, assume_unique=True, return_additional_columns=["source_id"]):
         coeffs, idx, coeffs_err, ids = i  # unpack
-        all_source_ids[idx] = ids
+        source_ids_result[idx] = ids
 
-    assert np.all(all_source_ids == possible_source_ids)
+    assert np.all(all_source_ids == source_ids_result)

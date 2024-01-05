@@ -26,6 +26,7 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
     """
     source_ids = np.asarray(source_ids, dtype=np.int64)
     reduced_source_ids = source_ids // 8796093022208
+    bad_source_ids = (source_ids < 1)
     total_num = len(source_ids)
 
     h5f = h5py.File(gaia_xp_coeff_h5_path, "r", rdcc_nbytes=rdcc_nbytes, rdcc_nslots=rdcc_nslots)
@@ -44,7 +45,7 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
         "healpix8_max": np.asarray(healpix_8_max),
     }
     for i in tqdm.tqdm(range(len(reference_file["healpix8_min"]))):
-        good_idx = (reference_file["healpix8_min"][i] <= reduced_source_ids) & (reduced_source_ids <= reference_file["healpix8_max"][i])
+        good_idx = (reference_file["healpix8_min"][i] <= reduced_source_ids) & (reduced_source_ids <= reference_file["healpix8_max"][i]) & ~bad_source_ids
         if np.sum(good_idx) > 0:
             current_source_ids = source_ids[good_idx]
             spec_f = h5f[f"{reference_file['file'][i]}"]
