@@ -33,7 +33,7 @@ setup(
     packages=find_packages(),
     package_data={"mygaiadb/sql_schema": ["*"]},
     include_package_data=True,
-    python_requires=f">=3.8",
+    python_requires=">=3.8",
     install_requires=[
         "numpy",
         "astropy",

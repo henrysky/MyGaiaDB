@@ -4,7 +4,7 @@
 - N/A
 
 ### Changed
-- N/A
+- Improved performance for ``yield_xp_coeffs()``, especially for short list of source id
 
 ### Fixed
 - N/A

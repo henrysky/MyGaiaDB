@@ -1,7 +1,7 @@
 import h5py
 import tqdm
 import numpy as np
-from .. import astro_data_path, gaia_xp_coeff_h5_path
+from .. import gaia_xp_coeff_h5_path
 
 
 def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_additional_columns=None, rdcc_nbytes=16*1024**3, rdcc_nslots=10e7):
@@ -50,16 +50,23 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
             spec_f = h5f[f"{reference_file['file'][i]}"]
             matches, idx1, idx2 = np.intersect1d(
                 current_source_ids,
-                np.asanyarray(spec_f["source_id"][()], dtype=np.int64),
+                np.asarray(spec_f["source_id"][()], dtype=np.int64),
                 assume_unique=assume_unique,
                 return_indices=True,
             )
-            # load all to memory to be faster, although this is kinda memory intensive
-            bp_coeffs = spec_f["bp_coefficients"][()]
-            rp_coeffs = spec_f["rp_coefficients"][()]
 
             if len(matches) > 0:
-                coeffs = np.hstack([bp_coeffs[idx2], rp_coeffs[idx2]])
+                # warp negative indices to positive indices
+                idx2 = idx2 % spec_f["source_id"].len()
+                
+                # dealing with sorting since h5py does not support fancy indexing
+                idx_argsort = np.argsort(idx2)
+                idx2_sorted = idx2[idx_argsort]
+                idx2_inv_argsort = np.argsort(idx_argsort)
+
+                coeffs = np.zeros((len(idx2), 110))
+                coeffs[:, :55] = (spec_f["bp_coefficients"][idx2_sorted])[idx2_inv_argsort]
+                coeffs[:, 55:] = (spec_f["rp_coefficients"][idx2_sorted])[idx2_inv_argsort]
                 if not return_errors:
                     if return_additional_columns is None:
                         yield coeffs, np.arange(total_num)[good_idx][idx1]
@@ -67,9 +74,9 @@ def yield_xp_coeffs(source_ids, assume_unique=True, return_errors=False, return_
                         extra_columns = tuple(spec_f[i][()][idx2] for i in return_additional_columns)
                         yield coeffs, np.arange(total_num)[good_idx][idx1], *extra_columns
                 else:
-                    bp_coeffs_err = spec_f["bp_coefficient_errors"][()]
-                    rp_coeffs_err = spec_f["rp_coefficient_errors"][()]
-                    coeffs_err = np.hstack([bp_coeffs_err[idx2], rp_coeffs_err[idx2]])
+                    coeffs_err = np.zeros((len(idx2), 110))
+                    coeffs_err[:, :55] = (spec_f["bp_coefficient_errors"][idx2_sorted])[idx2_inv_argsort]
+                    coeffs_err[:, 55:] = (spec_f["rp_coefficient_errors"][idx2_sorted])[idx2_inv_argsort]
                     if return_additional_columns is None:
                         yield coeffs, np.arange(total_num)[good_idx][idx1], coeffs_err
                     else:

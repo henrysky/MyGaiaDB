@@ -423,7 +423,7 @@ and you can remove a user table like ``my_table_1`` in this case by using ``remo
 Gaia XP Spectroscopy Query
 ----------------------------
 
-There can be use case where you want to run a function (e.g., a machine learning model) to a large batch of source_id with reasonable memory usage. 
+There can be use case where you want to run a function (e.g., a machine learning model) to a large batch of Gaia source ids with reasonable memory usage. 
 You can use ``MyGaiaDB`` to do that in batch provided you have compiled a single h5 with ``mygaiadb.compile.compile_xp_continuous_allinone_h5()``
 
 ..  code-block:: python
