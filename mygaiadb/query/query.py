@@ -8,7 +8,6 @@ import inspect
 import sqlite3
 import sysconfig
 import contextlib
-import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from mygaiadb import (
@@ -106,7 +105,7 @@ class LocalGaiaSQL:
         """
         for i in callbacks:
             for j in i.required_col:
-                if not j in headers:
+                if j not in headers:
                     raise NameError(
                         f"Callback for new column {i.new_col_name} requires column {j} but not presented in your query"
                     )
@@ -441,7 +440,7 @@ class LocalGaiaSQL:
         result: list
             list of columns of DATABASE_NAME.TABLE_NAME
         """
-        if not "." in name:
+        if "." not in name:
             raise NameError(
                 "Table name need to be with the format of DATABASE_NAME.TABLE_NAME"
             )

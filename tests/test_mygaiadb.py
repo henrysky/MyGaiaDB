@@ -1,9 +1,9 @@
-import sys
-import stat
+import h5py
 import pytest
-import pathlib
 import mygaiadb
 from mygaiadb.query import LocalGaiaSQL
+from mygaiadb.spec import yield_xp_coeffs
+from mygaiadb import gaia_xp_coeff_h5_path
 from mygaiadb.data import download, compile
 import numpy as np
 import pandas as pd
@@ -69,6 +69,9 @@ def test_query():
     localdb.save_csv(query, "output.csv", comments=False)
     query_df = localdb.query(query)
 
+    assert len(query_df) == 10, "Query should return 10 rows"
+    assert "source_id" in query_df.keys(), "Query should contain 'source_id'"
+
 
 @pytest.mark.order(5)
 def test_query_saving():
@@ -113,3 +116,37 @@ def test_query_saving():
     query_df_from_saved = pd.read_csv("output.csv", comment="#")
     # make sure saved csv has the same result of simply query
     assert np.all(query_df.loc[0] == query_df_from_saved.loc[0])
+
+
+@pytest.mark.order(6)
+def test_xp_query():
+    # ================= Generate dataset =================
+    f_xp = h5py.File(gaia_xp_coeff_h5_path, "w")
+    # list of possible random source_id
+    possible_source_ids = np.random.randint(4295806720, 6917528997577384320, size=10000000, dtype=np.int64)
+    reduced_possible_source_ids = possible_source_ids // 8796093022208
+    all_source_ids = []
+
+    for i, j in zip([0, 3001, 6001], [3000, 6000, 9000]):
+        good_source_ids = (i <= reduced_possible_source_ids) & (reduced_possible_source_ids <= j)
+        _source_ids = possible_source_ids[good_source_ids]
+        all_source_ids.append(_source_ids)
+        f_xp.create_group(f"{i}-{j}")
+        f_xp[i].create_dataset("source_id", data=_source_ids, dtype=np.int64)
+        f_xp[i].create_dataset("bp_coefficients", data=np.random.random((np.sum(good_source_ids), 55)))
+        f_xp[i].create_dataset("rp_coefficients", data=np.random.random((np.sum(good_source_ids), 55)))
+        f_xp[i].create_dataset("bp_coefficient_error", data=np.random.random((np.sum(good_source_ids), 55)))
+        f_xp[i].create_dataset("rp_coefficient_error", data=np.random.random((np.sum(good_source_ids), 55)))
+    f_xp.close()
+    all_source_ids = np.concatenate(all_source_ids)
+
+    # ================= Test query =================
+    np.random.shuffle(all_source_ids)
+
+    all_source_ids = np.zeros((len(all_source_ids),), dtype=np.int64)
+
+    for i in yield_xp_coeffs(all_source_ids, return_errors=True, assume_unique=True, return_additional_columns=["source_id"]):
+        coeffs, idx, coeffs_err, ids = i  # unpack
+        all_source_ids[idx] = ids
+
+    assert np.all(all_source_ids == possible_source_ids)

@@ -207,7 +207,7 @@ def download_allwise(test=False):
 
     if test:
         downloader(
-            f"http://irsa.ipac.caltech.edu/data/download/wise-allwise/wise-allwise-cat-part01.bz2",
+            "http://irsa.ipac.caltech.edu/data/download/wise-allwise/wise-allwise-cat-part01.bz2",
             _ALLWISE_PARENT.joinpath("wise-allwise-cat-part01.bz2"),
             "test",
             test=test,
