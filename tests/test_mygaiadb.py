@@ -141,7 +141,7 @@ def test_xp_query():
     f_xp.close()
     all_source_ids = np.concatenate(all_source_ids)
 
-    # ================= Test query =================
+    # ================= Test query with unique source id =================
     np.random.shuffle(all_source_ids)
 
     source_ids_result = np.zeros((len(all_source_ids),), dtype=np.int64)
@@ -151,3 +151,16 @@ def test_xp_query():
         source_ids_result[idx] = ids
 
     assert np.all(all_source_ids == source_ids_result)
+
+    # ================= Test query with repeated source id and unknowns =================
+    all_source_ids_w_replacement = np.random.choice(np.concatenate([all_source_ids, np.random.randint(4295806720, 6917528997577384320, size=len(all_source_ids) // 2, dtype=np.int64)]), size=len(all_source_ids) * 2, replace=True)
+
+    source_ids_result = np.zeros((len(all_source_ids_w_replacement),), dtype=np.int64)
+
+    for i in yield_xp_coeffs(all_source_ids_w_replacement, return_errors=True, assume_unique=False, return_additional_columns=["source_id"]):
+        coeffs, idx, coeffs_err, ids = i  # unpack
+        source_ids_result[idx] = ids
+
+    # 0 represents no source_id found for XP coefficients
+    assert np.all((all_source_ids_w_replacement == source_ids_result)[source_ids_result != 0])
+    
