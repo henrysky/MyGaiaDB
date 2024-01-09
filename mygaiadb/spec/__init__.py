@@ -49,15 +49,18 @@ def yield_xp_coeffs(
         "healpix8_min": np.asarray(healpix_8_min),
         "healpix8_max": np.asarray(healpix_8_max),
     }
-    for i in tqdm.tqdm(range(len(reference_file["healpix8_min"]))):
+    # for i in tqdm.tqdm(range(len(reference_file["healpix8_min"]))):
+    for min, max, f in zip(
+        tqdm.tqdm(reference_file["healpix8_min"]),
+        reference_file["healpix8_max"],
+        reference_file["file"],
+    ):
         good_idx = (
-            (reference_file["healpix8_min"][i] <= reduced_source_ids)
-            & (reduced_source_ids <= reference_file["healpix8_max"][i])
-            & ~bad_source_ids
+            (min <= reduced_source_ids) & (reduced_source_ids <= max) & ~bad_source_ids
         )
         if np.sum(good_idx) > 0:
             current_source_ids = source_ids[good_idx]
-            spec_f = h5f[f"{reference_file['file'][i]}"]
+            spec_f = h5f[f]
             matches, idx1, idx2 = np.intersect1d(
                 current_source_ids,
                 np.asarray(spec_f["source_id"][()], dtype=np.int64),
@@ -65,7 +68,7 @@ def yield_xp_coeffs(
                 return_indices=True,
             )
 
-            if len(matches) > 0:
+            if (size := len(matches)) > 0:
                 # warp negative indices to positive indices
                 idx2 = idx2 % spec_f["source_id"].len()
 
@@ -74,9 +77,7 @@ def yield_xp_coeffs(
                 idx2_sorted = idx2[idx_argsort]
                 idx2_inv_argsort = np.argsort(idx_argsort)
 
-                coeffs = np.zeros(
-                    (len(idx2), 110), dtype=spec_f["bp_coefficients"].dtype
-                )
+                coeffs = np.zeros((size, 110), dtype=spec_f["bp_coefficients"].dtype)
                 try:
                     coeffs[:, :55] = (spec_f["bp_coefficients"][idx2_sorted])[
                         idx2_inv_argsort
@@ -102,7 +103,7 @@ def yield_xp_coeffs(
                         )
                 else:
                     coeffs_err = np.zeros(
-                        (len(idx2), 110), dtype=spec_f["bp_coefficient_errors"].dtype
+                        (size, 110), dtype=spec_f["bp_coefficient_errors"].dtype
                     )
                     coeffs_err[:, :55] = (spec_f["bp_coefficient_errors"][idx2_sorted])[
                         idx2_inv_argsort

@@ -164,3 +164,7 @@ def test_xp_query():
     # 0 represents no source_id found for XP coefficients
     assert np.all((all_source_ids_w_replacement == source_ids_result)[source_ids_result != 0])
     
+    # assert error is raised
+    with pytest.raises(TypeError):
+        for i in yield_xp_coeffs(all_source_ids_w_replacement, assume_unique=True):
+            coeffs, idx = i  # unpack
