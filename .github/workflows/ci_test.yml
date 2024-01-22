@@ -43,7 +43,7 @@ jobs:
         run: |
           python -m pip install .
       - name: Cache my astro data
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/my_astro_data/
           key: mygaiadb-${{ runner.os }}-2023march13
