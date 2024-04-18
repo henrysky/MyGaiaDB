@@ -4,7 +4,7 @@
 - N/A
 
 ### Changed
-- Improved performance for ``yield_xp_coeffs()``, especially for short list of source id
+- N/A
 
 ### Fixed
 - N/A
@@ -18,6 +18,7 @@
 - Fix ``compile_xp_continuous_h5()`` won't run on new computer since it assumed non-standard file structure
 - Reduce memory usage for ``compile_xp_continuous_h5()``
 - ``compile_xp_continuous_allinone_h5()`` can now save correlation matrix too
+- [0.4.2] Improved performance for ``yield_xp_coeffs()``, especially for short list of source id
 
 ### Fixed
 - [0.4.1] Fix ``yield_xp_coeffs()`` fails for some gaia source id due to dtype issue

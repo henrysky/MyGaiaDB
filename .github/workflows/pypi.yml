@@ -34,7 +34,7 @@ jobs:
           conda install -y numpy astropy h5py pandas tqdm wheel pytest pytest-order
           python -m pip install build
       - name: Set environment variables on Mac OS
-        if: matrix.os == 'macos-latest'
+        if: matrix.buildplat[1] == 'macos'
         shell: bash -l {0}
         run: |
           echo "CFLAGS=-I$CONDA_PREFIX/include" >> $GITHUB_ENV
