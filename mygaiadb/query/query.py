@@ -1,23 +1,25 @@
-import os
-import re
-import sys
-import stat
-import ctypes
-import pathlib
-import inspect
-import sqlite3
-import sysconfig
 import contextlib
+import inspect
+import os
+import pathlib
+import re
+import sqlite3
+import stat
+import sys
+import sysconfig
+from ctypes.util import find_library
+
 import pandas as pd
 from tqdm import tqdm
+
 from mygaiadb import (
-    mygaiadb_default_db,
-    mygaiadb_usertable_db,
-    gaia_sql_db_path,
-    tmass_sql_db_path,
+    __version__,
     allwise_sql_db_path,
     catwise_sql_db_path,
-    __version__
+    gaia_sql_db_path,
+    mygaiadb_default_db,
+    mygaiadb_usertable_db,
+    tmass_sql_db_path,
 )
 
 
@@ -78,17 +80,26 @@ class LocalGaiaSQL:
         # ipython Auto-completion
         try:
             from IPython import get_ipython
+
             def list_all_tables_completer(ipython, event):
                 out = self.list_all_tables()
-                out.extend(list(f"user_table.{i}" for i in self.list_user_tables().keys()))
+                out.extend(
+                    list(f"user_table.{i}" for i in self.list_user_tables().keys())
+                )
                 return out
+
             def usertable_completer(ipython, event):
                 out = self.list_user_tables()
                 return out
-            get_ipython().set_hook("complete_command", list_all_tables_completer,
-                                   re_key=".*get_table_column")
-            get_ipython().set_hook("complete_command", usertable_completer,
-                                   re_key=".*remove_user_table")
+
+            get_ipython().set_hook(
+                "complete_command",
+                list_all_tables_completer,
+                re_key=".*get_table_column",
+            )
+            get_ipython().set_hook(
+                "complete_command", usertable_completer, re_key=".*remove_user_table"
+            )
         except:
             pass
 
@@ -127,7 +138,9 @@ class LocalGaiaSQL:
 
     def _file_exist(self, path):
         if not os.path.exists(path):
-            raise FileNotFoundError(f"Database at {path} does not exist. You should set loading that database to False.")
+            raise FileNotFoundError(
+                f"Database at {path} does not exist. You should set loading that database to False."
+            )
 
     def preprocess_query(func):
         """
@@ -169,7 +182,9 @@ class LocalGaiaSQL:
         """
         self._file_exist(mygaiadb_default_db)
         conn = sqlite3.connect(gaia_sql_db_path)
-        conn.create_function("mygaiadb_version", 0, lambda: __version__, deterministic=True)
+        conn.create_function(
+            "mygaiadb_version", 0, lambda: __version__, deterministic=True
+        )
         c = conn.cursor()
         if self.load_ext:
             self._load_sqlite3_ext(conn)
@@ -207,13 +222,13 @@ class LocalGaiaSQL:
             self.attached_db_name.append("catwise")
         # ======================= optional table =======================
         return conn, c
-    
+
     @staticmethod
     def _load_sqlite3_ext(c):
         c.enable_load_extension(True)
         # Find and load the library
         _lib = None
-        _libname = ctypes.util.find_library("astroqlite_c")
+        _libname = find_library("astroqlite_c")
         _ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
         if _libname:
             _lib = _libname
@@ -229,7 +244,13 @@ class LocalGaiaSQL:
 
     @preprocess_query
     def save_csv(
-        self, query, filename, chunksize=50000, overwrite=True, callbacks=None, comments=True
+        self,
+        query,
+        filename,
+        chunksize=50000,
+        overwrite=True,
+        callbacks=None,
+        comments=True,
     ):
         """
         Given query, save the fetchall() result to csv, "chunksize" number of rows at each time until finished
@@ -298,7 +319,7 @@ class LocalGaiaSQL:
                     mode="a" if not first_flag else "w",
                     index=False,
                     header=False if not first_flag else True,
-                    lineterminator="\n"
+                    lineterminator="\n",
                 )
                 first_flag = False
                 pbar.update(len(_df))

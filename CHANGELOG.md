@@ -22,6 +22,7 @@
 
 ### Fixed
 - [0.4.1] Fix ``yield_xp_coeffs()`` fails for some gaia source id due to dtype issue
+- [0.4.3] Fix ``ctypes`` import issue
 
 ## [0.3] - 2023-08-05
 
