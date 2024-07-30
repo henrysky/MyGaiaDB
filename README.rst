@@ -1,24 +1,27 @@
 MyGaiaDB
 ===============
 
-*Why share when you can have the whole Gaia database on your own locally?*
+*Why share when you can have the entire Gaia database locally?*
 
-``MyGaiaDB`` is simple python package with a set of scripts to help you setup a local 
-Gaia **DR3** database (local 2MASS, ALLWISE and CATWISE databases too) without the need of administrator privilege 
-and is compatible to all major platforms (Linux, Mac and Windows) because ``MyGaiaDB`` is **serverless** 
-which requires Python only using ``sqlite`` as long as you have enough disk space.
+``MyGaiaDB`` is a simple Python package that provides scripts to help you set up a local 
+Gaia **DR3** database, along with local 2MASS, ALLWISE, and CATWISE databases, without needing 
+administrative privileges. It's compatible with all major platforms (Linux, Mac, and Windows) 
+because ``MyGaiaDB`` is **serverless** and only requires Python with ``sqlite``, as long as you have 
+enough disk space.
 
-This code is mainly to help myself managing data for my research project with Gaia DR3 XP spectra 
-and not meant to fit research usage from every aspect of Gaia's 1 billion stars. The main motivation of this 
-code is to make setting up local Gaia database with 2MASS, ALLWISE and CATWISE accessible to everyone. Possible use cases include 
-but not limited to making very long complex query cross-matching to multiple databases that can take a long time 
-to finish (where the online ESA `Gaia archive`_ has timeout limitation).
+This code was primarily developed to assist with my research project involving Gaia DR3 XP spectra. 
+It is not intended to cover every aspect of research using Gaia's 1 billion stars. The main goal of 
+this code is to make setting up a local Gaia database, along with 2MASS, ALLWISE, and CATWISE, 
+accessible to everyone. Potential use cases include, but are not limited to, making complex and 
+lengthy cross-matching queries with multiple databases, which can be time-consuming (especially 
+given the online ESA Gaia archive's timeout limitations).
 
-You are welcome to modify the code, make pull request to make this code to suit your and others need.
+
+Feel free to modify the code and submit pull requests to enhance its functionality for yourself and others.
 
 ..
 
-    Part of this code will never be continuously tested properly since no way I can run this code with a few TBs of gaia data on Github Actions
+    Parts of this code are not continuously tested, as it is impractical to run this code with several terabytes of Gaia data on GitHub Actions.
 
 .. contents:: **Table of Contents**
     :depth: 3
@@ -26,35 +29,39 @@ You are welcome to modify the code, make pull request to make this code to suit 
 Installation and Dependencies
 -------------------------------
 
-This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy`` and ``tqdm`` while only need to use 
-``sqlite3`` bundled with your python installation without additional installation.
-Some optional functionalities require ``galpy``, ``mwdust``. Downloading functions require ``wget``.
+This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy`` and ``tqdm``. 
+This code only needs the ``sqlite3`` library that comes bundled with your Python installation. 
+For some optional functionalities,  ``galpy``, ``mwdust`` are required. Downloading functions will require ``wget``.
 
-You can simply do ``pip install mygaiadb`` to install compiled ``MyGaiaDB`` wheels.
+You can install the precompiled ``MyGaiaDB`` wheels by running `pip install mygaiadb`.
 
-Otherwise, you need to compile the code locally from source code. You need to add the folder which contains ``sqlite3ext.h`` to **INCLUDE** environment variable.
-If you are using Conda, you can do ``set INCLUDE=%CONDA_PREFIX%\Library\include;%INCLUDE%`` for Windows Command Prompt or ``$env:INCLUDE="$env:CONDA_PREFIX\Library\include"`` for Windows PowerShell 
-or ``export CFLAGS=-I$CONDA_PREFIX/include`` for MacOS or nothing for Linux. Then you can run ``python -m pip install .`` to install the 
-latest commits from github or ``python -m pip install -e .``  to develop ``MyGaiaDB`` locally.
+Alternatively, you can compile the code locally from the source. You'll need to add the folder containing ``sqlite3ext.h`` 
+to your **INCLUDE** environment variable. For Conda users, the commands are:
+
+- Windows Command Prompt: ``set INCLUDE=%CONDA_PREFIX%\Library\include;%INCLUDE%``
+- Windows PowerShell: ``$env:INCLUDE="$env:CONDA_PREFIX\Library\include"``
+- MacOS: ``export CFLAGS=-I$CONDA_PREFIX/include``
+- Linux: No action needed usually
+
+Then, you can run `python -m pip install .` to install the latest commits from GitHub or `python -m pip install -e .` to develop `MyGaiaDB` locally.
 
 Folder Structure
 -------------------
 
-You need to make sure you have at least ~8TB of free disk space with fast **random read** speed for optimal query performance. 
-First set an environment variable called **MY_ASTRO_DATA** which point to a folder that (will) contains your 
-astronomical data in general. To be compatible with other python package, under **MY_ASTRO_DATA** there should be a folder called ``gaia_mirror`` that contains all 
-gaia data (i.e. **GAIA_TOOLS_DATA** environment variable from Jo Bovy's gaia_tools_).
+Ensure you have at least ~8TB of free disk space with fast **random read** speed for optimal query performance. First, set 
+an environment variable called **MY_ASTRO_DATA** that points to a folder containing your astronomical data. To be compatible 
+with other Python packages, there should be a folder called ``gaia_mirror`` under **MY_ASTRO_DATA** that contains all Gaia data (similar to the 
+**GAIA_TOOLS_DATA** environment variable used by Jo Bovy's gaia_tools_).
 
 .. _apogee: https://github.com/jobovy/apogee
 .. _gaia_tools: https://github.com/jobovy/gaia_tools
 
-If you start from scratch on a clean computer, you only need to set **MY_ASTRO_DATA** environment variable and ``MyGaiaDB`` will populate the files and folders. 
-``MyGaiaDB`` will use ``~/.mygaiadb`` folder to save user specific settings and tables.
+If starting from scratch on a clean computer, set the **MY_ASTRO_DATA** environment variable, and 
+``MyGaiaDB`` will populate the necessary files and folders. ``MyGaiaDB`` will use the ``~/.mygaiadb`` folder to save user-specific settings and tables.
 
-If you already have the data on your computer but in a different directory structure and you do not want or can not move them, 
-you can use symbolic link to create the required folder structure without 
-duplicating files. For Linux and MacOS, you can use ``ln -s {source-dir-or-file-path} {symbolic-dir-or-file-path}``. 
-For Windows, you can use ``mklink {symbolic-file-path} {source-file-path}`` or ``mklink /D {symbolic-dir-path} {source-dir-path}``. 
+If you already have the data on your computer but in a different directory structure and cannot move them, you can use symbolic links to create 
+the required folder structure without duplicating files. For Linux and MacOS, use  ``ln -s {source-dir-or-file-path} {symbolic-dir-or-file-path}``. 
+For Windows, use ``mklink {symbolic-file-path} {source-file-path}`` or ``mklink /D {symbolic-dir-path} {source-dir-path}``. 
 The **case sensitive** folder structure should look something like the following chart:
 
 ::
@@ -124,7 +131,7 @@ The **case sensitive** folder structure should look something like the following
 Downloading Data
 ---------------------------
 
-To download with ``MyGaiaDB``, you can do
+To download and populate data with ``MyGaiaDB``, you can do
 
 ..  code-block:: python
 
@@ -161,11 +168,11 @@ Official data links:
 
 Compiling Databases
 ---------------------
-Here are functions to compile databases (each function only need to be ran once on each computer you store the data). 
-**Each function will generate large sized file(s)**. Moreover, if you are using a shared computing server, 
-only one user need to run the functions and share **MY_ASTRO_DATA** folder path to other user so
-they can setup their own environment variable **MY_ASTRO_DATA** to that folder too. Multiple users can use the SQL 
-database at the same time since ``MyGaiaDB`` will set read-only permission before loading databases to prevent accidential modification.
+The following functions are used to compile the databases. **Each function only needs to be run once per computer where the data is stored**, 
+and **each function will generate large-sized files**. If you are using a shared computing server, only one user needs to run these functions. 
+Once the databases are compiled, share the **MY_ASTRO_DATA** folder path with other users. They can set their own **MY_ASTRO_DATA** environment 
+variable to point to that folder. Multiple users on the same computers can access the SQL database simultaneously, as ``MyGaiaDB`` will set the 
+databases to read-only mode before loading them, preventing accidental modifications.
 
 ..  code-block:: python
 
@@ -191,34 +198,34 @@ database at the same time since ``MyGaiaDB`` will set read-only permission befor
 SQL Databases Data Model
 ---------------------------
 
-Currently for Gaia DR3 in ``MyGaiaDB``, these databases are only available if you have compiled all of them: 
+In ``MyGaiaDB``, the following databases are available if all have been compiled: 
 ``gaiadr3.gaia_source``, ``gaiadr3.allwise_best_neighbour``, ``gaiadr3.tmasspscxsc_best_neighbour``, 
-``gaiadr3.astrophysical_parameters``, ``tmass.twomass_psc``, ``allwise.allwise``, ``catwise.catwise``. But there are a few 
-utility functions to see list of tables and table's columns. Brief description of the tables are as following:
+``gaiadr3.astrophysical_parameters``, ``tmass.twomass_psc``, ``allwise.allwise`` and ``catwise.catwise``. 
+A few utility functions are available to list tables and their columns. Below is a brief description of each table:
 
 -   | ``gaiadr3.gaia_source``
-    | This table mimics ``gaia_source_lite`` on `Gaia Archive`_ with addition of ``grvs_mag`` columns
+    | This table mirrors ``gaia_source_lite`` on the `Gaia Archive`_ with the addition of ``grvs_mag`` column
     | Official description: https://gea.esac.esa.int/archive/documentation/GDR3/Gaia_archive/chap_datamodel/sec_dm_main_source_catalogue/ssec_dm_gaia_source.html
 -   | ``gaiadr3.allwise_best_neighbour``
-    | This table is identical to ``allwise_best_neighbour`` on `Gaia Archive`_
+    | Identical to ``allwise_best_neighbour`` on `Gaia Archive`_
     | Official description: https://gea.esac.esa.int/archive/documentation/GDR3/Gaia_archive/chap_datamodel/sec_dm_cross-matches/ssec_dm_allwise_best_neighbour.html
 -   | ``gaiadr3.tmasspscxsc_best_neighbour``
-    | This table is identical to ``tmass_psc_xsc_best_neighbour`` on `Gaia Archive`_
+    | Identical to ``tmass_psc_xsc_best_neighbour`` on `Gaia Archive`_
     | Official description: https://gea.esac.esa.int/archive/documentation/GDR3/Gaia_archive/chap_datamodel/sec_dm_cross-matches/ssec_dm_tmass_psc_xsc_best_neighbour.html
 -   | ``gaiadr3.astrophysical_parameters``
-    | This table is a lite version of ``astrophysical_parameters`` on `Gaia Archive`_ with only essential useful columns are kept
+    | A simplified version of ``astrophysical_parameters`` on `Gaia Archive`_ with only essential columns retained
     | Official description: https://gea.esac.esa.int/archive/documentation/GDR3/Gaia_archive/chap_datamodel/sec_dm_astrophysical_parameter_tables/ssec_dm_astrophysical_parameters.html
 -   | ``tmass.twomass_psc``
-    | This table is a lite version of 2MASS Point Source Catalog (PSC) with only essential useful columns are kept
+    | A simplified version of 2MASS Point Source Catalog (PSC) with only essential columns retained
     | Official description: https://irsa.ipac.caltech.edu/2MASS/download/allsky/format_psc.html
 -   | ``allwise.allwise``
-    | This table is a lite version of ALLWISE source catalog with only essential useful columns are kept
+    | A simplified version of ALLWISE source catalog with only essential columns retained
     | Official description: https://wise2.ipac.caltech.edu/docs/release/allwise/expsup/sec2_1a.html
 -   | ``catwise.catwise``
-    | This table is a lite version of CATWISE source catalog with only essential useful columns are kept
+    | A simplified version of CATWISE source catalog with only essential columns retained
     | Official description: https://irsa.ipac.caltech.edu/data/WISE/CatWISE/gator_docs/catwise_colDescriptions.html
 
-You can use ``list_all_tables()`` to get a list of tables excluding ``user_table``. do 
+You can use the ``list_all_tables()`` function to get a list of tables, excluding ``user_table``. For example:
 
 ..  code-block:: python
 
@@ -460,7 +467,7 @@ Author
    | University of Toronto
    | Contact Henry: henrysky.leung [at] utoronto.ca
 
-This package is original developed for the paper `Towards an astronomical foundation model for stars with a Transformer-based model <https://ui.adsabs.harvard.edu/abs/2023arXiv230810944L/>`__.
+This package is original developed for the paper `Towards an astronomical foundation model for stars with a Transformer-based model <https://ui.adsabs.harvard.edu/abs/2024MNRAS.527.1494L>`__.
 
 License
 -------------
