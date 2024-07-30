@@ -29,7 +29,7 @@ so other users can also use it, so you are welcome to do so.
 
 To add a new database:
 
-#. Add your dataset (i.e. the raw data file) download logics in ``MyGaiaDB/data/download.py``. You should also add download logics for test suits to run such that the test suits can be ran on a small portion of the data to sanity check (you can check how it is done for existing datasets)
-#. Add your new SQL schema as a ``.sql`` file under ``MyGaiaDB/data/sql_schema/`` directory.
-#. Add compilation logics (i.e. convert raw data to a SQL database) in ``MyGaiaDB/data/compile.py``.
+#. Add your dataset (i.e. the raw data file) download logics in ``./src/mygaiadb/data/download.py``. You should also add download logics for test suits to run such that the test suits can be ran on a small portion of the data to sanity check (you can check how it is done for existing datasets)
+#. Add your new SQL schema as a ``.sql`` file under ``./src/mygaiadb/data/sql_schema/`` directory.
+#. Add compilation logics (i.e. convert raw data to a SQL database) in ``./src/mygaiadb/data/compile.py``.
 #. Add tests in the test suits to check the correctness of the compilation logics as well as do a simple query to make sure everything is good.

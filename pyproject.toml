@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools >= 61.0", "wheel", "Cython"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MyGaiaDB"
+version = "0.5.0dev0"
+dynamic = ["dependencies"]
+requires-python = ">=3.8"
+authors = [
+  {name = "Henry Leung", email = "henryskyleung@gmail.com"},
+]
+maintainers = [
+  {name = "Henry Leung", email = "henryskyleung@gmail.com"},
+]
+description = "Setup local serverless ESA Gaia / 2MASS / ALLWISE / CATWISE databases and run query locally with Python"
+readme = "README.rst"
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Database :: Database Engines/Servers",
+    "Topic :: Database :: Front-Ends",]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[project.urls]
+Homepage = "https://github.com/henrysky/MyGaiaDB"
+Documentation = "https://github.com/henrysky/MyGaiaDB"
+Repository = "https://github.com/henrysky/MyGaiaDB"
+"Bug Tracker" = "https://github.com/henrysky/MyGaiaDB/issues"
+
+[tool.ruff]
+extend-include = ["*.ipynb"]
