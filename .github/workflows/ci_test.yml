@@ -48,7 +48,7 @@ jobs:
           key: mygaiadb-${{ runner.os }}-2023march13
       - name: Test
         run: |
-          python -m pytest -v -s tests/
+          python -m pytest -v tests/
       - name: Cleanup files from cache
         run: |
           python tests/cleanup.py 'i_swear_i_am_on_gh_action'
