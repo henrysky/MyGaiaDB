@@ -8,7 +8,8 @@ def SameSide(A, R):
     R_rad = R / 180 * np.pi
     return np.where(
         (
-            ((np.sign(np.cos(A_rad))) == (np.sign(np.cos(R_rad)))) == ((np.sign(np.sin(A_rad))) == (np.sign(np.sin(R_rad))))
+            ((np.sign(np.cos(A_rad))) == (np.sign(np.cos(R_rad))))
+            == ((np.sign(np.sin(A_rad))) == (np.sign(np.sin(R_rad))))
         ),
         (A + 36000) % 360,
         (A + 36180) % 360,
@@ -22,13 +23,13 @@ def radec_to_ecl(ra, dec):
     this relation is good for Gaia with epoch 2016, accurate to almost machine precision
     """
     e = 23.43928083333333 / 180 * np.pi
-    ra_rad = np.asarray(ra) / 180. * np.pi + (0.05542 * u.arcsec).to(u.rad).value
-    dec_rad = np.asarray(dec) / 180. * np.pi
+    ra_rad = np.asarray(ra) / 180.0 * np.pi + (0.05542 * u.arcsec).to(u.rad).value
+    dec_rad = np.asarray(dec) / 180.0 * np.pi
     l = np.arctan(
         np.tan(ra_rad) * np.cos(e) + np.tan(dec_rad) * np.sin(e) / np.cos(ra_rad)
-    ) / (np.pi / 180.)
+    ) / (np.pi / 180.0)
     b = np.arcsin(
         np.sin(dec_rad) * np.cos(e) - np.cos(dec_rad) * np.sin(e) * np.sin(ra_rad)
-    ) / (np.pi / 180.)
+    ) / (np.pi / 180.0)
     l = SameSide(l, ra_rad)
     return l, b

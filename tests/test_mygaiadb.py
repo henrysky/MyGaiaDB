@@ -31,17 +31,33 @@ def test_compile():
     assert mygaiadb.tmass_sql_db_path.exists()
     # assert mygaiadb.allwise_sql_db_path.exists()
     # assert database > 2GB
-    assert mygaiadb.gaia_sql_db_path.stat().st_size > 2e+9
+    assert mygaiadb.gaia_sql_db_path.stat().st_size > 2e9
 
 
 @pytest.mark.order(3)
 def test_user_table():
     localdb = LocalGaiaSQL(load_allwise=False)
-    localdb.upload_user_table(pd.DataFrame({"source_id": [5188146770731873152, 4611686018427432192, 5764607527332179584]}), "user_table_1")
+    localdb.upload_user_table(
+        pd.DataFrame(
+            {
+                "source_id": [
+                    5188146770731873152,
+                    4611686018427432192,
+                    5764607527332179584,
+                ]
+            }
+        ),
+        "user_table_1",
+    )
     result = localdb.query("""SELECT * FROM user_table.user_table_1""")
-    assert result["source_id"].tolist() == [5188146770731873152, 4611686018427432192, 5764607527332179584]
+    assert result["source_id"].tolist() == [
+        5188146770731873152,
+        4611686018427432192,
+        5764607527332179584,
+    ]
     localdb.remove_user_table("user_table_1")
     assert localdb.list_user_tables() == {}
+
 
 @pytest.mark.order(4)
 def test_utilities():
@@ -51,6 +67,7 @@ def test_utilities():
     localdb.get_table_column("gaiadr3.tmasspscxsc_best_neighbour")
     localdb.get_table_column("tmass.twomass_psc")
     localdb.get_table_column("catwise.catwise")
+
 
 @pytest.mark.order(5)
 def test_query():
@@ -89,7 +106,6 @@ def test_query_saving():
     # make sure saved csv has the same result of simply query
     assert np.all(query_df.loc[0] == query_df_from_saved.loc[0])
 
-
     # ================= query with new line in start =================
     query = """
     SELECT G.ra, G.dec
@@ -102,7 +118,6 @@ def test_query_saving():
     query_df_from_saved = pd.read_csv("output.csv", comment="#")
     # make sure saved csv has the same result of simply query
     assert np.all(query_df.loc[0] == query_df_from_saved.loc[0])
-
 
     # ================= query with new line in end =================
     query = """SELECT G.ra, G.dec
@@ -123,21 +138,35 @@ def test_xp_query():
     # ================= Generate dataset =================
     f_xp = h5py.File(gaia_xp_coeff_h5_path, "w")
     # list of possible random source_id
-    possible_source_ids = np.random.randint(4295806720, 6917528997577384320, size=10000000, dtype=np.int64)
+    possible_source_ids = np.random.randint(
+        4295806720, 6917528997577384320, size=10000000, dtype=np.int64
+    )
     reduced_possible_source_ids = possible_source_ids // 8796093022208
     all_source_ids = []
 
     for i, j in zip([0, 3001, 6001], [3000, 6000, 9000]):
-        good_source_ids = (i <= reduced_possible_source_ids) & (reduced_possible_source_ids <= j)
+        good_source_ids = (i <= reduced_possible_source_ids) & (
+            reduced_possible_source_ids <= j
+        )
         _source_ids = possible_source_ids[good_source_ids]
         all_source_ids.append(_source_ids)
         group_name = f"{i}-{j}"
         f_xp.create_group(group_name)
         f_xp[group_name].create_dataset("source_id", data=_source_ids, dtype=np.int64)
-        f_xp[group_name].create_dataset("bp_coefficients", data=np.random.random((np.sum(good_source_ids), 55)))
-        f_xp[group_name].create_dataset("rp_coefficients", data=np.random.random((np.sum(good_source_ids), 55)))
-        f_xp[group_name].create_dataset("bp_coefficient_errors", data=np.random.random((np.sum(good_source_ids), 55)))
-        f_xp[group_name].create_dataset("rp_coefficient_errors", data=np.random.random((np.sum(good_source_ids), 55)))
+        f_xp[group_name].create_dataset(
+            "bp_coefficients", data=np.random.random((np.sum(good_source_ids), 55))
+        )
+        f_xp[group_name].create_dataset(
+            "rp_coefficients", data=np.random.random((np.sum(good_source_ids), 55))
+        )
+        f_xp[group_name].create_dataset(
+            "bp_coefficient_errors",
+            data=np.random.random((np.sum(good_source_ids), 55)),
+        )
+        f_xp[group_name].create_dataset(
+            "rp_coefficient_errors",
+            data=np.random.random((np.sum(good_source_ids), 55)),
+        )
     f_xp.close()
     all_source_ids = np.concatenate(all_source_ids)
 
@@ -146,24 +175,50 @@ def test_xp_query():
 
     source_ids_result = np.zeros((len(all_source_ids),), dtype=np.int64)
 
-    for i in yield_xp_coeffs(all_source_ids, return_errors=True, assume_unique=True, return_additional_columns=["source_id"]):
+    for i in yield_xp_coeffs(
+        all_source_ids,
+        return_errors=True,
+        assume_unique=True,
+        return_additional_columns=["source_id"],
+    ):
         coeffs, idx, coeffs_err, ids = i  # unpack
         source_ids_result[idx] = ids
 
     assert np.all(all_source_ids == source_ids_result)
 
     # ================= Test query with repeated source id and unknowns =================
-    all_source_ids_w_replacement = np.random.choice(np.concatenate([all_source_ids, np.random.randint(4295806720, 6917528997577384320, size=len(all_source_ids) // 2, dtype=np.int64)]), size=len(all_source_ids) * 2, replace=True)
+    all_source_ids_w_replacement = np.random.choice(
+        np.concatenate(
+            [
+                all_source_ids,
+                np.random.randint(
+                    4295806720,
+                    6917528997577384320,
+                    size=len(all_source_ids) // 2,
+                    dtype=np.int64,
+                ),
+            ]
+        ),
+        size=len(all_source_ids) * 2,
+        replace=True,
+    )
 
     source_ids_result = np.zeros((len(all_source_ids_w_replacement),), dtype=np.int64)
 
-    for i in yield_xp_coeffs(all_source_ids_w_replacement, return_errors=True, assume_unique=False, return_additional_columns=["source_id"]):
+    for i in yield_xp_coeffs(
+        all_source_ids_w_replacement,
+        return_errors=True,
+        assume_unique=False,
+        return_additional_columns=["source_id"],
+    ):
         coeffs, idx, coeffs_err, ids = i  # unpack
         source_ids_result[idx] = ids
 
     # 0 represents no source_id found for XP coefficients
-    assert np.all((all_source_ids_w_replacement == source_ids_result)[source_ids_result != 0])
-    
+    assert np.all(
+        (all_source_ids_w_replacement == source_ids_result)[source_ids_result != 0]
+    )
+
     # assert error is raised
     with pytest.raises(Exception):
         for i in yield_xp_coeffs(all_source_ids_w_replacement, assume_unique=True):

@@ -1,7 +1,6 @@
 import contextlib
 import inspect
 import os
-import pathlib
 import re
 import sqlite3
 import stat
@@ -19,8 +18,9 @@ from mygaiadb import (
     mygaiadb_default_db,
     mygaiadb_usertable_db,
     tmass_sql_db_path,
+    mygaiadb_path,
 )
-from mygaiadb import __file__ as mygaiadb_path
+
 
 class QueryCallback:
     """
@@ -231,7 +231,7 @@ class LocalGaiaSQL:
         c.enable_load_extension(True)
         # Find and load the library
         _ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
-        _lib = pathlib.Path(mygaiadb_path).parent.joinpath(f"astroqlite_c{_ext_suffix}")
+        _lib = mygaiadb_path.joinpath(f"astroqlite_c{_ext_suffix}")
         if _lib.exists():
             c.load_extension(_lib.as_posix())
         else:

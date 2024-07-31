@@ -1,6 +1,5 @@
 import sqlite3
 from pathlib import Path
-import os
 import gc
 import tqdm
 import h5py
@@ -18,13 +17,14 @@ from . import (
 )
 from astropy.io import ascii
 from astropy.table import vstack
-from .. import (
+from mygaiadb import (
     astro_data_path,
     gaia_sql_db_path,
     tmass_sql_db_path,
     allwise_sql_db_path,
     gaia_xp_coeff_h5_path,
     catwise_sql_db_path,
+    mygaiadb_path,
 )
 
 
@@ -39,7 +39,9 @@ def compile_xp_continuous_allinone_h5(save_correlation_matrix=False):
     file_paths = list(base_path.glob("*.h5"))
 
     if len(file_paths) == 0:
-        raise FileNotFoundError(f"Gaia data does not exist at {base_path}. Please run compile_xp_continuous_h5() first.")
+        raise FileNotFoundError(
+            f"Gaia data does not exist at {base_path}. Please run compile_xp_continuous_h5() first."
+        )
 
     file_names = [x.name for x in file_paths]
     healpix_8_min = [
@@ -76,10 +78,18 @@ def compile_xp_continuous_allinone_h5(save_correlation_matrix=False):
             "bp_standard_deviation", data=temp_h5_data["bp_standard_deviation"][()]
         )
         gp.create_dataset("bp_chi_squared", data=temp_h5_data["bp_chi_squared"][()])
-        if save_correlation_matrix and "bp_coefficient_correlations" in temp_h5_data.keys():
-            gp.create_dataset("bp_coefficient_correlations", data=temp_h5_data["bp_coefficient_correlations"][()])
+        if (
+            save_correlation_matrix
+            and "bp_coefficient_correlations" in temp_h5_data.keys()
+        ):
+            gp.create_dataset(
+                "bp_coefficient_correlations",
+                data=temp_h5_data["bp_coefficient_correlations"][()],
+            )
         else:
-            warnings.warn("No bp_coefficient_correlations in the original data but you have set save_correlation_matrix=True, so bp_coefficient_correlations will not be saved.")
+            warnings.warn(
+                "No bp_coefficient_correlations in the original data but you have set save_correlation_matrix=True, so bp_coefficient_correlations will not be saved."
+            )
         gp.create_dataset(
             "bp_coefficient_errors", data=temp_h5_data["bp_coefficient_errors"][()]
         )
@@ -109,10 +119,18 @@ def compile_xp_continuous_allinone_h5(save_correlation_matrix=False):
             "rp_standard_deviation", data=temp_h5_data["rp_standard_deviation"][()]
         )
         gp.create_dataset("rp_chi_squared", data=temp_h5_data["rp_chi_squared"][()])
-        if save_correlation_matrix and "rp_coefficient_correlations" in temp_h5_data.keys():
-            gp.create_dataset("rp_coefficient_correlations", data=temp_h5_data["rp_coefficient_correlations"][()])
+        if (
+            save_correlation_matrix
+            and "rp_coefficient_correlations" in temp_h5_data.keys()
+        ):
+            gp.create_dataset(
+                "rp_coefficient_correlations",
+                data=temp_h5_data["rp_coefficient_correlations"][()],
+            )
         else:
-            warnings.warn("No bp_coefficient_correlations in the original data but you have set save_correlation_matrix=True, so bp_coefficient_correlations will not be saved.")
+            warnings.warn(
+                "No bp_coefficient_correlations in the original data but you have set save_correlation_matrix=True, so bp_coefficient_correlations will not be saved."
+            )
         gp.create_dataset(
             "rp_coefficient_errors", data=temp_h5_data["rp_coefficient_errors"][()]
         )
@@ -151,7 +169,12 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
     ):
         # XpContinuousMeanSpectrum_614517-614573's bp_basis_function_id is problematic, need special treatment
         if "614517-614573" in str(i_path):
-            file_path_f = vstack([ascii.read(i_path, data_end=31212), ascii.read(i_path, data_start=31213)])
+            file_path_f = vstack(
+                [
+                    ascii.read(i_path, data_end=31212),
+                    ascii.read(i_path, data_start=31213),
+                ]
+            )
         else:
             file_path_f = ascii.read(i_path)
 
@@ -204,7 +227,12 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
         )
 
         file_names_wo_ext = i_path.name[:-7]
-        with h5py.File(root_path.joinpath(f"{file_names_wo_ext}.h5",), "w",) as h5f:
+        with h5py.File(
+            root_path.joinpath(
+                f"{file_names_wo_ext}.h5",
+            ),
+            "w",
+        ) as h5f:
             h5f.create_dataset("source_id", data=file_path_f["source_id"].data)
             h5f.create_dataset("solution_id", data=file_path_f["solution_id"].data)
             h5f.create_dataset("bp_basis_function_id", data=bp_basis_function_id)
@@ -263,7 +291,8 @@ def compile_rvs_h5():
         "Spectroscopy",
         "rvs_mean_spectrum",
     )
-    for i_path in tqdm.tqdm(list(root_path.glob("*.csv.gz")),
+    for i_path in tqdm.tqdm(
+        list(root_path.glob("*.csv.gz")),
         desc="RVS spec",
     ):
         file_path_f = ascii.read(i_path)
@@ -324,9 +353,8 @@ def compile_gaia_sql_db(
             "allwise_best_neighbour_schema.sql",
             "tmasspscxsc_best_neighbour_schema.sql",
         ]:
-            schema_filename = os.path.join(
-                os.path.dirname(__file__), "sql_schema", f"{schema}"
-            )
+            schema_filename = mygaiadb_path.joinpath("data", "sql_schema", f"{schema}")
+
             with open(schema_filename) as f:
                 lines = f.read().replace("\n", "")
             c.execute(lines)
@@ -409,10 +437,8 @@ def compile_gaia_sql_db(
             data.to_sql("gaia_source", conn, if_exists="append", index=False)
 
     if do_gaia_astrophysical_table:
-        schema_filename = os.path.join(
-            os.path.dirname(__file__),
-            "sql_schema",
-            "astrophysical_parameters_lite_schema.sql",
+        schema_filename = mygaiadb_path.joinpath(
+            "data", "sql_schema", "astrophysical_parameters_lite_schema.sql"
         )
 
         with open(schema_filename) as f:
@@ -522,8 +548,8 @@ def compile_tmass_sql_db(indexing=True):
 
     # =================== 2MASS ===================
     # this section will take 1 hour to run
-    schema_filename = os.path.join(
-        os.path.dirname(__file__), "sql_schema", "twomass_psc_lite_schema.sql"
+    schema_filename = mygaiadb_path.joinpath(
+        "data", "sql_schema", "twomass_psc_lite_schema.sql"
     )
 
     with open(schema_filename) as f:
@@ -660,8 +686,8 @@ def compile_allwise_sql_db(indexing=True):
     c = conn.cursor()
 
     # this section will take ~16 hours to run
-    schema_filename = os.path.join(
-        os.path.dirname(__file__), "sql_schema", "allwise_lite_schema.sql"
+    schema_filename = mygaiadb_path.joinpath(
+        "data", "sql_schema", "allwise_lite_schema.sql"
     )
 
     with open(schema_filename) as f:
@@ -1046,8 +1072,8 @@ def compile_catwise_sql_db(indexing=True):
     c = conn.cursor()
 
     # this section will take ~16 hours to run
-    schema_filename = os.path.join(
-        os.path.dirname(__file__), "sql_schema", "catwise_lite_schema.sql"
+    schema_filename = mygaiadb_path.joinpath(
+        "data", "sql_schema", "catwise_lite_schema.sql"
     )
 
     with open(schema_filename) as f:
