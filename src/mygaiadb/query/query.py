@@ -80,28 +80,32 @@ class LocalGaiaSQL:
         # ipython Auto-completion
         try:
             from IPython import get_ipython
-
-            def list_all_tables_completer(ipython, event):
-                out = self.list_all_tables()
-                out.extend(
-                    list(f"user_table.{i}" for i in self.list_user_tables().keys())
-                )
-                return out
-
-            def usertable_completer(ipython, event):
-                out = self.list_user_tables()
-                return out
-
-            get_ipython().set_hook(
-                "complete_command",
-                list_all_tables_completer,
-                re_key=".*get_table_column",
-            )
-            get_ipython().set_hook(
-                "complete_command", usertable_completer, re_key=".*remove_user_table"
-            )
-        except:
+        except ImportError:
             pass
+        else:
+            if (ipy := get_ipython()) is not None:
+
+                def list_all_tables_completer(ipython, event):
+                    out = self.list_all_tables()
+                    out.extend(
+                        list(f"user_table.{i}" for i in self.list_user_tables().keys())
+                    )
+                    return out
+
+                def usertable_completer(ipython, event):
+                    out = self.list_user_tables()
+                    return out
+
+                ipy.set_hook(
+                    "complete_command",
+                    list_all_tables_completer,
+                    re_key=".*get_table_column",
+                )
+                ipy.set_hook(
+                    "complete_command",
+                    usertable_completer,
+                    re_key=".*remove_user_table",
+                )
 
     def _check_callbacks_header(self, headers, callbacks):
         """
@@ -240,7 +244,7 @@ class LocalGaiaSQL:
                     c.load_extension(_lib)
                     break
         if _lib is None:
-            raise IOError("MyGaiaDB SQL C extension not found")
+            raise ImportError("MyGaiaDB SQL C extension not found")
 
     @preprocess_query
     def save_csv(

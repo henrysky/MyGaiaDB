@@ -82,10 +82,10 @@ def yield_xp_coeffs(
                     coeffs[:, :55] = (spec_f["bp_coefficients"][idx2_sorted])[
                         idx2_inv_argsort
                     ]
-                except TypeError:
-                    raise TypeError(
-                        "Indexing elements must be in increasing order. Possible issues include your source_id array is not unique but you set 'assume_unique=True'"
-                    )
+                except TypeError as e:
+                    raise Exception(
+                        "Indexing elements must be in increasing order. This error may occur if the source_id array contains duplicate values while 'assume_unique=True' is set."
+                    ) from e
                 coeffs[:, 55:] = (spec_f["rp_coefficients"][idx2_sorted])[
                     idx2_inv_argsort
                 ]
