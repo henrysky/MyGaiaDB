@@ -7,7 +7,6 @@ import sqlite3
 import stat
 import sys
 import sysconfig
-from ctypes.util import find_library
 
 import pandas as pd
 from tqdm import tqdm
@@ -21,7 +20,7 @@ from mygaiadb import (
     mygaiadb_usertable_db,
     tmass_sql_db_path,
 )
-
+from mygaiadb import __file__ as mygaiadb_path
 
 class QueryCallback:
     """
@@ -231,19 +230,11 @@ class LocalGaiaSQL:
     def _load_sqlite3_ext(c):
         c.enable_load_extension(True)
         # Find and load the library
-        _lib = None
-        _libname = find_library("astroqlite_c")
         _ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
-        if _libname:
-            _lib = _libname
-        if _lib is None:
-            for path in sys.path:
-                _temp_lib = pathlib.Path(path).joinpath(f"astroqlite_c{_ext_suffix}")
-                if _temp_lib.exists():
-                    _lib = _temp_lib.as_posix()
-                    c.load_extension(_lib)
-                    break
-        if _lib is None:
+        _lib = pathlib.Path(mygaiadb_path).parent.joinpath(f"astroqlite_c{_ext_suffix}")
+        if _lib.exists():
+            c.load_extension(_lib.as_posix())
+        else:
             raise ImportError("MyGaiaDB SQL C extension not found")
 
     @preprocess_query
