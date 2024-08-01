@@ -1,8 +1,11 @@
-import tqdm
-import shutil
 import pathlib
+import shutil
+from typing import Optional
+
 import requests
-from .. import astro_data_path
+import tqdm
+
+from mygaiadb import astro_data_path
 
 _GAIA_PARENT = astro_data_path.joinpath("gaia_mirror")
 _GAIA_DR3_PARENT = _GAIA_PARENT.joinpath("Gaia", "gdr3")
@@ -28,17 +31,33 @@ _ALLWISE_PARENT = astro_data_path.joinpath("allwise_mirror")
 _CATWISE_PARENT = astro_data_path.joinpath("catwise_mirror", "2020")
 
 
-def downloader(url, fullfilename, name, test=False, session=None):
+def downloader(
+    url: str,
+    fullfilename: str,
+    name: str,
+    test: bool = False,
+    session: Optional[requests.Session] = None,
+):
     """
-    url: URL of data file
-    fullfilename: full local path
-    name: name of the task
-    session: Requests session
+    Download a file from a URL to a local file using ``requests``
+
+    Parameters
+    ----------
+    url : str
+        URL of the file to download
+    fullfilename : str
+        Full path to the local file to save
+    name : str
+        Name of the file to download
+    test : bool, optional
+        If True, the file will not be downloaded if it already exists
+    session : requests.Session, optional
+        A requests session to use for the download. If None, a new session will be created
     """
     if session is None:
         s = requests.Session()
     user_agent = "Mozilla/5.0"
-    r = requests.get(
+    r = s.get(
         url,
         stream=True,
         allow_redirects=True,

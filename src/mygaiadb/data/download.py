@@ -1,5 +1,5 @@
 import subprocess
-from . import (
+from mygaiadb.data import (
     downloader,
     _GAIA_DR3_GAIASOURCE_PARENT,
     _GAIA_DR3_ASTROPHYS_PARENT,
@@ -14,7 +14,15 @@ from . import (
 )
 
 
-def download_gaia_source(test=False):
+def download_gaia_source(test: bool=False):
+    """
+    Download Gaia DR3 source data from the ESA Gaia archive.
+
+    Parameters
+    ----------
+    test : bool, optional (default=False)
+        If True, only download a small subset of the data for testing purposes.
+    """
     _GAIA_DR3_GAIASOURCE_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/gaia_source/"
     if test:
@@ -39,7 +47,15 @@ def download_gaia_source(test=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_gaia_astrophysical_parameters(test=False):
+def download_gaia_astrophysical_parameters(test: bool=False):
+    """
+    Download Gaia DR3 astrophysical parameters data from the ESA Gaia archive.
+
+    Parameters
+    ----------
+    test : bool, optional (default=False)
+        If True, only download a small subset of the data for testing purposes.
+    """
     _GAIA_DR3_ASTROPHYS_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Astrophysical_parameters/astrophysical_parameters/"
     if test:
@@ -68,7 +84,15 @@ def download_gaia_astrophysical_parameters(test=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_allwise_best_neightbour(test=False):
+def download_allwise_best_neightbour(test: bool=False):
+    """
+    Download AllWISE best neighbour data from the ESA Gaia archive.
+
+    Parameters
+    ----------
+    test : bool, optional (default=False)
+        If True, only download a small subset of the data for testing purposes.
+    """
     _GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gedr3/cross_match/allwise_best_neighbour/"
     if test:
@@ -97,7 +121,15 @@ def download_allwise_best_neightbour(test=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_2mass_best_neightbour(test=False):
+def download_2mass_best_neightbour(test: bool=False):
+    """
+    Download 2MASS best neighbour data from the ESA Gaia archive.
+
+    Parameters
+    ----------
+    test : bool, optional (default=False)
+        If True, only download a small subset of the data for testing purposes.
+    """
     _GAIA_DR3_2MASS_NEIGHBOUR_PARENT.mkdir(parents=True, exist_ok=True)
     _url = (
         "http://cdn.gea.esac.esa.int/Gaia/gedr3/cross_match/tmasspscxsc_best_neighbour/"
@@ -128,7 +160,15 @@ def download_2mass_best_neightbour(test=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_2mass(test=False):
+def download_2mass(test: bool=False):
+    """
+    Download 2MASS data from the IPAC archive.
+
+    Parameters
+    ----------
+    test : bool, optional (default=False)
+        If True, only download a small subset of the data for testing purposes.
+    """
     _2MASS_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "https://irsa.ipac.caltech.edu/2MASS/download/allsky/"
     if test:
@@ -147,7 +187,15 @@ def download_2mass(test=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_allwise(test=False):
+def download_allwise(test: bool=False):
+    """
+    Download AllWISE data from the IPAC archive.
+
+    Parameters
+    ----------
+    test : bool, optional (default=False)
+        If True, only download a small subset of the data for testing purposes.
+    """
     _ALLWISE_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://irsa.ipac.caltech.edu/data/download/wise-allwise/"
     # https://irsa.ipac.caltech.edu/data/download/wise-allwise/wget_bz2.script
@@ -218,7 +266,15 @@ def download_allwise(test=False):
             subprocess.run(cmd_str, shell=True)
 
 
-def download_gaia_xp_continuous(test=False):
+def download_gaia_xp_continuous(test: bool=False):
+    """
+    Download Gaia DR3 XP continuous spectra from the ESA Gaia archive.
+
+    Parameters
+    ----------
+    test : bool, optional (default=False)
+        If True, only download a small subset of the data for testing purposes.
+    """
     _GAIA_DR3_XP_CONTINUOUS_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/xp_continuous_mean_spectrum/"
     if test:
@@ -237,7 +293,15 @@ def download_gaia_xp_continuous(test=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_gaia_xp_sampled(test=False):
+def download_gaia_xp_sampled(test: bool=False):
+    """
+    Download Gaia DR3 XP sampled spectra from the ESA Gaia archive.
+
+    Parameters
+    ----------
+    test : bool, optional (default=False)
+        If True, only download a small subset of the data for testing purposes.
+    """
     _GAIA_DR3_XP_SAMPLED_PARENT.mkdir(parents=True, exist_ok=True)
     _url = (
         "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/xp_sampled_mean_spectrum/"
@@ -258,7 +322,15 @@ def download_gaia_xp_sampled(test=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_gaia_rvs(test=False):
+def download_gaia_rvs(test: bool=False):
+    """
+    Download Gaia DR3 RVS spectra from the ESA Gaia archive.
+    
+    Parameters
+    ----------
+    test : bool, optional (default=False)
+        If True, only download a small subset of the data for testing purposes.
+    """
     _GAIA_DR3_RVS_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/rvs_mean_spectrum/"
     if test:
@@ -275,7 +347,15 @@ def download_gaia_rvs(test=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_catwise(test=False):
+def download_catwise(test: bool=False):
+    """
+    Download CatWISE data from the NERSC archive.
+
+    Parameters
+    ----------
+    test : bool, optional (default=False)
+        If True, only download a small subset of the data for testing purposes.
+    """
     _CATWISE_PARENT.mkdir(parents=True, exist_ok=True)
     _url = "https://portal.nersc.gov/project/cosmo/data/CatWISE/2020/"
     if test:

@@ -1,11 +1,11 @@
 import contextlib
-import inspect
 import os
 import re
 import sqlite3
 import stat
 import sys
 import sysconfig
+from typing import List, Optional
 
 import pandas as pd
 from tqdm import tqdm
@@ -20,50 +20,32 @@ from mygaiadb import (
     tmass_sql_db_path,
     mygaiadb_path,
 )
-
-
-class QueryCallback:
-    """
-    Callback to add new column to SQL query on the fly
-    """
-
-    def __init__(self, new_col_name, func):
-        """
-        INPUT:
-            new_col_name (string): Name of the new column you wan to add
-            func (function): function that maps query columns to new columns, arguements of this function need to have \
-                the same names as columns in query
-        """
-        self.new_col_name = new_col_name
-        self.func = func
-        self.required_col = list(inspect.getfullargspec(self.func))[0]
+from mygaiadb.query.callbacks import QueryCallback
 
 
 class LocalGaiaSQL:
     """
     Class for local Gaia SQL database
-    """
 
+    Parameters
+    ----------
+    load_tmass : bool, optional (default=True)
+        Whether to load 2mass table
+    load_allwise : bool, optional (default=True)
+        Whether to load allwise table
+    load_ext : bool, optional (default=True)
+        Whether to load sqlite extension
+    readonly_guard : bool, optional (default=True)
+        Whether to ensure the databases are read-only
+    """
     def __init__(
         self,
-        load_tmass=True,
-        load_allwise=True,
-        load_catwise=True,
-        load_ext=True,
-        readonly_guard=True,
+        load_tmass: bool=True,
+        load_allwise: bool=True,
+        load_catwise: bool=True,
+        load_ext: bool=True,
+        readonly_guard: bool=True,
     ):
-        """
-        Parameters
-        ----------
-        load_tmass : bool
-            whether to load 2mass table
-        load_allwise : bool
-            whether to load allwise table
-        load_ext : bool
-            whether to load sqlite extension
-        readonly_guard : bool
-            whether to ensure the databases are read-only
-        """
         self.load_tmass = load_tmass
         self.load_allwise = load_allwise
         self.load_catwise = load_catwise
@@ -106,16 +88,16 @@ class LocalGaiaSQL:
                     re_key=".*remove_user_table",
                 )
 
-    def _check_callbacks_header(self, headers, callbacks):
+    def _check_callbacks_header(self, headers: List[str], callbacks: List[QueryCallback]):
         """
         Helper function to check if all columns required by all callbacks are presented in query
 
         Parameters
         ----------
-        headers : list of string
-            SQL query result header
-        callbacks : QueryCallback object
-            callbacks used in a query
+        headers: List[str]
+            List of query result header
+        callbacks: List[QueryCallback]
+            List of callbacks used in a query
         """
         for i in callbacks:
             for j in i.required_col:
@@ -124,7 +106,7 @@ class LocalGaiaSQL:
                         f"Callback for new column {i.new_col_name} requires column {j} but not presented in your query"
                     )
 
-    def _result_after_callbacks(self, df, callbacks):
+    def _result_after_callbacks(self, df: pd.DataFrame, callbacks: List[QueryCallback]):
         for i in callbacks:
             func_dist = {}
             for j in i.required_col:
@@ -134,10 +116,7 @@ class LocalGaiaSQL:
 
     def _read_only(self, file_path):
         # set read only premission for all loaded dataset to prevent accidental change
-        if self.win32:
-            os.chmod(file_path, stat.S_IREAD)
-        else:
-            os.chmod(file_path, 0o444)
+        os.chmod(file_path, stat.S_IREAD if self.win32 else 0o444)
 
     def _file_exist(self, path):
         if not os.path.exists(path):
@@ -240,30 +219,31 @@ class LocalGaiaSQL:
     @preprocess_query
     def save_csv(
         self,
-        query,
-        filename,
-        chunksize=50000,
-        overwrite=True,
-        callbacks=None,
-        comments=True,
+        query: str,
+        filename: str,
+        chunksize: int=50000,
+        overwrite: bool=True,
+        callbacks: Optional[List[QueryCallback]]=None,
+        comments: bool=True,
     ):
         """
         Given query, save the fetchall() result to csv, "chunksize" number of rows at each time until finished
 
         Parameters
         ----------
-        query : string
+        query : str
             Query string
-        filename : string
-            filename (*.csv) to be saved
-        chunksize : int
-            number of rows to do in one batch
-        overwrite : bool
-            whether to overwrite csv file if it already exists
-        callbacks : list
-            list of mygaiadb callbacks
-        comments : bool
-            whether to save the query as comment lines in csv file
+        filename : str
+            Filename (*.csv) to be saved
+        chunksize : int, optional, default=50000
+            Number of rows to do in one batch
+        overwrite : bool, optional, default=True
+            Whether to overwrite csv file if it already exists
+        callbacks : List[QueryCallback], optional, default=None
+            List of mygaiadb callbacks
+        comments : bool, optional, default=True
+            Whether to save the query as comment lines in csv file
+
         Returns
         -------
         None
@@ -321,14 +301,16 @@ class LocalGaiaSQL:
         return None
 
     @preprocess_query
-    def query(self, query, callbacks=None):
+    def query(self, query: str, callbacks: Optional[List[QueryCallback]]=None):
         """
         Get result from query to pandas dataframe, ONLY USE THIS FOR SMALL QUERY
 
         Parameters
         ----------
-        query : string
+        query : str
             Query string
+        callbacks : List[QueryCallback], optional, default=None
+            List of mygaiadb callbacks
 
         Returns
         -------
@@ -341,9 +323,14 @@ class LocalGaiaSQL:
         return _df
 
     @preprocess_query
-    def execution_plan(self, query):
+    def execution_plan(self, query: str):
         """
         Get execution plan for a query, to debug to improve indexing
+
+        Parameters
+        ----------
+        query : str
+            Query string
         """
         query = (
             """
@@ -360,7 +347,7 @@ class LocalGaiaSQL:
         """
         raise NotImplementedError()
 
-    def upload_user_table(self, df, tablename=None):
+    def upload_user_table(self, df: pd.DataFrame, tablename: str):
         """
         Add a custom user table
 
@@ -371,12 +358,10 @@ class LocalGaiaSQL:
         tablename: str
             Table name
         """
-        if tablename is None:
-            raise NameError("You need to specify a name for the new table")
         with contextlib.closing(sqlite3.connect(mygaiadb_usertable_db)) as conn:
             df.to_sql(f"{tablename}", conn, if_exists="fail", index=False)
 
-    def remove_user_table(self, tablename=None, reclaim=False):
+    def remove_user_table(self, tablename: str, reclaim: bool=False):
         """
         Remove a custom user table
 
@@ -384,11 +369,9 @@ class LocalGaiaSQL:
         ----------
         tablename: str
             Table name
-        reclaim: bool
+        reclaim: bool, optional, default=False
             Whether to reclaim disk space after removing a table
         """
-        if tablename is None:
-            raise NameError("You need to specify a name for the table to be removed")
         with contextlib.closing(sqlite3.connect(mygaiadb_usertable_db)) as conn:
             conn.execute(f"""DROP TABLE {tablename}""")
             if reclaim:
@@ -442,7 +425,7 @@ class LocalGaiaSQL:
             result.extend(list(f"{i}.{_a[0]}" for _a in a))
         return result
 
-    def get_table_column(self, name=None):
+    def get_table_column(self, name: str):
         """
         Get the list of column from a table
 

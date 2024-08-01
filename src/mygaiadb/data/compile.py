@@ -1,34 +1,44 @@
-import sqlite3
-from pathlib import Path
 import gc
-import tqdm
-import h5py
+import sqlite3
 import warnings
+from pathlib import Path
+
+import h5py
 import numpy as np
 import pandas as pd
-from . import (
-    _GAIA_DR3_GAIASOURCE_PARENT,
-    _GAIA_DR3_ASTROPHYS_PARENT,
-    _GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT,
-    _GAIA_DR3_2MASS_NEIGHBOUR_PARENT,
+import tqdm
+from astropy.io import ascii
+from astropy.table import vstack
+
+from mygaiadb import (
+    allwise_sql_db_path,
+    astro_data_path,
+    catwise_sql_db_path,
+    gaia_sql_db_path,
+    gaia_xp_coeff_h5_path,
+    mygaiadb_path,
+    tmass_sql_db_path,
+)
+from mygaiadb.data import (
     _2MASS_PARENT,
     _ALLWISE_PARENT,
     _CATWISE_PARENT,
-)
-from astropy.io import ascii
-from astropy.table import vstack
-from mygaiadb import (
-    astro_data_path,
-    gaia_sql_db_path,
-    tmass_sql_db_path,
-    allwise_sql_db_path,
-    gaia_xp_coeff_h5_path,
-    catwise_sql_db_path,
-    mygaiadb_path,
+    _GAIA_DR3_2MASS_NEIGHBOUR_PARENT,
+    _GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT,
+    _GAIA_DR3_ASTROPHYS_PARENT,
+    _GAIA_DR3_GAIASOURCE_PARENT,
 )
 
 
-def compile_xp_continuous_allinone_h5(save_correlation_matrix=False):
+def compile_xp_continuous_allinone_h5(save_correlation_matrix: bool = False):
+    """
+    Compile all xp_continuous_mean_spectrum h5 files into one h5 file
+
+    Parameters
+    ----------
+    save_correlation_matrix : bool, optional (default=False)
+        Whether to save the correlation matrix
+    """
     base_path = astro_data_path.joinpath(
         "gaia_mirror",
         "Gaia",
@@ -155,7 +165,15 @@ def compile_xp_continuous_allinone_h5(save_correlation_matrix=False):
     h5f.close()
 
 
-def compile_xp_continuous_h5(save_correlation_matrix=False):
+def compile_xp_continuous_h5(save_correlation_matrix: bool = False):
+    """
+    Compile xp_continuous_mean_spectrum csv.gz files into h5 files
+
+    Parameters
+    ----------
+    save_correlation_matrix : bool, optional (default=False)
+        Whether to save the correlation matrix
+    """
     root_path = astro_data_path.joinpath(
         "gaia_mirror",
         "Gaia",
@@ -284,6 +302,9 @@ def compile_xp_continuous_h5(save_correlation_matrix=False):
 
 
 def compile_rvs_h5():
+    """
+    Compile rvs_mean_spectrum csv.gz files into h5 files
+    """
     root_path = astro_data_path.joinpath(
         "gaia_mirror",
         "Gaia",
@@ -310,6 +331,9 @@ def compile_rvs_h5():
 
 
 def comile_xp_mean_spec_h5():
+    """
+    Compile xp_sampled_mean_spectrum csv.gz files into h5 files
+    """
     root_path = astro_data_path.joinpath(
         "gaia_mirror",
         "Gaia",
@@ -333,10 +357,21 @@ def comile_xp_mean_spec_h5():
 
 
 def compile_gaia_sql_db(
-    do_gaia_source_table=True, do_gaia_astrophysical_table=True, indexing=True
+    do_gaia_source_table: bool = True,
+    do_gaia_astrophysical_table: bool = True,
+    indexing: bool = True,
 ):
     """
     This function compile Gaia SQL database
+
+    Parameters
+    ----------
+    do_gaia_source_table : bool, optional (default=True)
+        Whether to compile gaia_source table
+    do_gaia_astrophysical_table : bool, optional (default=True)
+        Whether to compile astrophysical_parameters table
+    indexing : bool, optional (default=True)
+        Whether to do SQL indexing on pre-determined columns
     """
     # The whole script takes about ~24 hours to complete
     Path(gaia_sql_db_path).touch()
@@ -538,9 +573,14 @@ def compile_gaia_sql_db(
         )
 
 
-def compile_tmass_sql_db(indexing=True):
+def compile_tmass_sql_db(indexing: bool = True):
     """
     This function compile 2MASS point source SQL database
+
+    Parameters
+    ----------
+    indexing : bool, optional (default=True)
+        Whether to do SQL indexing on pre-determined columns
     """
     Path(tmass_sql_db_path).touch()
     conn = sqlite3.connect(tmass_sql_db_path)
@@ -677,9 +717,14 @@ def compile_tmass_sql_db(indexing=True):
         )
 
 
-def compile_allwise_sql_db(indexing=True):
+def compile_allwise_sql_db(indexing: bool = True):
     """
     This function compile allwise SQL database
+
+    Parameters
+    ----------
+    indexing : bool, optional (default=True)
+        Whether to do SQL indexing on pre-determined columns
     """
     Path(allwise_sql_db_path).touch()
     conn = sqlite3.connect(allwise_sql_db_path)
@@ -1063,9 +1108,14 @@ def compile_allwise_sql_db(indexing=True):
         )
 
 
-def compile_catwise_sql_db(indexing=True):
+def compile_catwise_sql_db(indexing: bool = True):
     """
     This function compile allwise SQL database
+
+    Parameters
+    ----------
+    indexing : bool, optional (default=True)
+        Whether to do SQL indexing on pre-determined columns
     """
     Path(catwise_sql_db_path).touch()
     conn = sqlite3.connect(catwise_sql_db_path)

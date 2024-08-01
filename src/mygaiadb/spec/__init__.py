@@ -1,34 +1,36 @@
 import h5py
 import tqdm
 import numpy as np
-from .. import gaia_xp_coeff_h5_path
+from mygaiadb import gaia_xp_coeff_h5_path
+from typing import Union, List, Optional
+from numpy.typing import NDArray
 
 
 def yield_xp_coeffs(
-    source_ids,
-    assume_unique=True,
-    return_errors=False,
-    return_additional_columns=None,
-    rdcc_nbytes=16 * 1024**3,
-    rdcc_nslots=10e7,
+    source_ids: Union[int, List[int], NDArray],
+    assume_unique: bool=True,
+    return_errors: bool=False,
+    return_additional_columns: Optional[List[str]]=None,
+    rdcc_nbytes: int=16 * 1024**3,
+    rdcc_nslots: int=10e7,
 ):
     """
     Function to yield XP coeffs according to their healpixs from source_id
 
     Parameters
     ----------
-    source_ids: Union[int, list, ndarray]
+    source_ids: Union[int, List[int], NDArray]
         Gaia source id
-    assume_unique: bool
+    assume_unique: bool, optional (default=True)
         Whether to assume the list of Gaia source id is unique
-    return_errors: bool
+    return_errors: bool, optional (default=False)
         Whether to return xp coeffs error
-    return_additional_columns: Union[None, list]
-        Additional columns to return
+    return_additional_columns: List[str], optional (default=None)
+        List of additional columns to return
         If you want coefficients error, please use return_errors=True
-    rdcc_nbytes: int
+    rdcc_nbytes: int, optional (default=16 * 1024**3)
         h5py cache in bytes
-    rdcc_nslots: int
+    rdcc_nslots: int, optional (default=10e7)
         h5py cache number of slots
     """
     source_ids = np.asarray(source_ids, dtype=np.int64)

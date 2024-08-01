@@ -1,65 +1,67 @@
+import importlib
+import importlib.util
 import inspect
 import warnings
+from abc import ABC, abstractmethod
+from itertools import compress
+from typing import Optional
+
 import numpy as np
-from ..utils import radec_to_ecl
 
-try:
-    from zero_point import zpt
-
-    _have_zpt = True
-except ImportError:
-    _have_zpt = False
-
-try:
-    import mwdust
-
-    _have_mwdust = True
-except ImportError:
-    _have_mwdust = False
-
-try:
-    from galpy.orbit import Orbit
-    from galpy.util.coords import radec_to_lb
-
-    _have_galpy = True
-except ImportError:
-    _have_galpy = False
+from mygaiadb.utils import radec_to_ecl
 
 
-class QueryCallback:
+class QueryCallback(ABC):
     """
     Callback to add new column to SQL query on the fly
+
+    Parameters
+    ----------
+    new_col_name : str
+        Name of the new column you wan to add
+    required_pkgs : list
+        List of required packages to use this callback.
     """
 
-    def __init__(self, new_col_name, func):
-        """
-        INPUT:
-            new_col_name (string): Name of the new column you wan to add
-            func (function): function that maps query columns to new columns, arguements of this function need to have \
-                the same names as columns in query
-        """
+    def __init__(self, new_col_name: str, required_pkgs: list[str]):
         self.new_col_name = new_col_name
-        self.func = func
         self.required_col = list(inspect.getfullargspec(self.func))[0]
+
+        # Please notice if you are implementing a new callback, we only check if the package(s) are installed.
+        # You should be the one who actually import the package(s) within your callback class.
+        have_pkg = [importlib.util.find_spec(pkg) is not None for pkg in required_pkgs]
+        print(have_pkg)
+        if not all(have_pkg):
+            raise ImportError(
+                f"Package(s) {list(compress(required_pkgs, np.invert(have_pkg)))} are required to use this callback"
+            )
+
+    @abstractmethod
+    def func(self, *args, **kwargs):
+        """
+        Function to be called to get the new column value
+        """
+        pass
 
 
 class ZeroPointCallback(QueryCallback):
-    def __init__(self, new_col_name="parallax_w_zp"):
-        """
-        Callback to use ``gaiadr3_zeropoint`` to get zero-point corrected parallax
+    """
+    Callback to use ``gaiadr3_zeropoint`` to get zero-point corrected parallax
 
-        INPUT:
-            new_col_name (string): Name of the new column you wan to add
-        """
-        super().__init__(new_col_name, self.parallax_zp_func)
-        if not _have_zpt:
-            raise RuntimeError(
-                "You need to have gaiadr3_zeropoint package installed to use this callback. Please see: https://gitlab.com/icc-ub/public/gaiadr3_zeropoint"
-            )
-        zpt.load_tables()
+    Parameters
+    ----------
+    new_col_name : str, optional (default="parallax_w_zp")
+        Name of the new column you wan to add
+    """
 
-    @staticmethod
-    def parallax_zp_func(
+    def __init__(self, new_col_name: str = "parallax_w_zp"):
+        super().__init__(new_col_name, required_pkgs=["gaiadr3-zeropoint"])
+
+        self.zpt = importlib.import_module("zero_point.zpt")
+        self.zpt.load_tables()
+
+    def func(
+        self,
         ra,
         dec,
         parallax,
@@ -68,10 +70,10 @@ class ZeroPointCallback(QueryCallback):
         pseudocolour,
         astrometric_params_solved,
     ):
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always", UserWarning)
-            ect_lon, ect_lat = radec_to_ecl(ra, dec)
-            return parallax - zpt.get_zpt(
+        ect_lon, ect_lat = radec_to_ecl(ra, dec)
+        with warnings.catch_warnings(record=True):
+            warnings.filterwarnings(action="ignore")
+            return parallax - self.zpt.get_zpt(
                 phot_bp_mean_mag,
                 nu_eff_used_in_astrometry,
                 pseudocolour,
@@ -81,72 +83,77 @@ class ZeroPointCallback(QueryCallback):
 
 
 class DustCallback(QueryCallback):
-    def __init__(self, new_col_name="sfd_ebv", filter=None, dustmap="SFD"):
-        """
-        Callback to use ``mwdust`` to get extinction
+    """
+    Callback to use ``mwdust`` to get extinction
 
-        INPUT:
-            new_col_name (string): Name of the new column you wan to add
-            filter (string): extinction in which filter, see mwdust
-            dustmap (string): which dust map to use, currently only supporting "SFD"
-        """
-        if not _have_mwdust:
-            raise RuntimeError(
-                "You need to have mwdust package installed to use this callback. Please see: https://github.com/jobovy/mwdust"
-            )
-        if not _have_galpy:
-            raise RuntimeError(
-                "You need to have galpy package installed to use this callback. Please see: https://github.com/jobovy/galpy"
-            )
+    Parameters
+    ----------
+    new_col_name : str, optional (default="sfd_ebv")
+        Name of the new column you wan to add
+    filter : str, optional (default=None)
+        extinction in which filter, see mwdust
+    dustmap : str, optional (default="SFD")
+        which dust map to use, currently only supporting ``SFD``
+    """
+
+    def __init__(
+        self,
+        new_col_name: str = "sfd_ebv",
+        filter: Optional[str] = None,
+        dustmap: str = "SFD",
+    ):
+        super().__init__(new_col_name, required_pkgs=["mwdust", "galpy"])
+        self.mwdust = importlib.import_module("mwdust")
+        self.radec_to_lb = importlib.import_module("galpy.util.coords").radec_to_lb
         self.filter = filter
         if dustmap.lower() == "sfd":
-            self.sfd = mwdust.SFD(filter=self.filter, noloop=True)
-            self._func_wrapped = lambda ra, dec: self.sfd_ebv_func(ra, dec)
-        super().__init__(new_col_name, self._func_wrapped)
+            self.sfd = self.mwdust.SFD(filter=self.filter, noloop=True)
+            self._func = self.sfd_ebv_func
 
     def sfd_ebv_func(self, ra, dec):
-        lb = radec_to_lb(ra, dec, degree=True)
-        l, b = lb[:, 0], lb[:, 1]
-        return self.sfd(l, b, np.ones_like(l))
+        lb = self.radec_to_lb(ra, dec, degree=True)
+        return self.sfd(lb[:, 0], lb[:, 1], np.ones_like(lb[:, 0]))
+
+    def func(self, ra, dec):
+        return self._func(ra, dec)
 
 
 class OrbitsCallback(QueryCallback):
-    def __init__(self, new_col_name="e"):
-        """
-        Callback to use ``galpy`` to setup orbit
+    """
+    Callback to use ``galpy`` to setup orbit to get orbital parameters
 
-        INPUT:
-            new_col_name (string): Name of the new column you wan to add
-            filter (string): extinction in which filter, see mwdust
-            dustmap (string): which dust map to use, currently only supporting "SFD"
-        """
-        if not _have_galpy:
-            raise RuntimeError(
-                "You need to have galpy package installed to use this callback. Please see: https://github.com/jobovy/galpy"
-            )
-        _r0 = 8.23
-        _v0 = 249.44
-        _z0 = 0.0208
+    Parameters
+    ----------
+    new_col_name : str, optional (default="e")
+        Name of the new column you wan to add
+    """
 
-        self._func_wrapped = (
-            lambda ra, dec, pmra, pmdec, parallax, radial_velocity: Orbit(
-                [
-                    ra,
-                    dec,
-                    (1 / parallax),
-                    pmra,
-                    pmdec,
-                    radial_velocity,
-                ],
-                radec=True,
-                ro=_r0,
-                vo=_v0,
-                zo=_z0,
-            )
-        )
-        super().__init__(new_col_name, self._func_wrapped)
+    def __init__(self, new_col_name: str = "e"):
+        super().__init__(new_col_name, required_pkgs=["galpy"])
+
+        self._r0 = 8.23  # kpc
+        self._v0 = 249.44  # km/s
+        self._z0 = 0.0208  # kpc
+
+        self.orbit = importlib.import_module("galpy.orbit")
+        self.radec_to_lb = importlib.import_module("galpy.util.coords").radec_to_lb
 
     def sfd_ebv_func(self, ra, dec):
-        lb = radec_to_lb(ra, dec, degree=True)
-        l, b = lb[:, 0], lb[:, 1]
-        return self.sfd(l, b, np.ones_like(l))
+        lb = self.radec_to_lb(ra, dec, degree=True)
+        return self.sfd(lb[:, 0], lb[:, 1], np.ones_like(lb[:, 0]))
+
+    def func(self, ra, dec, pmra, pmdec, parallax, radial_velocity):
+        return self.orbit.Orbit(
+            [
+                ra,
+                dec,
+                (1 / parallax),
+                pmra,
+                pmdec,
+                radial_velocity,
+            ],
+            radec=True,
+            ro=self._r0,
+            vo=self._v0,
+            zo=self._z0,
+        )
