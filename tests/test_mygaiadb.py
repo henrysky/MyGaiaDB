@@ -4,9 +4,38 @@ import mygaiadb
 from mygaiadb.query import LocalGaiaSQL
 from mygaiadb.spec import yield_xp_coeffs
 from mygaiadb import gaia_xp_coeff_h5_path
+from mygaiadb.utils import radec_to_ecl
 from mygaiadb.data import download, compile
 import numpy as np
 import pandas as pd
+import numpy.testing as npt
+
+
+@pytest.mark.order(0)
+def test_utils():
+    # ground truth from gaia archive
+    ecl_lon, ecl_lat = radec_to_ecl(251.6199206701881, -51.570525258091074)
+    assert np.isclose(ecl_lon, 257.0569564736029)
+    assert np.isclose(ecl_lat, -28.95388614797272)
+
+    # ground truth from gaia archive
+    ecl_lon, ecl_lat = radec_to_ecl(
+        [286.5265406513801, 129.79901099303206, 335.83340230395504, 86.52254525701424],
+        [
+            47.291529577659965,
+            62.501265689962935,
+            -2.5196758407656876,
+            -70.95210921593667,
+        ],
+    )
+    npt.assert_almost_equal(
+        ecl_lon,
+        [302.3766885818636, 113.54364730018743, 336.6899780497866, 284.39599199643834],
+    )
+    npt.assert_almost_equal(
+        ecl_lat,
+        [68.8807587756507, 42.277113700990235, 7.027983296314586, -85.43324423869875],
+    )
 
 
 @pytest.mark.order(1)
@@ -60,7 +89,7 @@ def test_user_table():
 
 
 @pytest.mark.order(4)
-def test_utilities():
+def test_query_utilities():
     localdb = LocalGaiaSQL(load_allwise=False)
     localdb.list_all_tables()
     localdb.get_table_column("gaiadr3.gaia_source")

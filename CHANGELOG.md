@@ -1,13 +1,15 @@
-## [0.5.0] - 202x-xx-xx
+## [0.5] - 202x-xx-xx
 
 ### Added
 - N/A
 
 ### Changed
-- N/A
+- Switch to use src-layout
+- Switch to use ``pyproject.toml`` instead of ``setup.py``
 
 ### Fixed
-- N/A
+- Fix ``radec_to_ecl()`` not wrapping ecliptic longitude correctly
+- Remove deprecated API from ``pkg_resources`` and delim_whitespace kwarg in ``pd.read_table``
 
 ## [0.4] - 2023-10-01
 
