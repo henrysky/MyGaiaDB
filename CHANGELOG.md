@@ -1,3 +1,14 @@
+## [0.6] - 20xx-xx-xx
+
+### Added
+- N/A
+
+### Changed
+- N/A
+
+### Fixed
+- N/A
+
 ## [0.5] - 2024-08-06
 
 ### Added
