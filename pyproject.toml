@@ -16,7 +16,7 @@ authors = [
 maintainers = [
   {name = "Henry Leung", email = "henryskyleung@gmail.com"},
 ]
-description = "Setup local serverless ESA Gaia / 2MASS / ALLWISE / CATWISE databases and run query locally with Python"
+description = "Setup local serverless SQL Gaia/2MASS/ALLWISE/CATWISE databases and run query locally with python"
 readme = "README.rst"
 license = {file = "LICENSE"}
 classifiers = [

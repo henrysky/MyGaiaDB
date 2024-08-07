@@ -43,7 +43,7 @@ to your **INCLUDE** environment variable. For Conda users, the commands are:
 - MacOS: ``export CFLAGS=-I$CONDA_PREFIX/include``
 - Linux: No action needed usually
 
-Then, you can run ``python -m pip install .`` to install the latest commits from GitHub or ```python -m pip install -e .``` to develop `MyGaiaDB` locally.
+Then, you can run ``python -m pip install .`` to install the latest commits from GitHub or ``python -m pip install -e .`` to develop ``MyGaiaDB`` locally.
 
 Folder Structure
 -------------------
