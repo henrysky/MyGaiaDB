@@ -110,7 +110,7 @@ class LocalGaiaSQL:
         for i in callbacks:
             func_dist = {}
             for j in i.required_col:
-                func_dist[j] = df[j]
+                func_dist[j] = df[j].to_numpy()
             df[i.new_col_name] = i.func(**func_dist)
         return df
 

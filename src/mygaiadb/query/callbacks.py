@@ -96,13 +96,19 @@ class ZeroPointCallback(QueryCallback):
         ect_lon, ect_lat = radec_to_ecl(ra, dec)
         with warnings.catch_warnings(record=True):
             warnings.filterwarnings(action="ignore")
-            return parallax - self.zpt.get_zpt(
+            # need to catch non-5p/6p solutions and gracefully handle them
+            print(astrometric_params_solved)
+            bad_idx = np.where((astrometric_params_solved != 31) & (astrometric_params_solved != 95))[0]
+            astrometric_params_solved[bad_idx] = 31  # just a placeholder
+            corrected_parallax = parallax - self.zpt.get_zpt(
                 phot_bp_mean_mag,
                 nu_eff_used_in_astrometry,
                 pseudocolour,
                 ect_lat,
                 astrometric_params_solved,
             )
+            corrected_parallax[bad_idx] = np.nan
+        return corrected_parallax
 
 
 class DustCallback(QueryCallback):
