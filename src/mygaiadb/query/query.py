@@ -253,7 +253,7 @@ class LocalGaiaSQL:
 
         self.cursor.execute(query)
         if os.path.exists(filename) and not overwrite:
-            raise SystemError(f"{os.path.abspath(filename)} already existed!")
+            raise FileExistsError(f"{os.path.abspath(filename)} already existed!")
         f = open(filename, "w")
         if comments:
             comment_char = "# "

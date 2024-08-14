@@ -1,7 +1,7 @@
 import h5py
 import pytest
 import mygaiadb
-from mygaiadb.query import LocalGaiaSQL
+from mygaiadb.query import LocalGaiaSQL, DustCallback, ZeroPointCallback, QueryCallback
 from mygaiadb.spec import yield_xp_coeffs
 from mygaiadb import gaia_xp_coeff_h5_path
 from mygaiadb.utils import radec_to_ecl
@@ -9,6 +9,11 @@ from mygaiadb.data import download, compile
 import numpy as np
 import pandas as pd
 import numpy.testing as npt
+
+
+@pytest.fixture(scope="module")
+def localdb():
+    return LocalGaiaSQL(load_allwise=False)
 
 
 @pytest.mark.order(0)
@@ -64,8 +69,7 @@ def test_compile():
 
 
 @pytest.mark.order(3)
-def test_user_table():
-    localdb = LocalGaiaSQL(load_allwise=False)
+def test_user_table(localdb):
     localdb.upload_user_table(
         pd.DataFrame(
             {
@@ -89,8 +93,7 @@ def test_user_table():
 
 
 @pytest.mark.order(4)
-def test_query_utilities():
-    localdb = LocalGaiaSQL(load_allwise=False)
+def test_query_utilities(localdb):
     localdb.list_all_tables()
     localdb.get_table_column("gaiadr3.gaia_source")
     localdb.get_table_column("gaiadr3.tmasspscxsc_best_neighbour")
@@ -99,7 +102,7 @@ def test_query_utilities():
 
 
 @pytest.mark.order(5)
-def test_query():
+def test_query(localdb):
     # just making sure a complex query like this can run without issue
     query = """
     SELECT * 
@@ -111,7 +114,6 @@ def test_query():
     WHERE (G.has_xp_continuous = 1)  
     LIMIT 10
     """
-    localdb = LocalGaiaSQL(load_allwise=False)
     localdb.save_csv(query, "output.csv", comments=False)
     query_df = localdb.query(query)
 
@@ -120,14 +122,13 @@ def test_query():
 
 
 @pytest.mark.order(5)
-def test_query_saving():
+def test_query_saving(localdb):
     # ================= query with new line in both start and end =================
     query = """
     SELECT G.ra, G.dec
     FROM gaiadr3.gaia_source as G
     LIMIT 10
     """
-    localdb = LocalGaiaSQL(load_allwise=False)
     localdb.save_csv(query, "output.csv", overwrite=True, comments=True)
     query_df = localdb.query(query)
 
@@ -140,7 +141,6 @@ def test_query_saving():
     SELECT G.ra, G.dec
     FROM gaiadr3.gaia_source as G
     LIMIT 10"""
-    localdb = LocalGaiaSQL(load_allwise=False)
     localdb.save_csv(query, "output.csv", overwrite=True, comments=True)
     query_df = localdb.query(query)
 
@@ -153,8 +153,10 @@ def test_query_saving():
     FROM gaiadr3.gaia_source as G
     LIMIT 10
     """
-    localdb = LocalGaiaSQL(load_allwise=False)
     localdb.save_csv(query, "output.csv", overwrite=True, comments=True)
+    # make sure overwriting is not allowed
+    with pytest.raises(Exception):
+        localdb.save_csv(query, "output.csv", overwrite=False, comments=True)
     query_df = localdb.query(query)
 
     query_df_from_saved = pd.read_csv("output.csv", comment="#")
@@ -252,3 +254,33 @@ def test_xp_query():
     with pytest.raises(Exception):
         for i in yield_xp_coeffs(all_source_ids_w_replacement, assume_unique=True):
             coeffs, idx = i  # unpack
+
+
+@pytest.mark.order(7)
+def test_query_callback(localdb):
+    # ================= Test custom Callback =================
+    query = """
+    SELECT G.source_id, G.ra, G.dec
+    FROM gaiadr3.gaia_source as G
+    LIMIT 10
+    """
+    ra_conversion = QueryCallback(
+        new_col_name="ra_rad", func=lambda ra: ra / 180 * np.pi
+    )
+    localdb.save_csv(
+        query, "output.csv", overwrite=True, callbacks=[ra_conversion], comments=True
+    )
+
+    # ================= Test custom DustCallback =================
+    query = """
+    SELECT G.source_id, G.ra, G.dec, G.parallax, G.phot_bp_mean_mag, G.nu_eff_used_in_astrometry, G.pseudocolour, G.astrometric_params_solved
+    FROM gaiadr3.gaia_source as G
+    LIMIT 10
+    """
+    # adding zero-point corrected parallax using official Gaia DR3 parallax zero-point python package
+    zp_callback = ZeroPointCallback(new_col_name="parallax_w_zp")
+    # adding SFD E(B-V) in H band filter using mwdust python package
+    dust_callback = DustCallback(new_col_name="sfd_ebv", filter="H", dustmap="SFD")
+    localdb.save_csv(
+        query, "output.csv", overwrite=True, callbacks=[zp_callback, dust_callback]
+    )
