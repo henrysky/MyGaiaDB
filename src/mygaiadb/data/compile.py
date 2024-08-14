@@ -1369,7 +1369,7 @@ def compile_catwise_sql_db(indexing: bool = True):
         try:
             data = pd.read_table(
                 p,
-                sep="\s+",
+                sep=r"\s+",
                 skiprows=19,
                 usecols=[catwise_allcol.index(i) for i in dtypes.keys()],
                 names=dtypes.keys(),
@@ -1378,7 +1378,7 @@ def compile_catwise_sql_db(indexing: bool = True):
         except ValueError:  # sometimes there are 20 rows of comments
             data = pd.read_table(
                 p,
-                sep="\s+",
+                sep=r"\s+",
                 skiprows=20,
                 usecols=[catwise_allcol.index(i) for i in dtypes.keys()],
                 names=dtypes.keys(),
