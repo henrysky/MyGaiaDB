@@ -1,7 +1,7 @@
 import h5py
 import pytest
 import mygaiadb
-from mygaiadb.query import LocalGaiaSQL, DustCallback, ZeroPointCallback, QueryCallback
+from mygaiadb.query import LocalGaiaSQL, DustCallback, ZeroPointCallback, LambdaCallback
 from mygaiadb.spec import yield_xp_coeffs
 from mygaiadb import gaia_xp_coeff_h5_path
 from mygaiadb.utils import radec_to_ecl
@@ -264,12 +264,15 @@ def test_query_callback(localdb):
     FROM gaiadr3.gaia_source as G
     LIMIT 10
     """
-    ra_conversion = QueryCallback(
+    ra_conversion = LambdaCallback(
         new_col_name="ra_rad", func=lambda ra: ra / 180 * np.pi
     )
     localdb.save_csv(
         query, "output.csv", overwrite=True, callbacks=[ra_conversion], comments=True
     )
+    # make sure the query result has the same result with numpy angle conversion
+    query_df = localdb.query(query, callbacks=[ra_conversion])
+    npt.assert_allclose(query_df["ra"] / 180 * np.pi, query_df["ra_rad"])
 
     # ================= Test custom DustCallback =================
     query = """

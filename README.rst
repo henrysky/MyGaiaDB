@@ -357,15 +357,15 @@ save the query as a comment in the csv file so you know how to reproduce the que
         header = list(headiter)
     print(" ".join(header).replace(" # ", "").replace("# ", ""))
 
-``MyGaiaDB`` also has callbacks functionality called ``QueryCallback``, these callbacks can be used when you do query. For example, 
+``MyGaiaDB`` also has callbacks functionality called ``LambdaCallback``, these callbacks can be used when you do query. For example, 
 you can create a callbacks to convert ``ra`` in degree to ``ra_rad`` in radian. So your csv file in the end will have a new column 
-called ``ra_rad``. Functions in ``QueryCallback`` must have arguments with **exact** column names in your query so ``MyGaiaDB`` knows 
+called ``ra_rad``. Functions in ``LambdaCallback`` must have arguments with **exact** column names in your query so ``MyGaiaDB`` knows 
 which columns to use on the fly.
 
 ..  code-block:: python
 
     import numpy as np
-    from mygaiadb.query import LocalGaiaSQL, QueryCallback
+    from mygaiadb.query import LocalGaiaSQL, LambdaCallback
 
     # initialize a local Gaia SQL database instance
     local_db = LocalGaiaSQL()
@@ -375,7 +375,7 @@ which columns to use on the fly.
     FROM gaiadr3.gaia_source as G
     LIMIT 100000
     """
-    ra_conversion = QueryCallback(new_col_name="ra_rad", func=lambda ra: ra / 180 * np.pi)
+    ra_conversion = LambdaCallback(new_col_name="ra_rad", func=lambda ra: ra / 180 * np.pi)
 
     local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, callbacks=[ra_conversion], comments=True)
 

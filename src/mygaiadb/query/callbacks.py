@@ -4,7 +4,7 @@ import inspect
 import warnings
 from abc import ABC, abstractmethod
 from itertools import compress
-from typing import Optional
+from typing import Optional, List
 
 import numpy as np
 
@@ -23,18 +23,18 @@ class QueryCallback(ABC):
         List of required packages to use this callback.
     """
 
-    def __init__(self, new_col_name: str, required_pkgs: list[str]):
+    def __init__(self, new_col_name: str, required_pkgs: Optional[List[str]] = None):
         self.new_col_name = new_col_name
         self.required_col = list(inspect.getfullargspec(self.func))[0]
 
         # Please notice if you are implementing a new callback, we only check if the package(s) are installed.
         # You should be the one who actually import the package(s) within your callback class.
-        have_pkg = [importlib.util.find_spec(pkg) is not None for pkg in required_pkgs]
-        print(have_pkg)
-        if not all(have_pkg):
-            raise ImportError(
-                f"Package(s) {list(compress(required_pkgs, np.invert(have_pkg)))} are required to use this callback"
-            )
+        if required_pkgs is not None:
+            have_pkg = [importlib.util.find_spec(pkg) is not None for pkg in required_pkgs]
+            if not all(have_pkg):
+                raise ImportError(
+                    f"Package(s) {list(compress(required_pkgs, np.invert(have_pkg)))} are required to use this callback"
+                )
 
     @abstractmethod
     def func(self, *args, **kwargs):
@@ -42,6 +42,26 @@ class QueryCallback(ABC):
         Function to be called to get the new column value
         """
         pass
+
+
+class LambdaCallback(QueryCallback):
+    """
+    Callback to use lambda function to get new column
+
+    Parameters
+    ----------
+    new_col_name : str
+        Name of the new column you wan to add
+    func : callable
+        Function to be called to get the new column value
+    """
+
+    def __init__(self, new_col_name: str, func: callable):
+        super().__init__(new_col_name)
+        self._func = func
+    
+    def func(self, *args, **kwargs):
+        return self._func(*args, **kwargs)
 
 
 class ZeroPointCallback(QueryCallback):
