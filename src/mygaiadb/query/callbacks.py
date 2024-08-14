@@ -19,13 +19,16 @@ class QueryCallback(ABC):
     ----------
     new_col_name : str
         Name of the new column you wan to add
-    required_pkgs : list
+    required_pkgs : list, optional (default=None)
         List of required packages to use this callback.
     """
 
     def __init__(self, new_col_name: str, required_pkgs: Optional[List[str]] = None):
         self.new_col_name = new_col_name
         self.required_col = list(inspect.getfullargspec(self.func))[0]
+        # remove self from required_col in case it is a class method
+        if "self" in self.required_col:
+            self.required_col.remove("self")
 
         # Please notice if you are implementing a new callback, we only check if the package(s) are installed.
         # You should be the one who actually import the package(s) within your callback class.
@@ -57,12 +60,12 @@ class LambdaCallback(QueryCallback):
     """
 
     def __init__(self, new_col_name: str, func: callable):
+        self.func = func
         super().__init__(new_col_name)
-        self._func = func
-    
-    def func(self, *args, **kwargs):
-        return self._func(*args, **kwargs)
 
+    # Placeholder implementation (to satisfy abstract method requirement)
+    def func(self):
+        raise NotImplementedError("This method is dynamically set in __init__")
 
 class ZeroPointCallback(QueryCallback):
     """
@@ -75,7 +78,7 @@ class ZeroPointCallback(QueryCallback):
     """
 
     def __init__(self, new_col_name: str = "parallax_w_zp"):
-        super().__init__(new_col_name, required_pkgs=["gaiadr3-zeropoint"])
+        super().__init__(new_col_name, required_pkgs=["zero_point"])
 
         self.zpt = importlib.import_module("zero_point.zpt")
         self.zpt.load_tables()
@@ -128,7 +131,7 @@ class DustCallback(QueryCallback):
         self.filter = filter
         if dustmap.lower() == "sfd":
             self.sfd = self.mwdust.SFD(filter=self.filter, noloop=True)
-            self._func = self.sfd_ebv_func
+            self.func = self.sfd_ebv_func
 
     def sfd_ebv_func(self, ra, dec):
         lb = self.radec_to_lb(ra, dec, degree=True)
