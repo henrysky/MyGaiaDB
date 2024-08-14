@@ -38,7 +38,7 @@ jobs:
         run: |
           conda install -y numpy astropy h5py pandas tqdm wheel pytest pytest-order pytest-cov galpy
           python -m pip install gaiadr3-zeropoint build mwdust
-          python -m pip install .
+          python -m pip install -e .
       - name: Cache my astro data
         uses: actions/cache@v4
         with:
@@ -46,7 +46,7 @@ jobs:
           key: mygaiadb-${{ runner.os }}-2023march13
       - name: Test
         run: |
-          python -m pytest -v ./tests --cov mygaiadb --junitxml=junit.xml
+          python -m pytest -v ./tests --cov ./src/mygaiadb --junitxml=junit.xml
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
         with:
