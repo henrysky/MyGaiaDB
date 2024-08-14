@@ -30,7 +30,7 @@ from mygaiadb.data import (
 )
 
 
-def compile_xp_continuous_allinone_h5(save_correlation_matrix: bool = False):
+def compile_xp_continuous_allinone_h5(save_correlation_matrix: bool = False):  # pragma: no cover
     """
     Compile all xp_continuous_mean_spectrum h5 files into one h5 file
 
@@ -165,7 +165,7 @@ def compile_xp_continuous_allinone_h5(save_correlation_matrix: bool = False):
     h5f.close()
 
 
-def compile_xp_continuous_h5(save_correlation_matrix: bool = False):
+def compile_xp_continuous_h5(save_correlation_matrix: bool = False):  # pragma: no cover
     """
     Compile xp_continuous_mean_spectrum csv.gz files into h5 files
 
@@ -301,7 +301,7 @@ def compile_xp_continuous_h5(save_correlation_matrix: bool = False):
         gc.collect()
 
 
-def compile_rvs_h5():
+def compile_rvs_h5():  # pragma: no cover
     """
     Compile rvs_mean_spectrum csv.gz files into h5 files
     """
@@ -330,7 +330,7 @@ def compile_rvs_h5():
             f.create_dataset("flux_error", data=flux_error)
 
 
-def comile_xp_mean_spec_h5():
+def comile_xp_mean_spec_h5():  # pragma: no cover
     """
     Compile xp_sampled_mean_spectrum csv.gz files into h5 files
     """
@@ -717,7 +717,7 @@ def compile_tmass_sql_db(indexing: bool = True):
         )
 
 
-def compile_allwise_sql_db(indexing: bool = True):
+def compile_allwise_sql_db(indexing: bool = True):  # pragma: no cover
     """
     This function compile allwise SQL database
 

@@ -38,11 +38,7 @@ def download_gaia_source(test: bool=False):
             "test",
             test=test,
         )
-        # cmd_str = f"cd {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} && curl --no-clobber -s -O {_url}GaiaSource_000000-003111.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-        # cmd_str = f"cd {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} && curl --no-clobber -s -O {_url}GaiaSource_003112-005263.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-    else:
+    else:  # pragma: no cover
         cmd_str = f"wget -P {_GAIA_DR3_GAIASOURCE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
 
@@ -75,11 +71,7 @@ def download_gaia_astrophysical_parameters(test: bool=False):
             "test",
             test=test,
         )
-        # cmd_str = f"cd {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}AstrophysicalParameters_000000-003111.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-        # cmd_str = f"cd {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}AstrophysicalParameters_003112-005263.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-    else:
+    else:  # pragma: no cover
         cmd_str = f"wget -P {_GAIA_DR3_ASTROPHYS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
 
@@ -112,11 +104,7 @@ def download_allwise_best_neightbour(test: bool=False):
             "test",
             test=test,
         )
-        # cmd_str = f"cd {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}allwiseBestNeighbour0001.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-        # cmd_str = f"cd {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}allwiseBestNeighbour0002.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-    else:
+    else:  # pragma: no cover
         cmd_str = f"wget -P {_GAIA_DR3_ALLWISE_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
 
@@ -151,11 +139,7 @@ def download_2mass_best_neightbour(test: bool=False):
             "test",
             test=test,
         )
-        # cmd_str = f"cd {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}tmasspscxscBestNeighbour0001.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-        # cmd_str = f"cd {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} && curl --no-clobber -s -O {_url}tmasspscxscBestNeighbour0002.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-    else:
+    else:  # pragma: no cover
         cmd_str = f"wget -P {_GAIA_DR3_2MASS_NEIGHBOUR_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
 
@@ -178,11 +162,7 @@ def download_2mass(test: bool=False):
         downloader(
             f"{_url}psc_aab.gz", _2MASS_PARENT.joinpath("psc_aab.gz"), "test", test=test
         )
-        # cmd_str = f"cd {_2MASS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}psc_aaa.gz"
-        # subprocess.run(cmd_str, shell=True)
-        # cmd_str = f"cd {_2MASS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}psc_aab.gz"
-        # subprocess.run(cmd_str, shell=True)
-    else:
+    else:  # pragma: no cover
         cmd_str = f"wget -P {_2MASS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
 
@@ -260,8 +240,7 @@ def download_allwise(test: bool=False):
             "test",
             test=test,
         )
-        # subprocess.run(cmd_list[3], shell=True)
-    else:
+    else:  # pragma: no cover
         for cmd_str in cmd_list:
             subprocess.run(cmd_str, shell=True)
 
@@ -286,9 +265,7 @@ def download_gaia_xp_continuous(test: bool=False):
             "test",
             test=test,
         )
-        # cmd_str = f"cd {_GAIA_DR3_XP_CONTINUOUS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}XpContinuousMeanSpectrum_000000-003111.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-    else:
+    else:  # pragma: no cover
         cmd_str = f"wget -P {_GAIA_DR3_XP_CONTINUOUS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
 
@@ -315,9 +292,7 @@ def download_gaia_xp_sampled(test: bool=False):
             "test",
             test=test,
         )
-        # cmd_str = f"cd {_GAIA_DR3_XP_SAMPLED_PARENT.as_posix()} && curl --no-clobber -s -O {_url}XpSampledMeanSpectrum_000000-003111.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-    else:
+    else:  # pragma: no cover
         cmd_str = f"wget -P {_GAIA_DR3_XP_SAMPLED_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
 
@@ -340,9 +315,7 @@ def download_gaia_rvs(test: bool=False):
             "test",
             test=test,
         )
-        # cmd_str = f"cd {_GAIA_DR3_RVS_PARENT.as_posix()} && curl --no-clobber -s -O {_url}RvsMeanSpectrum_000000-003111.csv.gz"
-        # subprocess.run(cmd_str, shell=True)
-    else:
+    else:  # pragma: no cover
         cmd_str = f"wget -P {_GAIA_DR3_RVS_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive --level=1 --no-directories {_url}"
         subprocess.run(cmd_str, shell=True)
 
@@ -367,8 +340,6 @@ def download_catwise(test: bool=False):
             "test",
             test=test,
         )
-        # cmd_str = f"cd {_CATWISE_PARENT.as_posix()} && curl --no-clobber -s -O {_url}catwise_2020a.tbl"
-        # subprocess.run(cmd_str, shell=True)
-    else:
+    else:  # pragma: no cover
         cmd_str = f"wget -P {_CATWISE_PARENT.as_posix()} --no-clobber --no-verbose --no-parent --recursive -R 'index.html*' --level=2 -e robots=off --no-host-directories --cut-dirs=5 {_url}"
         subprocess.run(cmd_str, shell=True)
