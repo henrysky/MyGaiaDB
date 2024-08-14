@@ -9,13 +9,15 @@ if len(sys.argv) > 0:
         astro_data_path = pathlib.Path(astro_data_path).expanduser()
 
         # delete every files ending with db
-        for i in list(astro_data_path.rglob("*.db")):
+        for db_file in astro_data_path.rglob("*.db"):
             # undo read-only premission in case any
-            i.chmod(stat.S_IWRITE)
-            i.unlink()
+            db_file.chmod(stat.S_IWRITE)
+            db_file.unlink()
 
         # delete every files ending with h5
-        for i in list(astro_data_path.rglob("*.h5")):
+        for h5_file in astro_data_path.rglob("*.h5"):
             # undo read-only premission in case any
-            i.chmod(stat.S_IWRITE)
-            i.unlink()
+            h5_file.chmod(stat.S_IWRITE)
+            h5_file.unlink()
+    else:
+        print("You probably don't want to run this script, are you sure you are on GH action?")
