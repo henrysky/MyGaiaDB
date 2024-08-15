@@ -14,7 +14,7 @@ from mygaiadb.data import (
 )
 
 
-def download_gaia_source(test: bool=False):
+def download_gaia_source(test: bool = False):
     """
     Download Gaia DR3 source data from the ESA Gaia archive.
 
@@ -43,7 +43,7 @@ def download_gaia_source(test: bool=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_gaia_astrophysical_parameters(test: bool=False):
+def download_gaia_astrophysical_parameters(test: bool = False):
     """
     Download Gaia DR3 astrophysical parameters data from the ESA Gaia archive.
 
@@ -76,7 +76,7 @@ def download_gaia_astrophysical_parameters(test: bool=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_allwise_best_neightbour(test: bool=False):
+def download_allwise_best_neightbour(test: bool = False):
     """
     Download AllWISE best neighbour data from the ESA Gaia archive.
 
@@ -109,7 +109,7 @@ def download_allwise_best_neightbour(test: bool=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_2mass_best_neightbour(test: bool=False):
+def download_2mass_best_neightbour(test: bool = False):
     """
     Download 2MASS best neighbour data from the ESA Gaia archive.
 
@@ -144,7 +144,7 @@ def download_2mass_best_neightbour(test: bool=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_2mass(test: bool=False):
+def download_2mass(test: bool = False):
     """
     Download 2MASS data from the IPAC archive.
 
@@ -167,7 +167,7 @@ def download_2mass(test: bool=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_allwise(test: bool=False):
+def download_allwise(test: bool = False):
     """
     Download AllWISE data from the IPAC archive.
 
@@ -245,7 +245,7 @@ def download_allwise(test: bool=False):
             subprocess.run(cmd_str, shell=True)
 
 
-def download_gaia_xp_continuous(test: bool=False):
+def download_gaia_xp_continuous(test: bool = False):
     """
     Download Gaia DR3 XP continuous spectra from the ESA Gaia archive.
 
@@ -270,7 +270,7 @@ def download_gaia_xp_continuous(test: bool=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_gaia_xp_sampled(test: bool=False):
+def download_gaia_xp_sampled(test: bool = False):
     """
     Download Gaia DR3 XP sampled spectra from the ESA Gaia archive.
 
@@ -297,10 +297,10 @@ def download_gaia_xp_sampled(test: bool=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_gaia_rvs(test: bool=False):
+def download_gaia_rvs(test: bool = False):
     """
     Download Gaia DR3 RVS spectra from the ESA Gaia archive.
-    
+
     Parameters
     ----------
     test : bool, optional (default=False)
@@ -320,7 +320,7 @@ def download_gaia_rvs(test: bool=False):
         subprocess.run(cmd_str, shell=True)
 
 
-def download_catwise(test: bool=False):
+def download_catwise(test: bool = False):
     """
     Download CatWISE data from the NERSC archive.
 

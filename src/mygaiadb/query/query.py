@@ -38,13 +38,14 @@ class LocalGaiaSQL:
     readonly_guard : bool, optional (default=True)
         Whether to ensure the databases are read-only
     """
+
     def __init__(
         self,
-        load_tmass: bool=True,
-        load_allwise: bool=True,
-        load_catwise: bool=True,
-        load_ext: bool=True,
-        readonly_guard: bool=True,
+        load_tmass: bool = True,
+        load_allwise: bool = True,
+        load_catwise: bool = True,
+        load_ext: bool = True,
+        readonly_guard: bool = True,
     ):
         self.load_tmass = load_tmass
         self.load_allwise = load_allwise
@@ -88,7 +89,9 @@ class LocalGaiaSQL:
                     re_key=".*remove_user_table",
                 )
 
-    def _check_callbacks_header(self, headers: List[str], callbacks: List[QueryCallback]):
+    def _check_callbacks_header(
+        self, headers: List[str], callbacks: List[QueryCallback]
+    ):
         """
         Helper function to check if all columns required by all callbacks are presented in query
 
@@ -223,10 +226,10 @@ class LocalGaiaSQL:
         self,
         query: str,
         filename: str,
-        chunksize: int=50000,
-        overwrite: bool=True,
-        callbacks: Optional[List[QueryCallback]]=None,
-        comments: bool=True,
+        chunksize: int = 50000,
+        overwrite: bool = True,
+        callbacks: Optional[List[QueryCallback]] = None,
+        comments: bool = True,
     ):
         """
         Given query, save the fetchall() result to csv, "chunksize" number of rows at each time until finished
@@ -303,7 +306,7 @@ class LocalGaiaSQL:
         return None
 
     @preprocess_query
-    def query(self, query: str, callbacks: Optional[List[QueryCallback]]=None):
+    def query(self, query: str, callbacks: Optional[List[QueryCallback]] = None):
         """
         Get result from query to pandas dataframe, ONLY USE THIS FOR SMALL QUERY
 
@@ -363,7 +366,7 @@ class LocalGaiaSQL:
         with contextlib.closing(sqlite3.connect(mygaiadb_usertable_db)) as conn:
             df.to_sql(f"{tablename}", conn, if_exists="fail", index=False)
 
-    def remove_user_table(self, tablename: str, reclaim: bool=False):
+    def remove_user_table(self, tablename: str, reclaim: bool = False):
         """
         Remove a custom user table
 

@@ -36,6 +36,3 @@ Homepage = "https://github.com/henrysky/MyGaiaDB"
 Documentation = "https://github.com/henrysky/MyGaiaDB"
 Repository = "https://github.com/henrysky/MyGaiaDB"
 "Bug Tracker" = "https://github.com/henrysky/MyGaiaDB/issues"
-
-[tool.ruff]
-extend-include = ["*.ipynb"]

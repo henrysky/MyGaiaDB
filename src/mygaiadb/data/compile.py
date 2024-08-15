@@ -30,7 +30,9 @@ from mygaiadb.data import (
 )
 
 
-def compile_xp_continuous_allinone_h5(save_correlation_matrix: bool = False):  # pragma: no cover
+def compile_xp_continuous_allinone_h5(
+    save_correlation_matrix: bool = False,
+):  # pragma: no cover
     """
     Compile all xp_continuous_mean_spectrum h5 files into one h5 file
 

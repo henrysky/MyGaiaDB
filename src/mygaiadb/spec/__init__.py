@@ -8,11 +8,11 @@ from numpy.typing import NDArray
 
 def yield_xp_coeffs(
     source_ids: Union[int, List[int], NDArray],
-    assume_unique: bool=True,
-    return_errors: bool=False,
-    return_additional_columns: Optional[List[str]]=None,
-    rdcc_nbytes: int=16 * 1024**3,
-    rdcc_nslots: int=10e7,
+    assume_unique: bool = True,
+    return_errors: bool = False,
+    return_additional_columns: Optional[List[str]] = None,
+    rdcc_nbytes: int = 16 * 1024**3,
+    rdcc_nslots: int = 10e7,
 ):
     """
     Function to yield XP coeffs according to their healpixs from source_id
