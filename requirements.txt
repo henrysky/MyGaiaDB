@@ -3,4 +3,5 @@ astropy
 h5py
 pandas
 tqdm
+wheel
 requests

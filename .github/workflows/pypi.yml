@@ -31,8 +31,8 @@ jobs:
       - name: Install dependencies
         shell: bash -l {0}
         run: |
-          conda install -y numpy astropy h5py pandas tqdm wheel pytest pytest-order
-          python -m pip install build
+          conda install --yes --file requirements.txt
+          python -m pip install -r requirements-dev.txt
       - name: Set environment variables on Mac OS
         if: matrix.buildplat[1] == 'macos'
         shell: bash -l {0}

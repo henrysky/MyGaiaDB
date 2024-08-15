@@ -36,8 +36,8 @@ jobs:
           echo "$CONDA_PREFIX\\Library\\bin" >> $GITHUB_PATH
       - name: Install dependencies
         run: |
-          conda install -y numpy astropy h5py pandas tqdm wheel pytest pytest-order pytest-cov galpy
-          python -m pip install gaiadr3-zeropoint build mwdust
+          conda install --yes --file requirements.txt
+          python -m pip install -r requirements-dev.txt
           python -m pip install -e .
       - name: Cache my astro data
         uses: actions/cache@v4
