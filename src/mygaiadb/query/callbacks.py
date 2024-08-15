@@ -25,10 +25,7 @@ class QueryCallback(ABC):
 
     def __init__(self, new_col_name: str, required_pkgs: Optional[List[str]] = None):
         self.new_col_name = new_col_name
-        self.required_col = list(inspect.getfullargspec(self.func))[0]
-        # remove self from required_col in case it is a class method
-        if "self" in self.required_col:
-            self.required_col.remove("self")
+        self.initialized = False
 
         # Please notice if you are implementing a new callback, we only check if the package(s) are installed.
         # You should be the one who actually import the package(s) within your callback class.
@@ -40,6 +37,18 @@ class QueryCallback(ABC):
                 raise ImportError(
                     f"Package(s) {list(compress(required_pkgs, np.invert(have_pkg)))} are required to use this callback"
                 )
+
+    def get_required_col(self):
+        self.required_col = list(inspect.getfullargspec(self.func))[0]
+        # remove self from required_col in case it is a class method
+        if "self" in self.required_col:
+            self.required_col.remove("self")
+
+    def __call__(self, *args, **kwargs):
+        if not self.initialized:
+            self.get_required_col()
+            self.initialized = True
+        return self.func(*args, **kwargs)
 
     @abstractmethod
     def func(self, *args, **kwargs):
@@ -139,8 +148,8 @@ class DustCallback(QueryCallback):
         self.mwdust = importlib.import_module("mwdust")
         self.radec_to_lb = importlib.import_module("galpy.util.coords").radec_to_lb
         self.filter = filter
+        self.dustmap = self.mwdust.SFD(filter=self.filter, noloop=True)
         if dustmap.lower() == "sfd":
-            self.sfd = self.mwdust.SFD(filter=self.filter, noloop=True)
             self.func = self.sfd_ebv_func  # set abstract method
         else:
             # other dust map requires inverse parallax too
@@ -148,8 +157,12 @@ class DustCallback(QueryCallback):
 
     def sfd_ebv_func(self, ra, dec):
         lb = self.radec_to_lb(ra, dec, degree=True)
-        return self.sfd(lb[:, 0], lb[:, 1], np.ones_like(lb[:, 0]))
+        return self.dustmap(lb[:, 0], lb[:, 1], np.ones_like(lb[:, 0]))
 
     def dust3d_ebv_func(self, ra, dec, parallax):
         lb = self.radec_to_lb(ra, dec, degree=True)
-        return self.sfd(lb[:, 0], lb[:, 1], 1.0 / parallax)
+        return self.dustmap(lb[:, 0], lb[:, 1], 1.0 / parallax)
+
+    # Placeholder implementation (to satisfy abstract method requirement)
+    def func(self):
+        raise NotImplementedError("This method is dynamically set in __init__")

@@ -99,19 +99,21 @@ class LocalGaiaSQL:
         callbacks: List[QueryCallback]
             List of callbacks used in a query
         """
-        for i in callbacks:
-            for j in i.required_col:
+        for callback in callbacks:
+            if not callback.initialized:
+                callback.get_required_col()
+            for j in callback.required_col:
                 if j not in headers:
                     raise NameError(
-                        f"Callback for new column {i.new_col_name} requires column {j} but not presented in your query"
+                        f"Callback for new column {callback.new_col_name} requires column {j} but not presented in your query"
                     )
 
     def _result_after_callbacks(self, df: pd.DataFrame, callbacks: List[QueryCallback]):
-        for i in callbacks:
+        for callback in callbacks:
             func_dist = {}
-            for j in i.required_col:
+            for j in callback.required_col:
                 func_dist[j] = df[j].to_numpy()
-            df[i.new_col_name] = i.func(**func_dist)
+            df[callback.new_col_name] = callback(**func_dist)
         return df
 
     def _read_only(self, file_path):
