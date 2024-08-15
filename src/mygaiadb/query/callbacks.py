@@ -33,7 +33,9 @@ class QueryCallback(ABC):
         # Please notice if you are implementing a new callback, we only check if the package(s) are installed.
         # You should be the one who actually import the package(s) within your callback class.
         if required_pkgs is not None:
-            have_pkg = [importlib.util.find_spec(pkg) is not None for pkg in required_pkgs]
+            have_pkg = [
+                importlib.util.find_spec(pkg) is not None for pkg in required_pkgs
+            ]
             if not all(have_pkg):
                 raise ImportError(
                     f"Package(s) {list(compress(required_pkgs, np.invert(have_pkg)))} are required to use this callback"
@@ -67,6 +69,7 @@ class LambdaCallback(QueryCallback):
     def func(self):
         raise NotImplementedError("This method is dynamically set in __init__")
 
+
 class ZeroPointCallback(QueryCallback):
     """
     Callback to use ``gaiadr3_zeropoint`` to get zero-point corrected parallax
@@ -97,8 +100,9 @@ class ZeroPointCallback(QueryCallback):
         with warnings.catch_warnings(record=True):
             warnings.filterwarnings(action="ignore")
             # need to catch non-5p/6p solutions and gracefully handle them
-            print(astrometric_params_solved)
-            bad_idx = np.where((astrometric_params_solved != 31) & (astrometric_params_solved != 95))[0]
+            bad_idx = np.where(
+                (astrometric_params_solved != 31) & (astrometric_params_solved != 95)
+            )[0]
             astrometric_params_solved[bad_idx] = 31  # just a placeholder
             corrected_parallax = parallax - self.zpt.get_zpt(
                 phot_bp_mean_mag,
@@ -122,7 +126,7 @@ class DustCallback(QueryCallback):
     filter : str, optional (default=None)
         extinction in which filter, see mwdust
     dustmap : str, optional (default="SFD")
-        which dust map to use, currently only supporting ``SFD``
+        which dust map to use (distance is assumed simply be 1/parallax)
     """
 
     def __init__(
@@ -137,52 +141,15 @@ class DustCallback(QueryCallback):
         self.filter = filter
         if dustmap.lower() == "sfd":
             self.sfd = self.mwdust.SFD(filter=self.filter, noloop=True)
-            self.func = self.sfd_ebv_func
+            self.func = self.sfd_ebv_func  # set abstract method
+        else:
+            # other dust map requires inverse parallax too
+            self.func = self.dust3d_ebv_func  # set abstract method
 
     def sfd_ebv_func(self, ra, dec):
         lb = self.radec_to_lb(ra, dec, degree=True)
         return self.sfd(lb[:, 0], lb[:, 1], np.ones_like(lb[:, 0]))
 
-    def func(self, ra, dec):
-        return self._func(ra, dec)
-
-
-class OrbitsCallback(QueryCallback):
-    """
-    Callback to use ``galpy`` to setup orbit to get orbital parameters
-
-    Parameters
-    ----------
-    new_col_name : str, optional (default="e")
-        Name of the new column you wan to add
-    """
-
-    def __init__(self, new_col_name: str = "e"):
-        super().__init__(new_col_name, required_pkgs=["galpy"])
-
-        self._r0 = 8.23  # kpc
-        self._v0 = 249.44  # km/s
-        self._z0 = 0.0208  # kpc
-
-        self.orbit = importlib.import_module("galpy.orbit")
-        self.radec_to_lb = importlib.import_module("galpy.util.coords").radec_to_lb
-
-    def sfd_ebv_func(self, ra, dec):
+    def dust3d_ebv_func(self, ra, dec, parallax):
         lb = self.radec_to_lb(ra, dec, degree=True)
-        return self.sfd(lb[:, 0], lb[:, 1], np.ones_like(lb[:, 0]))
-
-    def func(self, ra, dec, pmra, pmdec, parallax, radial_velocity):
-        return self.orbit.Orbit(
-            [
-                ra,
-                dec,
-                (1 / parallax),
-                pmra,
-                pmdec,
-                radial_velocity,
-            ],
-            radec=True,
-            ro=self._r0,
-            vo=self._v0,
-            zo=self._z0,
-        )
+        return self.sfd(lb[:, 0], lb[:, 1], 1.0 / parallax)
