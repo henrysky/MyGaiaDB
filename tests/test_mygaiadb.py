@@ -282,8 +282,8 @@ def test_query_callback(localdb):
     """
     # adding zero-point corrected parallax using official Gaia DR3 parallax zero-point python package
     zp_callback = ZeroPointCallback(new_col_name="parallax_w_zp")
-    # adding SFD E(B-V) in H band filter using mwdust python package
-    dust_callback = DustCallback(new_col_name="sfd_ebv", filter="H", dustmap="SFD")
+    # adding SFD E(B-V) in 2MASS H band filter using mwdust python package
+    dust_callback = DustCallback(new_col_name="sfd_ebv", filter="2MASS H", dustmap="SFD")
     localdb.save_csv(
         query, "output.csv", overwrite=True, callbacks=[zp_callback, dust_callback]
     )

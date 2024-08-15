@@ -393,8 +393,8 @@ We also have a few useful callbacks included by default to add columns like zero
 
     # adding zero-point corrected parallax using official Gaia DR3 parallax zero-point python package
     zp_callback = ZeroPointCallback(new_col_name="parallax_w_zp")
-    # adding SFD E(B-V) in H band filter using mwdust python package
-    dust_callback = DustCallback(new_col_name="sfd_ebv", filter="H", dustmap="SFD")
+    # adding SFD E(B-V) in 2MASS H band filter using mwdust python package
+    dust_callback = DustCallback(new_col_name="sfd_ebv", filter="2MASS H", dustmap="SFD")
 
     local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, callbacks=[zp_callback, dust_callback])
 
