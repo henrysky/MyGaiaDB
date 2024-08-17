@@ -17,6 +17,7 @@
 ### Changed
 - Switch to use src-layout
 - Switch to use ``pyproject.toml`` instead of ``setup.py``
+- [0.5.1] Reorganize the underlying code for query callback class
 
 ### Fixed
 - Fix ``radec_to_ecl()`` not wrapping ecliptic longitude correctly

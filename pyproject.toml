@@ -7,7 +7,7 @@ mygaiadb = ["data/sql_schema/*.sql"]
 
 [project]
 name = "MyGaiaDB"
-version = "0.6.0.dev0"
+version = "0.5.1"
 dynamic = ["dependencies"]
 requires-python = ">=3.8"
 authors = [
