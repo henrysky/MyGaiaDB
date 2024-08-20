@@ -153,7 +153,7 @@ class LocalGaiaSQL:
             query = re.sub(r"[']\s?\b(f)\b\s?[']", "0 ", query, flags=re.IGNORECASE)
             query = re.sub(r"[']\s?\b(true)\b\s?[']", "1 ", query, flags=re.IGNORECASE)
             query = re.sub(r"[']\s?\b(false)\b\s?[']", "0 ", query, flags=re.IGNORECASE)
-            if "query" in kwargs:
+            if "query" in kwargs:  # put the processed query back
                 kwargs["query"] = query
             else:
                 args = list(args)
@@ -253,9 +253,6 @@ class LocalGaiaSQL:
         -------
         None
         """
-        if callbacks is not None and not isinstance(callbacks, list):
-            raise TypeError("callbacks must be a list")
-
         self.cursor.execute(query)
         if os.path.exists(filename) and not overwrite:
             raise FileExistsError(f"{os.path.abspath(filename)} already existed!")

@@ -43,7 +43,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/my_astro_data/
-          key: mygaiadb-${{ runner.os }}-2024aug19
+          key: mygaiadb-${{ runner.os }}-2024aug20
       - name: Test
         run: |
           python -m pytest -v ./tests --cov ./src/mygaiadb --junitxml=junit.xml --cov-report=xml

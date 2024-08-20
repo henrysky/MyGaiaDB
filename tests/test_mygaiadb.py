@@ -88,9 +88,14 @@ def test_compile():
 
 
 @pytest.mark.order(3)
+def test_load_non_existing_db():
+    with pytest.raises(Exception):
+        LocalGaiaSQL(load_allwise=True)
+
+
+@pytest.mark.order(4)
 def test_user_table(localdb):
-    localdb.upload_user_table(
-        pd.DataFrame(
+    test_data = pd.DataFrame(
             {
                 "source_id": [
                     5188146770731873152,
@@ -98,29 +103,43 @@ def test_user_table(localdb):
                     5764607527332179584,
                 ]
             }
-        ),
+        )
+    localdb.upload_user_table(
+        test_data,
         "user_table_1",
     )
-    result = localdb.query("""SELECT * FROM user_table.user_table_1""")
+    localdb.upload_user_table(
+        test_data,
+        "user_table_2",
+    )
+    assert "user_table_1" in localdb.list_user_tables()
+    assert "user_table_2" in localdb.list_user_tables()
+    
+    result = localdb.query(query="""SELECT * FROM user_table.user_table_1""")
     assert result["source_id"].tolist() == [
         5188146770731873152,
         4611686018427432192,
         5764607527332179584,
     ]
     localdb.remove_user_table("user_table_1")
+    localdb.remove_user_table("user_table_2", reclaim=True)
     assert localdb.list_user_tables() == {}
 
 
-@pytest.mark.order(4)
+@pytest.mark.order(5)
 def test_query_utilities(localdb):
     localdb.list_all_tables()
-    localdb.get_table_column("gaiadr3.gaia_source")
-    localdb.get_table_column("gaiadr3.tmasspscxsc_best_neighbour")
-    localdb.get_table_column("tmass.twomass_psc")
-    localdb.get_table_column("catwise.catwise")
+    assert "source_id" in localdb.get_table_column("gaiadr3.gaia_source")
+    assert "source_id" in localdb.get_table_column("gaiadr3.tmasspscxsc_best_neighbour")
+    assert "ra" in localdb.get_table_column("tmass.twomass_psc")
+    assert "ra" in localdb.get_table_column("catwise.catwise")
+
+    with pytest.raises(Exception):
+        # should raise exception as table does not exist
+        localdb.get_table_column("gaia_source")
 
 
-@pytest.mark.order(5)
+@pytest.mark.order(6)
 def test_query(localdb):
     # just making sure a complex query like this can run without issue
     query = """
@@ -139,8 +158,27 @@ def test_query(localdb):
     assert len(query_df) == 0, "Query should return 0 rows as this test is incomplete"
     assert "source_id" in query_df.keys(), "Query should contain 'source_id'"
 
+    # test query preprocessing
+    query = """
+    SELECT G.source_id, G.ra, G.dec
+    FROM gaiadr3.gaia_source as G
+    WHERE (G.has_xp_continuous = 'True')
+    TOP 10
+    """
+    preprocessed_result = localdb.query(query)
 
-@pytest.mark.order(5)
+    query = """
+    SELECT G.source_id, G.ra, G.dec
+    FROM gaiadr3.gaia_source as G
+    WHERE (G.has_xp_continuous = 1)
+    LIMIT 10
+    """
+    normal_result = localdb.query(query)
+
+    assert np.all(preprocessed_result == normal_result)
+
+
+@pytest.mark.order(7)
 def test_query_saving(localdb):
     # ================= query with new line in both start and end =================
     query = """
@@ -183,7 +221,7 @@ def test_query_saving(localdb):
     assert np.all(query_df.loc[0] == query_df_from_saved.loc[0])
 
 
-@pytest.mark.order(6)
+@pytest.mark.order(8)
 @pytest.mark.parametrize(
     "return_errors,assume_unique,return_additional_columns,replacement",
     [
@@ -232,7 +270,7 @@ def test_xp_query(
             assert np.all(source_ids_result[source_ids_result != 0] == all_source_ids[source_ids_result != 0])
 
 
-@pytest.mark.order(7)
+@pytest.mark.order(9)
 def test_query_callback(localdb):
     # ================= Test custom Callback =================
     query = """
@@ -249,6 +287,14 @@ def test_query_callback(localdb):
     # make sure the query result has the same result with numpy angle conversion
     query_df = localdb.query(query, callbacks=[ra_conversion])
     npt.assert_allclose(query_df["ra"] / 180 * np.pi, query_df["ra_rad"])
+
+    query = """
+    SELECT G.source_id
+    FROM gaiadr3.gaia_source as G
+    LIMIT 10
+    """
+    with pytest.raises(Exception):  # should raise exception as RA is not requested in the query
+        localdb.query(query, callbacks=[ra_conversion])
 
     # ================= Test custom DustCallback =================
     query = """
