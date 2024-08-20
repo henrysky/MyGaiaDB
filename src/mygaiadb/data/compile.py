@@ -32,7 +32,7 @@ from mygaiadb.data import (
 
 def compile_xp_continuous_allinone_h5(
     save_correlation_matrix: bool = False,
-):  # pragma: no cover
+):
     """
     Compile all xp_continuous_mean_spectrum h5 files into one h5 file
 
@@ -52,7 +52,7 @@ def compile_xp_continuous_allinone_h5(
 
     if len(file_paths) == 0:
         raise FileNotFoundError(
-            f"Gaia data does not exist at {base_path}. Please run compile_xp_continuous_h5() first."
+            f"Gaia data in h5 format does not exist at {base_path}. Please run `compile_xp_continuous_h5()` first."
         )
 
     file_names = [x.name for x in file_paths]
@@ -93,7 +93,7 @@ def compile_xp_continuous_allinone_h5(
         if (
             save_correlation_matrix
             and "bp_coefficient_correlations" in temp_h5_data.keys()
-        ):
+        ):    # pragma: no cover
             gp.create_dataset(
                 "bp_coefficient_correlations",
                 data=temp_h5_data["bp_coefficient_correlations"][()],
@@ -134,7 +134,7 @@ def compile_xp_continuous_allinone_h5(
         if (
             save_correlation_matrix
             and "rp_coefficient_correlations" in temp_h5_data.keys()
-        ):
+        ):  # pragma: no cover
             gp.create_dataset(
                 "rp_coefficient_correlations",
                 data=temp_h5_data["rp_coefficient_correlations"][()],
@@ -167,7 +167,7 @@ def compile_xp_continuous_allinone_h5(
     h5f.close()
 
 
-def compile_xp_continuous_h5(save_correlation_matrix: bool = False):  # pragma: no cover
+def compile_xp_continuous_h5(save_correlation_matrix: bool = False):
     """
     Compile xp_continuous_mean_spectrum csv.gz files into h5 files
 
@@ -188,7 +188,7 @@ def compile_xp_continuous_h5(save_correlation_matrix: bool = False):  # pragma: 
         desc="XP coeffs",
     ):
         # XpContinuousMeanSpectrum_614517-614573's bp_basis_function_id is problematic, need special treatment
-        if "614517-614573" in str(i_path):
+        if "614517-614573" in str(i_path):  # pragma: no cover
             file_path_f = vstack(
                 [
                     ascii.read(i_path, data_end=31212),

@@ -16,6 +16,16 @@ def localdb():
     return LocalGaiaSQL(load_allwise=False)
 
 
+@pytest.fixture(scope="module")
+def avaliable_source_ids():
+    source_ids = []
+    with h5py.File(gaia_xp_coeff_h5_path, "r") as f:
+        for i in f.keys():
+            source_ids.append(f[i]["source_id"][()])
+    source_ids = np.concatenate(source_ids)
+    return source_ids
+
+
 @pytest.mark.order(0)
 def test_utils():
     # ground truth from gaia archive
@@ -46,6 +56,9 @@ def test_utils():
 @pytest.mark.order(1)
 def test_download():
     download.download_gaia_source(test=True)
+    download.download_gaia_xp_continuous(test=True)
+    download.download_gaia_xp_sampled(test=True)
+    download.download_gaia_rvs(test=True)
     download.download_2mass_best_neightbour(test=True)
     download.download_allwise_best_neightbour(test=True)
     download.download_gaia_astrophysical_parameters(test=True)
@@ -57,11 +70,17 @@ def test_download():
 @pytest.mark.order(2)
 def test_compile():
     compile.compile_gaia_sql_db(indexing=False)
+    with pytest.raises(Exception):
+        # assert that one need to compile_xp_continuous_h5() first
+        compile.compile_xp_continuous_allinone_h5(save_correlation_matrix=False)
+    compile.compile_xp_continuous_h5(save_correlation_matrix=True)
+    compile.compile_xp_continuous_allinone_h5(save_correlation_matrix=False)
     compile.compile_tmass_sql_db(indexing=False)
     # compile.compile_allwise_sql_db(indexing=False)
     compile.compile_catwise_sql_db(indexing=False)
     # check if database exist
     assert mygaiadb.gaia_sql_db_path.exists()
+    assert mygaiadb.gaia_xp_coeff_h5_path.exists()
     assert mygaiadb.tmass_sql_db_path.exists()
     # assert mygaiadb.allwise_sql_db_path.exists()
     # assert database > 2GB
@@ -165,95 +184,52 @@ def test_query_saving(localdb):
 
 
 @pytest.mark.order(6)
-def test_xp_query():
-    # ================= Generate dataset =================
-    f_xp = h5py.File(gaia_xp_coeff_h5_path, "w")
-    # list of possible random source_id
-    possible_source_ids = np.random.randint(
-        4295806720, 6917528997577384320, size=10000000, dtype=np.int64
+@pytest.mark.parametrize(
+    "return_errors,assume_unique,return_additional_columns,replacement",
+    [
+        # Test query with unique source id
+        (True, True, ["source_id"], False),
+        # Test query with repeated source id
+        (True, False, ["source_id"], True),
+        # Test query with repeated source id but assume unique
+        (True, True, ["source_id"], True,),
+    ],
+)
+def test_xp_query(
+    avaliable_source_ids,
+    return_errors,
+    assume_unique,
+    return_additional_columns,
+    replacement,
+):
+    all_source_ids = np.random.choice(
+        avaliable_source_ids, size=len(avaliable_source_ids), replace=replacement
     )
-    reduced_possible_source_ids = possible_source_ids // 8796093022208
-    all_source_ids = []
-
-    for i, j in zip([0, 3001, 6001], [3000, 6000, 9000]):
-        good_source_ids = (i <= reduced_possible_source_ids) & (
-            reduced_possible_source_ids <= j
-        )
-        _source_ids = possible_source_ids[good_source_ids]
-        all_source_ids.append(_source_ids)
-        group_name = f"{i}-{j}"
-        f_xp.create_group(group_name)
-        f_xp[group_name].create_dataset("source_id", data=_source_ids, dtype=np.int64)
-        f_xp[group_name].create_dataset(
-            "bp_coefficients", data=np.random.random((np.sum(good_source_ids), 55))
-        )
-        f_xp[group_name].create_dataset(
-            "rp_coefficients", data=np.random.random((np.sum(good_source_ids), 55))
-        )
-        f_xp[group_name].create_dataset(
-            "bp_coefficient_errors",
-            data=np.random.random((np.sum(good_source_ids), 55)),
-        )
-        f_xp[group_name].create_dataset(
-            "rp_coefficient_errors",
-            data=np.random.random((np.sum(good_source_ids), 55)),
-        )
-    f_xp.close()
-    all_source_ids = np.concatenate(all_source_ids)
-
-    # ================= Test query with unique source id =================
-    np.random.shuffle(all_source_ids)
-
     source_ids_result = np.zeros((len(all_source_ids),), dtype=np.int64)
-
-    for i in yield_xp_coeffs(
-        all_source_ids,
-        return_errors=True,
-        assume_unique=True,
-        return_additional_columns=["source_id"],
-    ):
-        coeffs, idx, coeffs_err, ids = i  # unpack
-        source_ids_result[idx] = ids
-
-    assert np.all(all_source_ids == source_ids_result)
-
-    # ================= Test query with repeated source id and unknowns =================
-    all_source_ids_w_replacement = np.random.choice(
-        np.concatenate(
-            [
+    if assume_unique and replacement:  # assert error is raised
+        with pytest.raises(Exception):
+            for i in yield_xp_coeffs(
                 all_source_ids,
-                np.random.randint(
-                    4295806720,
-                    6917528997577384320,
-                    size=len(all_source_ids) // 2,
-                    dtype=np.int64,
-                ),
-            ]
-        ),
-        size=len(all_source_ids) * 2,
-        replace=True,
-    )
-
-    source_ids_result = np.zeros((len(all_source_ids_w_replacement),), dtype=np.int64)
-
-    for i in yield_xp_coeffs(
-        all_source_ids_w_replacement,
-        return_errors=True,
-        assume_unique=False,
-        return_additional_columns=["source_id"],
-    ):
-        coeffs, idx, coeffs_err, ids = i  # unpack
-        source_ids_result[idx] = ids
-
-    # 0 represents no source_id found for XP coefficients
-    assert np.all(
-        (all_source_ids_w_replacement == source_ids_result)[source_ids_result != 0]
-    )
-
-    # assert error is raised
-    with pytest.raises(Exception):
-        for i in yield_xp_coeffs(all_source_ids_w_replacement, assume_unique=True):
-            coeffs, idx = i  # unpack
+                return_errors=return_errors,
+                assume_unique=assume_unique,
+                return_additional_columns=return_additional_columns,
+            ):
+                coeffs, idx, coeffs_err, ids = i
+    else:
+        for i in yield_xp_coeffs(
+            all_source_ids,
+            return_errors=return_errors,
+            assume_unique=assume_unique,
+            return_additional_columns=return_additional_columns,
+        ):
+            coeffs, idx, coeffs_err, ids = i
+            source_ids_result[idx] = ids
+        # assert source_id
+        if not replacement:
+            assert np.all(source_ids_result == all_source_ids)
+        else:
+            # if there are repeated source_id, then only assert those non-zero source_id
+            assert np.all(source_ids_result[source_ids_result != 0] == all_source_ids[source_ids_result != 0])
 
 
 @pytest.mark.order(7)

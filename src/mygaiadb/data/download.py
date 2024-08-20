@@ -258,9 +258,17 @@ def download_gaia_xp_continuous(test: bool = False):
     _url = "http://cdn.gea.esac.esa.int/Gaia/gdr3/Spectroscopy/xp_continuous_mean_spectrum/"
     if test:
         downloader(
-            f"{_url}XpContinuousMeanSpectrum_000000-003111.csv.gz",
+            f"{_url}XpContinuousMeanSpectrum_463735-463755.csv.gz",
             _GAIA_DR3_XP_CONTINUOUS_PARENT.joinpath(
-                "XpContinuousMeanSpectrum_000000-003111.csv.gz"
+                "XpContinuousMeanSpectrum_463735-463755.csv.gz"
+            ),
+            "test",
+            test=test,
+        )
+        downloader(
+            f"{_url}XpContinuousMeanSpectrum_463756-463776.csv.gz",
+            _GAIA_DR3_XP_CONTINUOUS_PARENT.joinpath(
+                "XpContinuousMeanSpectrum_463756-463776.csv.gz"
             ),
             "test",
             test=test,
