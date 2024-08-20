@@ -37,6 +37,8 @@ def yield_xp_coeffs(
     reduced_source_ids = source_ids // 8796093022208
     bad_source_ids = source_ids < 1
     total_num = len(source_ids)
+    if return_additional_columns is None:
+        return_additional_columns = []
 
     h5f = h5py.File(
         gaia_xp_coeff_h5_path, "r", rdcc_nbytes=rdcc_nbytes, rdcc_nslots=rdcc_nslots
@@ -91,19 +93,11 @@ def yield_xp_coeffs(
                 coeffs[:, 55:] = (spec_f["rp_coefficients"][idx2_sorted])[
                     idx2_inv_argsort
                 ]
-                if not return_errors:
-                    if return_additional_columns is None:
-                        yield coeffs, np.arange(total_num)[good_idx][idx1]
-                    else:
-                        extra_columns = tuple(
-                            spec_f[i][()][idx2] for i in return_additional_columns
-                        )
-                        yield (
-                            coeffs,
-                            np.arange(total_num)[good_idx][idx1],
-                            *extra_columns,
-                        )
-                else:
+                extra_columns = tuple(
+                    spec_f[i][()][idx2] for i in return_additional_columns
+                )
+                coeffs_err = ()
+                if return_errors:
                     coeffs_err = np.zeros(
                         (size, 110), dtype=spec_f["bp_coefficient_errors"].dtype
                     )
@@ -113,17 +107,12 @@ def yield_xp_coeffs(
                     coeffs_err[:, 55:] = (spec_f["rp_coefficient_errors"][idx2_sorted])[
                         idx2_inv_argsort
                     ]
-                    if return_additional_columns is None:
-                        yield coeffs, np.arange(total_num)[good_idx][idx1], coeffs_err
-                    else:
-                        extra_columns = tuple(
-                            spec_f[i][()][idx2] for i in return_additional_columns
-                        )
-                        yield (
-                            coeffs,
-                            np.arange(total_num)[good_idx][idx1],
-                            coeffs_err,
-                            *extra_columns,
-                        )
+                    coeffs_err = (coeffs_err,)
+                yield (
+                    coeffs,
+                    np.arange(total_num)[good_idx][idx1],
+                    *coeffs_err,
+                    *extra_columns,
+                )
             else:  # this is the case where the source_id is within healpix but does not have xp coeffs
                 pass
