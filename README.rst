@@ -1,6 +1,15 @@
 MyGaiaDB
 ===============
 
+.. image:: https://img.shields.io/pypi/v/mygaiadb
+   :alt: PyPI - Version
+   :target: https://pypi.org/project/mw-plot/
+
+.. image:: https://codecov.io/gh/henrysky/MyGaiaDB/graph/badge.svg?token=wDClBJ2hNu
+   :alt: Codecov 
+   :target: https://codecov.io/gh/henrysky/mygaiadb
+
+
 *Why share when you can have the entire Gaia database locally?*
 
 ``MyGaiaDB`` is a simple Python package that provides scripts to help you set up a local 
@@ -26,21 +35,23 @@ Feel free to modify the code and submit pull requests to enhance its functionali
 .. contents:: **Table of Contents**
     :depth: 3
 
-Installation and Dependencies
+Installation and Dependnciees
 -------------------------------
 
 This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy`` and ``tqdm``. 
-This code only needs the ``sqlite3`` library that comes bundled with your Python installation. 
+This code only needs the ``sqlite3`` library that comes bundled with your Python installation. You need to make sure that the 
+``sqlite3ext.h`` file is available in your path and your Python is compiled with sqlite extension enabled (i.e., compiled with ``PYTHON_CONFIGURE_OPTS="--enable-loadable-sqlite-extensions"``).
 For some optional functionalities,  ``galpy``, ``mwdust`` are required. Downloading functions will require ``wget``.
 
 You can install the precompiled ``MyGaiaDB`` wheels by running `pip install mygaiadb`.
 
 Alternatively, you can compile the code locally from the source. You'll need to add the folder containing ``sqlite3ext.h`` 
-to your **INCLUDE** environment variable. For Conda users, the commands are:
+to your **INCLUDE** environment variable. Depending on your platforms, the commands are:
 
 - Windows Command Prompt: ``set INCLUDE=%CONDA_PREFIX%\Library\include;%INCLUDE%``
 - Windows PowerShell: ``$env:INCLUDE="$env:CONDA_PREFIX\Library\include"``
-- MacOS: ``export CFLAGS=-I$CONDA_PREFIX/include``
+- MacOS with Conda: ``export CPPFLAGS=-I$CONDA_PREFIX/include``
+- MacOS with ``sqlite`` installed via Homebrew: ``export LDFLAGS="-L$(brew --prefix sqlite)/lib" CPPFLAGS="-I$(brew --prefix sqlite)/include"``
 - Linux: No action needed usually
 
 Then, you can run ``python -m pip install .`` to install the latest commits from GitHub or ``python -m pip install -e .`` to develop ``MyGaiaDB`` locally.

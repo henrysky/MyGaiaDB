@@ -37,7 +37,7 @@ jobs:
         if: matrix.buildplat[1] == 'macos'
         shell: bash -l {0}
         run: |
-          echo "CFLAGS=-I$CONDA_PREFIX/include" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I$CONDA_PREFIX/include" >> $GITHUB_ENV
           echo "LDFLAGS=-L$CONDA_PREFIX/lib" >> $GITHUB_ENV
           echo "REPAIR_LIBRARY_PATH=$CONDA_PREFIX/lib" >> $GITHUB_ENV
           echo "$CONDA_PREFIX/bin" >> $GITHUB_PATH
