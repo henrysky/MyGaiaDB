@@ -255,13 +255,14 @@ You can use ``get_table_column(table_name)`` to get a list of columns of a table
 
 ..  code-block:: python
 
-    from mygaiadb.query import LocalGaiaSQL
+    >>> from mygaiadb.query import LocalGaiaSQL
 
-    # initialize a local Gaia SQL database instance
-    local_db = LocalGaiaSQL()
+    >>> # initialize a local Gaia SQL database instance
+    >>> local_db = LocalGaiaSQL()
 
-    # print a list of columns of a table
-    print(local_db.get_table_column("gaiadr3.gaia_source"))
+    >>> # print a list of columns of a table
+    >>> print(local_db.get_table_column("gaiadr3.gaia_source"))  # doctest: +ELLIPSIS
+    ['source_id', 'random_index', ...]
 
 
 If you want to manage and edit the databases with GUI, you can try to use `SQLiteStudio`_ or `DB Browser for SQLite`_.
@@ -433,11 +434,9 @@ and then carry-on doing query with ``my_table_1`` cross-matching with other tabl
 
 ..  code-block:: python
 
-    >>> local_db.query("""SELECT * FROM gaiadr3.gaia_source as G  INNER JOIN user_table.my_table_1 as MY on MY.source_id = G.source_id""")
-        source_id  random_index          ra  ra_error        dec  dec_error  parallax  ...  grvs_mag           l          b  has_xp_continuous  has_xp_sampled  has_rvs            source_id
-    0  5188146770731873152      92665034  106.809848  0.128483 -89.992879   0.135611  1.487036  ...      None  302.923937 -27.127759                  0               0        0  5188146770731873152
-    1  4611686018427432192     654192849   63.430772  0.092484 -89.988887   0.093497  0.694396  ...      None  302.922275 -27.135308                  0               0        0  4611686018427432192
-    2  5764607527332179584    1741270837  193.633291  0.072219 -89.988749   0.067486  0.245594  ...      None  302.932091 -27.117000                  1               0        0  5764607527332179584
+    >>> local_db.query("""SELECT * FROM gaiadr3.gaia_source as G  INNER JOIN user_table.my_table_1 as MY on MY.source_id = G.source_id""")  # doctest: +ELLIPSIS
+        source_id  random_index  ...  has_rvs            source_id
+    0  ...
 
 You can check the list of your own user tables with column names by using ``list_user_tables()``
 
