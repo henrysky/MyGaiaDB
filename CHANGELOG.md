@@ -19,7 +19,7 @@
 - Switch to use ``pyproject.toml`` instead of ``setup.py``
 - [0.5.1] Reorganize the underlying code for query callback class
 - [0.5.2] Simplify ``yield_xp_coeffs()`` code logics
-- [0.5.2] Improve tests covverage on dataset compilation
+- [0.5.2] Improve tests coverage on dataset compilation
 
 ### Fixed
 - Fix ``radec_to_ecl()`` not wrapping ecliptic longitude correctly
