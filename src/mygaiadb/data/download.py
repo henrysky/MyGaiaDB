@@ -12,7 +12,7 @@ from mygaiadb.data import (
     _2MASS_PARENT,
     _CATWISE_PARENT,
 )
-
+import pandas as pd
 
 def download_gaia_source(test: bool = False):
     """
@@ -234,11 +234,24 @@ def download_allwise(test: bool = False):
     ]
 
     if test:
+        # downloader(
+        #     "http://irsa.ipac.caltech.edu/data/download/wise-allwise/wise-allwise-cat-part01.bz2",
+        #     _ALLWISE_PARENT.joinpath("wise-allwise-cat-part01.bz2"),
+        #     "test",
+        #     test=test,
+        # )
         downloader(
-            "http://irsa.ipac.caltech.edu/data/download/wise-allwise/wise-allwise-cat-part01.bz2",
-            _ALLWISE_PARENT.joinpath("wise-allwise-cat-part01.bz2"),
+            "https://irsa.ipac.caltech.edu/data/download/wise-allwise-parquet/wise-allwise.parquet/healpix_k0=0/healpix_k5=0/part0.snappy.parquet",
+            _ALLWISE_PARENT.joinpath("part0.snappy.parquet"),
             "test",
             test=test,
+        )
+        # to csv and then save with bz2 compression
+        df = pd.read_parquet(_ALLWISE_PARENT.joinpath("part0.snappy.parquet"))
+        df.to_csv(_ALLWISE_PARENT.joinpath("part0.csv"), index=False, sep="|", header=False)
+        subprocess.run(
+            f"bzip2 -z -c {_ALLWISE_PARENT.joinpath('part0.csv').as_posix()} > {_ALLWISE_PARENT.joinpath('wise-allwise-cat-part01.bz2').as_posix()}",
+            shell=True,
         )
     else:  # pragma: no cover
         for cmd_str in cmd_list:

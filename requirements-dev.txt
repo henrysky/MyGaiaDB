@@ -1,6 +1,9 @@
 build
 gaiadr3-zeropoint
 mwdust
+astroquery
+snappy
+pyarrow
 pytest
 pytest-order
 pytest-cov

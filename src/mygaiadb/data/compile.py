@@ -719,7 +719,7 @@ def compile_tmass_sql_db(indexing: bool = True):
         )
 
 
-def compile_allwise_sql_db(indexing: bool = True):  # pragma: no cover
+def compile_allwise_sql_db(indexing: bool = True):
     """
     This function compile allwise SQL database
 

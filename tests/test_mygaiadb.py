@@ -63,7 +63,7 @@ def test_download():
     download.download_allwise_best_neightbour(test=True)
     download.download_gaia_astrophysical_parameters(test=True)
     download.download_2mass(test=True)
-    # download.download_allwise(test=True)
+    download.download_allwise(test=True)
     download.download_catwise(test=True)
 
 
@@ -76,21 +76,15 @@ def test_compile():
     compile.compile_xp_continuous_h5(save_correlation_matrix=True)
     compile.compile_xp_continuous_allinone_h5(save_correlation_matrix=False)
     compile.compile_tmass_sql_db(indexing=False)
-    # compile.compile_allwise_sql_db(indexing=False)
+    compile.compile_allwise_sql_db(indexing=False)
     compile.compile_catwise_sql_db(indexing=False)
     # check if database exist
     assert mygaiadb.gaia_sql_db_path.exists()
     assert mygaiadb.gaia_xp_coeff_h5_path.exists()
     assert mygaiadb.tmass_sql_db_path.exists()
-    # assert mygaiadb.allwise_sql_db_path.exists()
+    assert mygaiadb.allwise_sql_db_path.exists()
     # assert database > 2GB
     assert mygaiadb.gaia_sql_db_path.stat().st_size > 2e9
-
-
-@pytest.mark.order(3)
-def test_load_non_existing_db():
-    with pytest.raises(Exception):
-        LocalGaiaSQL(load_allwise=True)
 
 
 @pytest.mark.order(4)
