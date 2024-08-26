@@ -39,6 +39,7 @@ jobs:
           conda install --yes --file requirements.txt
           python -m pip install -r requirements-dev.txt
           python -m pip install .
+          npm install -g junit-report-merger
       - name: Cache my astro data
         uses: actions/cache@v4
         with:
@@ -49,6 +50,8 @@ jobs:
           python -m pytest -v ./tests --cov mygaiadb --junitxml=junit1.xml --cov-report=xml
           # only run doctests after the main tests have passed, since main tests set up the environment
           python -m pytest -v --doctest-only --doctest-glob="*.rst" --cov mygaiadb  --cov-append --junitxml=junit2.xml --cov-report=xml
+      - name: Merge test results
+        run: junit-report-merger junit1.xml junit2.xml -o junit.xml
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
         with:

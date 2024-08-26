@@ -240,13 +240,14 @@ You can use the ``list_all_tables()`` function to get a list of tables, excludin
 
 ..  code-block:: python
 
-    from mygaiadb.query import LocalGaiaSQL
+    >>> from mygaiadb.query import LocalGaiaSQL
 
-    # initialize a local Gaia SQL database instance
-    local_db = LocalGaiaSQL()
+    >>> # initialize a local Gaia SQL database instance
+    >>> local_db = LocalGaiaSQL()
 
-    # print a list of tables
-    print(local_db.list_all_tables())
+    >>> # print a list of tables
+    >>> print(local_db.list_all_tables())  # doctest: +ELLIPSIS
+    ['gaiadr3.gaia_source', ...]
 
 
 You can use ``get_table_column(table_name)`` to get a list of columns of a table which must be in the format of 
@@ -284,32 +285,36 @@ returns 89.618118 on `Gaia Archive`_. And you can also use such query in the sam
 
 ..  code-block:: python
 
-    from mygaiadb.query import LocalGaiaSQL
+    >>> from mygaiadb.query import LocalGaiaSQL
 
-    # initialize a local Gaia SQL database instance
-    local_db = LocalGaiaSQL()
-    local_db.query("""
-        SELECT DISTANCE(179., 10., G.ra, G.dec) as ang_sep
-        FROM gaiadr3.gaia_source as G
-        WHERE G.source_id = 4472832130942575872
-    """)
+    >>> # initialize a local Gaia SQL database instance
+    >>> local_db = LocalGaiaSQL()
+    >>> local_db.query("""
+    ...     SELECT DISTANCE(179., 10., G.ra, G.dec) as ang_sep
+    ...     FROM gaiadr3.gaia_source as G
+    ...     WHERE G.source_id = 4472832130942575872
+    ... """)
+         ang_sep
+    0  89.618118
 
-and you will get the same result of 89.618118.
+which you will get the same result of 89.618118.
 
 For example the following query which utilize conventional maths function to approximate uncertainty in Gaia G magnitude
 
 ..  code-block:: python
 
-    from mygaiadb.query import LocalGaiaSQL
+    >>> from mygaiadb.query import LocalGaiaSQL
 
-    # initialize a local Gaia SQL database instance
-    local_db = LocalGaiaSQL()
-    # CDS equation for conversion: http://vizier.cds.unistra.fr/viz-bin/VizieR-n?-source=METAnot&catid=1350&notid=63&-out=text
-    local_db.query("""
-        SELECT sqrt(power(((2.5 / log(10)) * (1 / G.phot_g_mean_flux_over_error)), 2) + power(0.0027553202, 2)) as phot_g_mean_mag_error
-        FROM gaiadr3.gaia_source as G
-        WHERE G.source_id = 3158175803069175680
-    """)
+    >>> # initialize a local Gaia SQL database instance
+    >>> local_db = LocalGaiaSQL()
+    >>> # CDS equation for conversion: http://vizier.cds.unistra.fr/viz-bin/VizieR-n?-source=METAnot&catid=1350&notid=63&-out=text
+    >>> local_db.query("""
+    ...     SELECT sqrt(power(((2.5 / log(10)) * (1 / G.phot_g_mean_flux_over_error)), 2) + power(0.0027553202, 2)) as phot_g_mean_mag_error
+    ...     FROM gaiadr3.gaia_source as G
+    ...     WHERE G.source_id = 3158175803069175680
+    ... """)
+       phot_g_mean_mag_error
+    0               0.003283
 
 Another example is the following query that works on `Gaia Archive`_ will also work in ``MyGaiaDB`` to select the first 100 gaia sources with XP coefficients
 
@@ -323,11 +328,13 @@ To run this query in ``MyGaiaDB``, you can do the following and will get a panda
 
 ..  code-block:: python
 
-    from mygaiadb.query import LocalGaiaSQL
+    >>> from mygaiadb.query import LocalGaiaSQL
 
-    # initialize a local Gaia SQL database instance
-    local_db = LocalGaiaSQL()
-    local_db.query("""SELECT TOP 100 * FROM gaiadr3.gaia_source as G  WHERE (G.has_xp_continuous = 'True')""")
+    >>> # initialize a local Gaia SQL database instance
+    >>> local_db = LocalGaiaSQL()
+    >>> local_db.query("""SELECT TOP 100 * FROM gaiadr3.gaia_source as G  WHERE (G.has_xp_continuous = 'True')""")  # doctest:+ELLIPSIS
+        source_id  random_index  ...  has_xp_sampled  has_rvs
+    0  ...
 
 The following example query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily, you've got ``MyGaiaDB`` to do the job. 
 The following example query from ``gaia_source`` table, ``astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
@@ -336,25 +343,25 @@ appropriate permission manually each time you have used ``MyGaiaDB``.
 
 ..  code-block:: python
 
-    from mygaiadb.query import LocalGaiaSQL
+    >>> from mygaiadb.query import LocalGaiaSQL
 
-    # initialize a local Gaia SQL database instance
-    local_db = LocalGaiaSQL()
+    >>> # initialize a local Gaia SQL database instance
+    >>> local_db = LocalGaiaSQL()
 
-    query = """
-    SELECT G.source_id, G.ra, G.dec, G.pmra, G.pmdec, G.parallax, G.parallax_error, G.phot_g_mean_mag, GA.logg_gspspec,
-    TM.j_m, AW.w1mpro
-    FROM gaiadr3.gaia_source as G
-    INNER JOIN gaiadr3.astrophysical_parameters as GA on GA.source_id = G.source_id
-    INNER JOIN gaiadr3.tmasspscxsc_best_neighbour as T on G.source_id = T.source_id
-    INNER JOIN gaiadr3.allwise_best_neighbour as W on W.source_id = T.source_id
-    INNER JOIN tmass.twomass_psc as TM on TM.designation = T.original_ext_source_id
-    INNER JOIN allwise.allwise as AW on AW.designation = W.original_ext_source_id
-    WHERE (G.has_xp_continuous = 1) AND (G.ruwe < 1.4) AND (G.ipd_frac_multi_peak <= 2) AND (G.ipd_gof_harmonic_amplitude<0.1) AND (GA.logg_gspspec < 3.0)
-    """
+    >>> query = """
+    ... SELECT G.source_id, G.ra, G.dec, G.pmra, G.pmdec, G.parallax, G.parallax_error, G.phot_g_mean_mag, GA.logg_gspspec,
+    ... TM.j_m, AW.w1mpro
+    ... FROM gaiadr3.gaia_source as G
+    ... INNER JOIN gaiadr3.astrophysical_parameters as GA on GA.source_id = G.source_id
+    ... INNER JOIN gaiadr3.tmasspscxsc_best_neighbour as T on G.source_id = T.source_id
+    ... INNER JOIN gaiadr3.allwise_best_neighbour as W on W.source_id = T.source_id
+    ... INNER JOIN tmass.twomass_psc as TM on TM.designation = T.original_ext_source_id
+    ... INNER JOIN allwise.allwise as AW on AW.designation = W.original_ext_source_id
+    ... WHERE (G.has_xp_continuous = 1) AND (G.ruwe < 1.4) AND (G.ipd_frac_multi_peak <= 2) AND (G.ipd_gof_harmonic_amplitude<0.1) AND (GA.logg_gspspec < 3.0)
+    ... """
 
-    # take ~12 hours to complete
-    local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, comments=True)
+    >>> # take ~12 hours to complete
+    >>> local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, comments=True)  # doctest: +SKIP
 
 As you can see for ``has_xp_continuous``, we can also use ``1`` to represent ``true`` which is used by Gaia archive but both are fine with ``MyGaiaDB``. 
 The ``overwrite=True`` means the function will save the file even if the file with the same name already exists. The ``comments=True`` means the function will 
@@ -362,11 +369,12 @@ save the query as a comment in the csv file so you know how to reproduce the que
 
 ..  code-block:: python
 
-    from itertools import takewhile
-    with open("output.csv", "r") as fobj:
-        headiter = takewhile(lambda s: s.startswith("#"), fobj)
-        header = list(headiter)
-    print(" ".join(header).replace(" # ", "").replace("# ", ""))
+    >>> from itertools import takewhile
+    >>> with open("output.csv", "r") as fobj:  # doctest: +SKIP
+    ...     headiter = takewhile(lambda s: s.startswith("#"), fobj)
+    ...     header = list(headiter)
+    >>> print(" ".join(header).replace(" # ", "").replace("# ", ""))  # doctest: +SKIP
+
 
 ``MyGaiaDB`` also has callbacks functionality called ``LambdaCallback``, these callbacks can be used when you do query. For example, 
 you can create a callbacks to convert ``ra`` in degree to ``ra_rad`` in radian. So your csv file in the end will have a new column 
@@ -375,39 +383,39 @@ which columns to use on the fly.
 
 ..  code-block:: python
 
-    import numpy as np
-    from mygaiadb.query import LocalGaiaSQL, LambdaCallback
+    >>> import numpy as np
+    >>> from mygaiadb.query import LocalGaiaSQL, LambdaCallback
 
-    # initialize a local Gaia SQL database instance
-    local_db = LocalGaiaSQL()
+    >>> # initialize a local Gaia SQL database instance
+    >>> local_db = LocalGaiaSQL()
 
-    query = """
-    SELECT G.source_id, G.ra, G.dec
-    FROM gaiadr3.gaia_source as G
-    LIMIT 100000
-    """
-    ra_conversion = LambdaCallback(new_col_name="ra_rad", func=lambda ra: ra / 180 * np.pi)
+    >>> query = """
+    ... SELECT G.source_id, G.ra, G.dec
+    ... FROM gaiadr3.gaia_source as G
+    ... LIMIT 100
+    ... """
+    >>> ra_conversion = LambdaCallback(new_col_name="ra_rad", func=lambda ra: ra / 180 * np.pi)
 
-    local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, callbacks=[ra_conversion], comments=True)
+    >>> local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, callbacks=[ra_conversion], comments=True)
 
 We also have a few useful callbacks included by default to add columns like zero-point corrected parallax or extinction
 
 ..  code-block:: python
 
-    from mygaiadb.query import ZeroPointCallback, DustCallback
+    >>> from mygaiadb.query import ZeroPointCallback, DustCallback
 
-    query = """
-    SELECT G.source_id, G.ra, G.dec, G.parallax, G.phot_bp_mean_mag, G.nu_eff_used_in_astrometry, G.pseudocolour, G.astrometric_params_solved
-    FROM gaiadr3.gaia_source as G
-    LIMIT 100000
-    """
+    >>> query = """
+    ... SELECT G.source_id, G.ra, G.dec, G.parallax, G.phot_bp_mean_mag, G.nu_eff_used_in_astrometry, G.pseudocolour, G.astrometric_params_solved
+    ... FROM gaiadr3.gaia_source as G
+    ... LIMIT 100000
+    ... """
 
-    # adding zero-point corrected parallax using official Gaia DR3 parallax zero-point python package
-    zp_callback = ZeroPointCallback(new_col_name="parallax_w_zp")
-    # adding SFD E(B-V) in 2MASS H band filter using mwdust python package
-    dust_callback = DustCallback(new_col_name="sfd_ebv", filter="2MASS H", dustmap="SFD")
+    >>> # adding zero-point corrected parallax using official Gaia DR3 parallax zero-point python package
+    >>> zp_callback = ZeroPointCallback(new_col_name="parallax_w_zp")
+    >>> # adding SFD E(B-V) in 2MASS H band filter using mwdust python package
+    >>> dust_callback = DustCallback(new_col_name="sfd_ebv", filter="2MASS H", dustmap="SFD")
 
-    local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, callbacks=[zp_callback, dust_callback])
+    >>> local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, callbacks=[zp_callback, dust_callback])
 
 User tables
 -------------
@@ -416,27 +424,33 @@ User tables
 
 ..  code-block:: python
 
-    from mygaiadb.query import LocalGaiaSQL 
-    local_db = LocalGaiaSQL()  
-    local_db.upload_user_table(pd.DataFrame({"source_id": [5188146770731873152, 4611686018427432192, 5764607527332179584]}), tablename="my_table_1")
+    >>> from mygaiadb.query import LocalGaiaSQL
+    >>> import pandas as pd
+    >>> local_db = LocalGaiaSQL()  
+    >>> local_db.upload_user_table(pd.DataFrame({"source_id": [5188146770731873152, 4611686018427432192, 5764607527332179584]}), tablename="my_table_1")
 
 and then carry-on doing query with ``my_table_1`` cross-matching with other tables like 
 
 ..  code-block:: python
 
-    local_db.query("""SELECT * FROM gaiadr3.gaia_source as G  INNER JOIN user_table.my_table_1 as MY on MY.source_id = G.source_id""")
+    >>> local_db.query("""SELECT * FROM gaiadr3.gaia_source as G  INNER JOIN user_table.my_table_1 as MY on MY.source_id = G.source_id""")
+        source_id  random_index          ra  ra_error        dec  dec_error  parallax  ...  grvs_mag           l          b  has_xp_continuous  has_xp_sampled  has_rvs            source_id
+    0  5188146770731873152      92665034  106.809848  0.128483 -89.992879   0.135611  1.487036  ...      None  302.923937 -27.127759                  0               0        0  5188146770731873152
+    1  4611686018427432192     654192849   63.430772  0.092484 -89.988887   0.093497  0.694396  ...      None  302.922275 -27.135308                  0               0        0  4611686018427432192
+    2  5764607527332179584    1741270837  193.633291  0.072219 -89.988749   0.067486  0.245594  ...      None  302.932091 -27.117000                  1               0        0  5764607527332179584
 
 You can check the list of your own user tables with column names by using ``list_user_tables()``
 
 ..  code-block:: python
 
-    local_db.list_user_tables()
+    >>> local_db.list_user_tables()
+    {'my_table_1': ['source_id']}
 
 and you can remove a user table like ``my_table_1`` in this case by using ``remove_user_table()``
 
 ..  code-block:: python
 
-    local_db.remove_user_table("my_table_1")
+    >>> local_db.remove_user_table("my_table_1")
 
 Gaia XP Spectroscopy Query
 ----------------------------
