@@ -9,6 +9,7 @@ from typing import List, Optional
 
 import pandas as pd
 from tqdm import tqdm
+import warnings
 
 from mygaiadb import (
     __version__,
@@ -218,8 +219,9 @@ class LocalGaiaSQL:
         _lib = mygaiadb_path.joinpath(f"astroqlite_c{_ext_suffix}")
         if _lib.exists():
             c.load_extension(_lib.as_posix())
+            warnings.warn("MyGaiaDB SQL C extension found at " + str(_lib))
         else:
-            raise ImportError("MyGaiaDB SQL C extension not found")
+            raise ImportError("MyGaiaDB SQL C extension not found at " + str(_lib))
 
     @preprocess_query
     def save_csv(
