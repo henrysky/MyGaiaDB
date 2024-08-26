@@ -4,6 +4,7 @@ mwdust
 pytest
 pytest-order
 pytest-cov
+pytest-doctestplus
 galpy
 ipykernel
 ipython
