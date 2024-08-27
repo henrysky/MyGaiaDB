@@ -280,9 +280,9 @@ For example the following query which used a special function called ``DISTANCE`
 
     SELECT DISTANCE(179., 10., G.ra, G.dec) as ang_sep
     FROM gaiadr3.gaia_source as G
-    WHERE G.source_id = 4472832130942575872
+    WHERE G.source_id = 154378304526208
 
-returns 89.618118 on `Gaia Archive`_. And you can also use such query in the same manner as you would on `Gaia Archive`_
+returns 132.172604 on `Gaia Archive`_. And you can also use such query in the same manner as you would on `Gaia Archive`_
 
 ..  code-block:: python
 
@@ -293,12 +293,12 @@ returns 89.618118 on `Gaia Archive`_. And you can also use such query in the sam
     >>> local_db.query("""
     ...     SELECT DISTANCE(179., 10., G.ra, G.dec) as ang_sep
     ...     FROM gaiadr3.gaia_source as G
-    ...     WHERE G.source_id = 4472832130942575872
+    ...     WHERE G.source_id = 154378304526208
     ... """)
          ang_sep
-    0  89.618118
+    0  132.172604
 
-which you will get the same result of 89.618118.
+which you will get the same result of 132.172604.
 
 For example the following query which utilize conventional maths function to approximate uncertainty in Gaia G magnitude
 
@@ -312,10 +312,10 @@ For example the following query which utilize conventional maths function to app
     >>> local_db.query("""
     ...     SELECT sqrt(power(((2.5 / log(10)) * (1 / G.phot_g_mean_flux_over_error)), 2) + power(0.0027553202, 2)) as phot_g_mean_mag_error
     ...     FROM gaiadr3.gaia_source as G
-    ...     WHERE G.source_id = 3158175803069175680
+    ...     WHERE G.source_id = 154378304526208
     ... """)
        phot_g_mean_mag_error
-    0               0.003283
+    0               0.003619
 
 Another example is the following query that works on `Gaia Archive`_ will also work in ``MyGaiaDB`` to select the first 100 gaia sources with XP coefficients
 
@@ -428,7 +428,7 @@ User tables
     >>> from mygaiadb.query import LocalGaiaSQL
     >>> import pandas as pd
     >>> local_db = LocalGaiaSQL()  
-    >>> local_db.upload_user_table(pd.DataFrame({"source_id": [5188146770731873152, 4611686018427432192, 5764607527332179584]}), tablename="my_table_1")
+    >>> local_db.upload_user_table(pd.DataFrame({"source_id": [158329674677120, 27373239622051072, 11638124421673088]}), tablename="my_table_1")
 
 and then carry-on doing query with ``my_table_1`` cross-matching with other tables like 
 
