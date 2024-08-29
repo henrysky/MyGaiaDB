@@ -362,7 +362,8 @@ appropriate permission manually each time you have used ``MyGaiaDB``.
     ... """
 
     >>> # take ~12 hours to complete
-    >>> local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, comments=True)  # doctest: +SKIP
+    >>> local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, comments=True)  # doctest:+ELLIPSIS
+    ...
 
 As you can see for ``has_xp_continuous``, we can also use ``1`` to represent ``true`` which is used by Gaia archive but both are fine with ``MyGaiaDB``. 
 The ``overwrite=True`` means the function will save the file even if the file with the same name already exists. The ``comments=True`` means the function will 
@@ -371,10 +372,19 @@ save the query as a comment in the csv file so you know how to reproduce the que
 ..  code-block:: python
 
     >>> from itertools import takewhile
-    >>> with open("output.csv", "r") as fobj:  # doctest: +SKIP
+    >>> with open("output.csv", "r") as fobj:
     ...     headiter = takewhile(lambda s: s.startswith("#"), fobj)
     ...     header = list(headiter)
-    >>> print(" ".join(header).replace(" # ", "").replace("# ", ""))  # doctest: +SKIP
+    >>> print(" ".join(header).replace(" # ", "").replace("# ", ""))
+    SELECT G.source_id, G.ra, G.dec, G.pmra, G.pmdec, G.parallax, G.parallax_error, G.phot_g_mean_mag, GA.logg_gspspec,
+    TM.j_m, AW.w1mpro
+    FROM gaiadr3.gaia_source as G
+    INNER JOIN gaiadr3.astrophysical_parameters as GA on GA.source_id = G.source_id
+    INNER JOIN gaiadr3.tmasspscxsc_best_neighbour as T on G.source_id = T.source_id
+    INNER JOIN gaiadr3.allwise_best_neighbour as W on W.source_id = T.source_id
+    INNER JOIN tmass.twomass_psc as TM on TM.designation = T.original_ext_source_id
+    INNER JOIN allwise.allwise as AW on AW.designation = W.original_ext_source_id
+    WHERE (G.has_xp_continuous = 1) AND (G.ruwe < 1.4) AND (G.ipd_frac_multi_peak <= 2) AND (G.ipd_gof_harmonic_amplitude<0.1) AND (GA.logg_gspspec < 3.0)
 
 
 ``MyGaiaDB`` also has callbacks functionality called ``LambdaCallback``, these callbacks can be used when you do query. For example, 

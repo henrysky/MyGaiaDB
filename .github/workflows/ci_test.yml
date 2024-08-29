@@ -38,6 +38,8 @@ jobs:
         run: |
           conda install --yes --file requirements.txt
           python -m pip install -r requirements-dev.txt
+          python -m pip install -e .  # install package in editable mode for doctests
+          python -m pip uninstall -y mygaiadb  # uninstall package to test editable install
           python -m pip install .
           npm install -g junit-report-merger
       - name: Cache my astro data
@@ -51,7 +53,7 @@ jobs:
           # # doctest expects editable install, so install the package in editable mode?
           # python -m pip install -e .
           # # only run doctests after the main tests have passed, since main tests set up the environment
-          # python -m pytest -v --doctest-only --doctest-glob="*.rst"
+          python -m pytest -v --doctest-only --doctest-glob="*.rst"
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
         with:
