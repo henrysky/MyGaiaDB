@@ -5,7 +5,6 @@ import sqlite3
 import stat
 import sys
 import sysconfig
-from typing import List, Optional
 
 import pandas as pd
 from tqdm import tqdm
@@ -90,16 +89,16 @@ class LocalGaiaSQL:
                 )
 
     def _check_callbacks_header(
-        self, headers: List[str], callbacks: List[QueryCallback]
+        self, headers: list[str], callbacks: list[QueryCallback]
     ):
         """
         Helper function to check if all columns required by all callbacks are presented in query
 
         Parameters
         ----------
-        headers: List[str]
+        headers: list[str]
             List of query result header
-        callbacks: List[QueryCallback]
+        callbacks: list[QueryCallback]
             List of callbacks used in a query
         """
         for callback in callbacks:
@@ -111,7 +110,7 @@ class LocalGaiaSQL:
                         f"Callback for new column {callback.new_col_name} requires column {j} but not presented in your query"
                     )
 
-    def _result_after_callbacks(self, df: pd.DataFrame, callbacks: List[QueryCallback]):
+    def _result_after_callbacks(self, df: pd.DataFrame, callbacks: list[QueryCallback]):
         for callback in callbacks:
             func_dist = {}
             for j in callback.required_col:
@@ -228,7 +227,7 @@ class LocalGaiaSQL:
         filename: str,
         chunksize: int = 50000,
         overwrite: bool = True,
-        callbacks: Optional[List[QueryCallback]] = None,
+        callbacks: list[QueryCallback] | None = None,
         comments: bool = True,
     ):
         """
@@ -244,7 +243,7 @@ class LocalGaiaSQL:
             Number of rows to do in one batch
         overwrite : bool, optional, default=True
             Whether to overwrite csv file if it already exists
-        callbacks : List[QueryCallback], optional, default=None
+        callbacks : list[QueryCallback], optional, default=None
             List of mygaiadb callbacks
         comments : bool, optional, default=True
             Whether to save the query as comment lines in csv file
@@ -303,7 +302,7 @@ class LocalGaiaSQL:
         return None
 
     @preprocess_query
-    def query(self, query: str, callbacks: Optional[List[QueryCallback]] = None):
+    def query(self, query: str, callbacks: list[QueryCallback] | None = None):
         """
         Get result from query to pandas dataframe, ONLY USE THIS FOR SMALL QUERY
 
@@ -311,7 +310,7 @@ class LocalGaiaSQL:
         ----------
         query : str
             Query string
-        callbacks : List[QueryCallback], optional, default=None
+        callbacks : list[QueryCallback], optional, default=None
             List of mygaiadb callbacks
 
         Returns

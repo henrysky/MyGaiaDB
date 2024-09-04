@@ -1,10 +1,10 @@
 ## [0.6] - 20xx-xx-xx
 
 ### Added
-- N/A
+- Wheels for Python 3.13
 
 ### Changed
-- N/A
+- Python 3.10 or above only to align with Numpy
 
 ### Fixed
 - N/A

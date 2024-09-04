@@ -4,7 +4,6 @@ import inspect
 import warnings
 from abc import ABC, abstractmethod
 from itertools import compress
-from typing import Optional, List
 
 import numpy as np
 
@@ -23,7 +22,7 @@ class QueryCallback(ABC):
         List of required packages to use this callback.
     """
 
-    def __init__(self, new_col_name: str, required_pkgs: Optional[List[str]] = None):
+    def __init__(self, new_col_name: str, required_pkgs: list[str] | None = None):
         self.new_col_name = new_col_name
         self.initialized = False
 
@@ -141,7 +140,7 @@ class DustCallback(QueryCallback):
     def __init__(
         self,
         new_col_name: str = "sfd_ebv",
-        filter: Optional[str] = None,
+        filter: str | None = None,
         dustmap: str = "SFD",
     ):
         super().__init__(new_col_name, required_pkgs=["mwdust", "galpy"])

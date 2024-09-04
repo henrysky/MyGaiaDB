@@ -38,7 +38,7 @@ Feel free to modify the code and submit pull requests to enhance its functionali
 Installation and Dependnciees
 -------------------------------
 
-This code requires ``python >= 3.8`` with ``numpy``, ``pandas``, ``h5py``, ``astropy`` and ``tqdm``. 
+This code requires ``python >= 3.10`` with ``numpy``, ``pandas``, ``h5py``, ``astropy`` and ``tqdm``. 
 This code only needs the ``sqlite3`` library that comes bundled with your Python installation. You need to make sure that the 
 ``sqlite3ext.h`` file is available in your path and your Python is compiled with sqlite extension enabled (i.e., compiled with ``PYTHON_CONFIGURE_OPTS="--enable-loadable-sqlite-extensions"``).
 For some optional functionalities,  ``galpy``, ``mwdust`` are required. Downloading functions will require ``wget``.

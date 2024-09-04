@@ -20,6 +20,7 @@ jobs:
         with:
           channels: conda-forge
           auto-update-conda: true
+          python-version: "3.10"
       - name: Set environment variables on Mac OS
         if: matrix.os == 'macos-latest'
         run: |

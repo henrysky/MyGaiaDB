@@ -9,7 +9,7 @@ mygaiadb = ["data/sql_schema/*.sql"]
 name = "MyGaiaDB"
 version = "0.6.0.dev0"
 dynamic = ["dependencies"]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [
   {name = "Henry Leung", email = "henryskyleung@gmail.com"},
 ]

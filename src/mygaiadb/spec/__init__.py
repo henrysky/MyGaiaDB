@@ -2,15 +2,14 @@ import h5py
 import tqdm
 import numpy as np
 from mygaiadb import gaia_xp_coeff_h5_path
-from typing import Union, List, Optional
 from numpy.typing import NDArray
 
 
 def yield_xp_coeffs(
-    source_ids: Union[int, List[int], NDArray],
+    source_ids: int | list[int] | NDArray,
     assume_unique: bool = True,
     return_errors: bool = False,
-    return_additional_columns: Optional[List[str]] = None,
+    return_additional_columns: list[str] | None = None,
     rdcc_nbytes: int = 16 * 1024**3,
     rdcc_nslots: int = 10e7,
 ):
@@ -19,13 +18,13 @@ def yield_xp_coeffs(
 
     Parameters
     ----------
-    source_ids: Union[int, List[int], NDArray]
+    source_ids: int | list[int] | NDArray
         Gaia source id
     assume_unique: bool, optional (default=True)
         Whether to assume the list of Gaia source id is unique
     return_errors: bool, optional (default=False)
         Whether to return xp coeffs error
-    return_additional_columns: List[str], optional (default=None)
+    return_additional_columns: list[str], optional (default=None)
         List of additional columns to return
         If you want coefficients error, please use return_errors=True
     rdcc_nbytes: int, optional (default=16 * 1024**3)

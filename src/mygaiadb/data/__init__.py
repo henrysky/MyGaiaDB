@@ -1,6 +1,5 @@
 import pathlib
 import shutil
-from typing import Optional
 
 import requests
 import tqdm
@@ -36,7 +35,7 @@ def downloader(
     fullfilename: str,
     name: str,
     test: bool = False,
-    session: Optional[requests.Session] = None,
+    session: requests.Session | None = None,
 ):
     """
     Download a file from a URL to a local file using ``requests``
