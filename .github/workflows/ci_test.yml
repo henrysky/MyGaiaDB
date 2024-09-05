@@ -50,11 +50,7 @@ jobs:
           key: mygaiadb-${{ runner.os }}-2024aug26
       - name: Test
         run: |
-          python -m pytest -v ./tests --cov mygaiadb --junitxml=junit.xml --cov-report=xml
-          # # doctest expects editable install, so install the package in editable mode?
-          # python -m pip install -e .
-          # # only run doctests after the main tests have passed, since main tests set up the environment
-          python -m pytest -v --doctest-only --doctest-glob="*.rst"
+          python -m pytest -v ./tests --cov mygaiadb --junitxml=junit.xml --cov-report=xml --doctest-glob="*.rst" --doctest-continue-on-failure ./tests/ ./README.rst
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v4
         with:

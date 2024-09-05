@@ -246,7 +246,7 @@ You can use the ``list_all_tables()`` function to get a list of tables, excludin
     >>> local_db = LocalGaiaSQL()
 
     >>> # print a list of tables
-    >>> print(local_db.list_all_tables())  # doctest: +ELLIPSIS
+    >>> print(local_db.list_all_tables())
     ['gaiadr3.gaia_source', ...]
 
 
@@ -261,7 +261,7 @@ You can use ``get_table_column(table_name)`` to get a list of columns of a table
     >>> local_db = LocalGaiaSQL()
 
     >>> # print a list of columns of a table
-    >>> print(local_db.get_table_column("gaiadr3.gaia_source"))  # doctest: +ELLIPSIS
+    >>> print(local_db.get_table_column("gaiadr3.gaia_source"))
     ['source_id', 'random_index', ...]
 
 
@@ -295,7 +295,7 @@ returns 132.172604 on `Gaia Archive`_. And you can also use such query in the sa
     ...     FROM gaiadr3.gaia_source as G
     ...     WHERE G.source_id = 154378304526208
     ... """)
-         ang_sep
+          ang_sep
     0  132.172604
 
 which you will get the same result of 132.172604.
@@ -333,9 +333,9 @@ To run this query in ``MyGaiaDB``, you can do the following and will get a panda
 
     >>> # initialize a local Gaia SQL database instance
     >>> local_db = LocalGaiaSQL()
-    >>> local_db.query("""SELECT TOP 100 * FROM gaiadr3.gaia_source as G  WHERE (G.has_xp_continuous = 'True')""")  # doctest:+ELLIPSIS
-        source_id  random_index  ...  has_xp_sampled  has_rvs
-    0  ...
+    >>> local_db.query("""SELECT TOP 100 * FROM gaiadr3.gaia_source as G  WHERE (G.has_xp_continuous = 'True')""")
+             source_id  random_index  ...  has_xp_sampled  has_rvs
+    0       ...
 
 The following example query is too complex for `Gaia Archive`_, thus you will get timeout error but luckily, you've got ``MyGaiaDB`` to do the job. 
 The following example query from ``gaia_source`` table, ``astrophysical_parameters`` table, 2MASS and ALLWISE table all at once.
@@ -362,7 +362,7 @@ appropriate permission manually each time you have used ``MyGaiaDB``.
     ... """
 
     >>> # take ~12 hours to complete
-    >>> local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, comments=True)  # doctest:+ELLIPSIS
+    >>> local_db.save_csv(query, "output.csv", chunksize=50000, overwrite=True, comments=True)
     ...
 
 As you can see for ``has_xp_continuous``, we can also use ``1`` to represent ``true`` which is used by Gaia archive but both are fine with ``MyGaiaDB``. 
@@ -444,7 +444,7 @@ and then carry-on doing query with ``my_table_1`` cross-matching with other tabl
 
 ..  code-block:: python
 
-    >>> local_db.query("""SELECT * FROM gaiadr3.gaia_source as G  INNER JOIN user_table.my_table_1 as MY on MY.source_id = G.source_id""")  # doctest: +ELLIPSIS
+    >>> local_db.query("""SELECT * FROM gaiadr3.gaia_source as G  INNER JOIN user_table.my_table_1 as MY on MY.source_id = G.source_id""")
         source_id  random_index  ...  has_rvs            source_id
     0  ...
 
