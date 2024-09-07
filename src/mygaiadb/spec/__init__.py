@@ -31,6 +31,17 @@ def yield_xp_coeffs(
         h5py cache in bytes
     rdcc_nslots: int, optional (default=10e7)
         h5py cache number of slots
+
+    Yields
+    ------
+    coeffs: NDArray
+        XP coeffs of shape (N, 110)
+    source_ids: NDArray
+        Gaia source id of shape (N,)
+    coeffs_err: NDArray
+        XP coeffs error (if return_errors=True) of shape (N, 110)
+    extra_columns: NDArray
+        Additional columns (if return_additional_columns is not None) of shape (N,)
     """
     source_ids = np.asarray(source_ids, dtype=np.int64)
     reduced_source_ids = source_ids // 8796093022208
