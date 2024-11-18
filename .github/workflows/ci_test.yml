@@ -52,7 +52,7 @@ jobs:
         run: |
           python -m pytest -v ./tests --cov mygaiadb --junitxml=junit.xml --cov-report=xml --doctest-glob="*.rst" --doctest-continue-on-failure ./tests/ ./README.rst
       - name: Upload results to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload test results to Codecov
