@@ -33,6 +33,11 @@ jobs:
         run: |
           conda install --yes --file requirements.txt
           python -m pip install -r requirements-dev.txt
+      - name: Set environment variables on Linux
+        if: matrix.buildplat[1] == 'manylinux'
+        shell: bash -l {0}
+        run: |
+          sudo apt-get install libsqlite3-dev
       - name: Set environment variables on Mac OS
         if: matrix.buildplat[1] == 'macos'
         shell: bash -l {0}
