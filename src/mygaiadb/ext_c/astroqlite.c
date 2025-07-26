@@ -7,6 +7,11 @@
 #include "sqlite3ext.h"
 
 SQLITE_EXTENSION_INIT1
+// for older SQLite versions
+#define SQLITE_DETERMINISTIC    0x000000800
+#define SQLITE_DIRECTONLY       0x000080000
+#define SQLITE_SUBTYPE          0x000100000
+#define SQLITE_INNOCUOUS        0x000200000
 
 #ifdef _WIN32
 #define EXPORT __declspec(dllexport)
