@@ -9,7 +9,7 @@ on:
     types: [created]
 
 jobs:
-  build_wheels:
+  build_wheels_sdist:
     name: Build wheel for ${{ matrix.python }}-${{ matrix.buildplat[1] }}-${{ matrix.buildplat[2] }}
     runs-on: ${{ matrix.buildplat[0] }}
     strategy:
@@ -22,12 +22,16 @@ jobs:
         - [macos-latest, macosx, arm64]
         - [windows-latest, win, amd64]
         python: ["cp310", "cp311", "cp312", "cp313"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v5
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          channels: conda-forge
+          channels: conda-forge,defaults
           auto-update-conda: true
+          auto-activate-base: true
+          activate-environment: true
+          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         shell: bash -l {0}
         run: |
@@ -59,24 +63,6 @@ jobs:
         with:
           name: ${{ matrix.python }}-${{ matrix.buildplat[1] }}_${{ matrix.buildplat[2] }}
           path: ./wheelhouse/*.whl
-  build_sdist:
-    name: Build source directory for release
-    if: github.event_name == 'release' && github.event.action == 'created'
-    runs-on: ubuntu-latest
-    steps:
-      # check-out this repository
-      - uses: actions/checkout@v5
-      # Setup python
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          channels: conda-forge
-          auto-update-conda: true
-          python-version: ${{ matrix.python }}
-      - name: Install dependencies
-        shell: bash -l {0}
-        run: |
-          conda install -y numpy astropy h5py pandas tqdm wheel pytest pytest-order galpy
-          python -m pip install gaiadr3-zeropoint build mwdust
       - name: Build sdist
         shell: bash -l {0}
         run: |
@@ -88,7 +74,7 @@ jobs:
   # Deploy wheels and sdist to PyPI (upon release creation)
   deploy_pypi:
     name: Deploy to PyPI
-    needs: [build_wheels, build_sdist]
+    needs: [build_wheels_sdist]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'created'
     steps:
