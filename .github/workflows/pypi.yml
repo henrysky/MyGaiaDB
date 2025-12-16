@@ -61,7 +61,7 @@ jobs:
           CIBW_BUILD: ${{ matrix.pythonplat[0] }}-${{ matrix.buildplat[1] }}_${{ matrix.buildplat[2] }}
           CIBW_ARCHS_MACOS: ${{ matrix.buildplat[2] }}
           CIBW_BEFORE_ALL_LINUX: "yum update -y && yum install -y sqlite-devel"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.pythonplat[0] }}-${{ matrix.buildplat[1] }}_${{ matrix.buildplat[2] }}
           path: ./wheelhouse/*.whl
@@ -69,7 +69,7 @@ jobs:
         shell: bash -l {0}
         run: |
           python -m build --sdist
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.pythonplat[0] }}-${{ matrix.buildplat[1] }}_${{ matrix.buildplat[2] }}-sdist
           path: ./dist/*.tar.gz
