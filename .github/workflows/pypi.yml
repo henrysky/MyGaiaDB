@@ -56,7 +56,7 @@ jobs:
           echo "LIBPATH=$CONDA_PREFIX\\Library\\lib" >> $GITHUB_ENV
           echo "$CONDA_PREFIX\\Library\\bin" >> $GITHUB_PATH
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.3.0
+        uses: pypa/cibuildwheel@v3.3.1
         env:
           CIBW_BUILD: ${{ matrix.pythonplat[0] }}-${{ matrix.buildplat[1] }}_${{ matrix.buildplat[2] }}
           CIBW_ARCHS_MACOS: ${{ matrix.buildplat[2] }}
