@@ -28,7 +28,7 @@ jobs:
         - ["cp313", "3.13"]
     steps:
       - uses: actions/checkout@v6
-      - uses: conda-incubator/setup-miniconda@v3
+      - uses: conda-incubator/setup-miniconda@v4
         with:
           channels: conda-forge,defaults
           auto-update-conda: true
