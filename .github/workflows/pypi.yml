@@ -27,7 +27,7 @@ jobs:
         - ["cp312", "3.12"]
         - ["cp313", "3.13"]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: conda-incubator/setup-miniconda@v4
         with:
           channels: conda-forge,defaults
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'created'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - run: |
           mkdir tmp_wheelhouse
           mkdir wheelhouse
