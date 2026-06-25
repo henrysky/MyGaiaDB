@@ -20,7 +20,7 @@ jobs:
         with:
           channels: conda-forge,defaults
           auto-update-conda: true
-          activate-environment: true
+          activate-environment: ci_test
           python-version: "3.13"
       - name: Set environment variables on Mac OS
         if: matrix.os == 'macos-latest'
@@ -38,6 +38,7 @@ jobs:
           echo "$CONDA_PREFIX\\Library\\bin" >> $GITHUB_PATH
       - name: Install dependencies
         run: |
+          conda install --yes pip
           conda install --yes --file requirements.txt
           python -m pip install -r requirements-dev.txt
           python -m pip install -e .  # install package in editable mode for doctests

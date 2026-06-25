@@ -37,6 +37,7 @@ jobs:
       - name: Install dependencies
         shell: bash -l {0}
         run: |
+          conda install --yes pip
           conda install --yes --file requirements.txt
           python -m pip install -r requirements-dev.txt
       - name: Set environment variables on Mac OS
