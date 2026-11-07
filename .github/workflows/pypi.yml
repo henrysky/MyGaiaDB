@@ -18,7 +18,6 @@ jobs:
       matrix:
         buildplat:
         - [ubuntu-latest, manylinux, x86_64]
-        - [macos-latest, macosx, x86_64]
         - [macos-latest, macosx, arm64]
         - [windows-latest, win, amd64]
         pythonplat: 
